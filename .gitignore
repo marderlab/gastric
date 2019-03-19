@@ -1,0 +1,5 @@
+*.mat
+*.sublime-workspace
+*.eps
+*.pdf
+*.DS_Store
