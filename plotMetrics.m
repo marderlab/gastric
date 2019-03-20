@@ -1,12 +1,12 @@
-function ax = plotMetrics(data, thing_to_plot)
+function ax = plotMetrics(data, thing_to_plot, neurons)
 
 
 figure('outerposition',[300 300 600 900],'PaperUnits','points','PaperSize',[600 900]); hold on
 
-neurons = {'PD','LP','VD','IC','LG','DG','GM'};
+
 
 for i = 1:length(neurons)
-	ax(i) = subplot(7,1,i); hold on
+	ax(i) = subplot(length(neurons),1,i); hold on
 	set(ax(i),'YScale','linear','YLim',[1e-2 20],'XLim',[0 8e3],'XTick',[])
 	ylabel(ax(i),neurons{i})
 end
