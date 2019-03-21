@@ -14,12 +14,15 @@ if ~exist('data','var')
 		data_root = '/Volumes/HYDROGEN/srinivas_data/gastric-data';
 		include_these = {'901_046','901_049','901_052','901_062','901_080'};
 
-		for i = 1:length(include_these)
 
-			this_data = crabsort.consolidate('neurons',{'PD','LG'},'data_fun',{@crabsort.getTemperature,@crabsort.getDataStatistics,@crabsort.findArtifacts},'data_dir',[data_root filesep include_these{i}]);
+		data = crabsort.consolidate('neurons',{'PD','LG'},'data_fun',{@crabsort.getTemperature,@crabsort.getDataStatistics},'data_dir',[data_root filesep include_these{1}]);
+
+		for i = 2:length(include_these)
+
+			this_data = crabsort.consolidate('neurons',{'PD','LG'},'data_fun',{@crabsort.getTemperature,@crabsort.getDataStatistics},'data_dir',[data_root filesep include_these{i}]);
 
 
-			sdfsd
+			data = [data, this_data];
 
 		end
 
@@ -77,22 +80,6 @@ ylabel(ax(3),'PD_{end} \rightarrow LG_{start} (s)')
 ylabel(ax(4),'PD_{end} \rightarrow LG_{end} (s)')
 
 
-% make a figure for normalized by LG period
-figure('outerposition',[300 300 901 901],'PaperUnits','points','PaperSize',[901 901]); hold on
-clear ax_LG
-
-
-for i = 1:4
-	ax_LG(i) = subplot(2,2,i); hold on
-	xlabel('Temperature (C)')
-end
-
-suptitle('Normalized by LG period')
-
-ylabel(ax_LG(1),'PD_{start} \rightarrow LG_{start} (norm)')
-ylabel(ax_LG(2),'PD_{start} \rightarrow LG_{end} (norm)')
-ylabel(ax_LG(3),'PD_{end} \rightarrow LG_{start} (norm)')
-ylabel(ax_LG(4),'PD_{end} \rightarrow LG_{end} (norm)')
 
 
 % and a figure for norm by PD period
@@ -122,6 +109,10 @@ for i = 1:length(data)
 	if isempty(data(i).LG_burst_periods)
 		continue
 	end
+
+	% if any(data(i).artifacts)
+	% 	continue
+	% end
 
 
 	LG_burst_starts = data(i).LG_burst_starts;
@@ -201,12 +192,6 @@ for i = 1:length(data)
 	plot(ax(4),this_temp,delay_PD_end_LG_end,'.','Color',C,'MarkerSize',10)
 
 
-	% norm by LG period
-	plot(ax_LG(1),this_temp,delay_PD_start_LG_start_norm_LG,'.','Color',C,'MarkerSize',10)
-	plot(ax_LG(2),this_temp,delay_PD_start_LG_end_norm_LG,'.','Color',C,'MarkerSize',10)
-	plot(ax_LG(3),this_temp,delay_PD_end_LG_start_norm_LG,'.','Color',C,'MarkerSize',10)
-	plot(ax_LG(4),this_temp,delay_PD_end_LG_end_norm_LG,'.','Color',C,'MarkerSize',10)
-
 	% norm by PD period
 	plot(ax_PD(1),this_temp,delay_PD_start_LG_start_norm_PD,'.','Color',C,'MarkerSize',10)
 	plot(ax_PD(2),this_temp,delay_PD_start_LG_end_norm_PD,'.','Color',C,'MarkerSize',10)
@@ -218,7 +203,6 @@ end
 
 for i = 1:4
 	ax(i).YLim = [0 1];
-	ax_LG(i).YLim = [0 1];
 	ax_PD(i).YLim = [0 1];
 end
 
