@@ -42,23 +42,165 @@ data = crabsort.computePeriods(data,'PD',.2);
 data = crabsort.computePeriods(data,'LG',1);
 
 
-all_exp_ids = unique([data.experiment_idx]);
+unique_exp_ids = unique([data.experiment_idx]);
+
+
+% compute the last stim time in the timeframe of each data slice
+for i = 1:length(data)
+	if min(data(i).mask) == 0
+		data(i).last_stim = find(data(i).mask==0,1,'last')*1e-3;
+	else
+		data(i).last_stim = NaN;
+	end
+end
+
+% compute for each element in data the time since the last stimulation 
+all_last_stim = [data.last_stim];
+all_exp_ids  = [data.experiment_idx];
+for i = 1:length(data)
+	data(i).time_to_last_stim = NaN;
+	if min(data(i).mask) == 1
+		% compute time to last stim
+		temp = all_last_stim;
+		temp(all_exp_ids ~= data(i).experiment_idx) = NaN;
+		temp = temp(1:i);
+		file_with_last_stim = find(~isnan(temp),1,'last');
+
+		if isempty(file_with_last_stim)
+			continue
+		end
+
+		data(i).time_to_last_stim = round(data(i).time_offset - data(file_with_last_stim).time_offset - data(file_with_last_stim).last_stim);
+
+	end
+
+end
+
+
+
+% show the raw data, triggered by when the stimulus goes off
+
+all_temp = 7:2:23;
+figure('outerposition',[300 300 1200 901],'PaperUnits','points','PaperSize',[1200 901]); hold on
+clear ax
+N = length(unique_exp_ids);
+
+for i = 1:N
+	ax(i) = figlib.autoPlot(N,i); hold on
+	xlabel(ax(i),'Time since stimulation (s)')
+	ylabel(ax(i),'Temperature (C)')
+	ax(i).YTick = (1:2:length(all_temp)) + .5;
+	ax(i).YTickLabel = {'7','11','15','19','21'};
+	ax(i).XLim = [0 120];
+end
+
+
+first_file_after_stim = find(~isnan(all_last_stim))+1;
+
+
+
+all_rasters = false(length(all_temp),length(first_file_after_stim));
+
+for i = 1:length(first_file_after_stim)
+
+	
+	idx = first_file_after_stim(i);
+
+	if isnan(data(idx).time_to_last_stim)
+		continue
+	end
+
+
+	this_exp = find(unique_exp_ids == data(idx).experiment_idx);
+
+	spiketimes = data(idx).LG + data(idx).time_to_last_stim;
+
+	temp_idx = corelib.closest(all_temp,mean(data(idx).temperature));
+
+
+	if ~all_rasters(temp_idx,this_exp)
+
+		neurolib.raster(ax(this_exp),spiketimes,'deltat',1,'yoffset',temp_idx)
+		all_rasters(temp_idx,this_exp) = true;
+	end
+
+
+	title(ax(this_exp),strlib.oval(data(idx).experiment_idx))
+
+end
+
+
+suptitle('LG bursts after stimulation')
+
+figlib.pretty('plw',1,'lw',1)
 
 
 
 
 
+% plot gastric period after stimulation as a function of time since stim
+
+
+c = parula(110);
+min_temp = min(vertcat(data.temperature));
+max_temp = max(vertcat(data.temperature));
 
 
 
+all_temp = 7:2:23;
+figure('outerposition',[300 300 1200 901],'PaperUnits','points','PaperSize',[1200 901]); hold on
+clear ax
+N = length(unique_exp_ids);
+
+for i = 1:N
+	ax(i) = figlib.autoPlot(N,i); hold on
+	xlabel(ax(i),'Time since stimulation (s)')
+	ylabel(ax(i),'LG burst period (s)')
+	ax(i).XLim = [0 400];
+	ax(i).YLim = [0 20];
+end
 
 
+first_file_after_stim = find(~isnan(all_last_stim))+1;
+
+all_rasters = false(length(all_temp),length(first_file_after_stim));
+
+for i = 1:length(first_file_after_stim)
 
 
+	for j = first_file_after_stim(i):length(data)
+
+		if ~isnan(data(j).last_stim)
+			break
+		end
 
 
+		if isnan(data(j).time_to_last_stim)
+			continue
+		end
+
+		this_exp = find(unique_exp_ids == data(j).experiment_idx);
 
 
+		% get the periods
+		y = data(j).LG_burst_periods;
+		x = data(j).LG_burst_starts +  data(j).time_to_last_stim;
+
+		this_temp = mean(data(j).temperature);
+		C = c(floor(1+(this_temp - min_temp)/(max_temp - min_temp)*99),:);
+
+		plot(ax(this_exp),x,y,'.','Color',C,'MarkerSize',10)
+
+		title(ax(this_exp),strlib.oval(data(idx).experiment_idx))
+
+	end	
+
+end
+
+
+suptitle('LG bursts after stimulation')
+
+figlib.pretty('plw',1,'lw',1)
 
 
 
@@ -67,7 +209,7 @@ all_exp_ids = unique([data.experiment_idx]);
 % plot pyloric and gastric periods as a function of temperature
 figure('outerposition',[300 300 1200 901],'PaperUnits','points','PaperSize',[1200 901]); hold on
 clear ax
-N = length(all_exp_ids) + 1;
+N = length(unique_exp_ids) + 1;
 for i = 1:N
 	ax(i) = figlib.autoPlot(N,i); hold on
 	ax(i).YScale = 'log';
@@ -89,7 +231,7 @@ for i = 1:length(data)
 		continue
 	end
 
-	this_exp = find(all_exp_ids == data(i).experiment_idx);
+	this_exp = find(unique_exp_ids == data(i).experiment_idx);
 
 	% LG
 	temperature = data(i).temperature(round(data(i).LG_burst_starts*1e3));
@@ -108,7 +250,6 @@ figlib.pretty('plw',1,'lw',1)
 
 
 
-return
 
 figure('outerposition',[300 300 700 700],'PaperUnits','points','PaperSize',[700 700]); hold on
 ax_int = gca;
@@ -127,10 +268,6 @@ ylabel('Gastric period (s)')
 figlib.pretty('lw',1,'plw',1)
 
 
-c = parula(100);
-min_temp = min(vertcat(data.temperature));
-max_temp = max(vertcat(data.temperature));
-
 
 
 figure('outerposition',[300 300 901 901],'PaperUnits','points','PaperSize',[901 901]); hold on
@@ -148,7 +285,7 @@ ylabel(ax(3),'PD_{end} \rightarrow LG_{start} (s)')
 ylabel(ax(4),'PD_{end} \rightarrow LG_{end} (s)')
 
 
-
+figlib.pretty('lw',1,'plw',1)
 
 % and a figure for norm by PD period
 figure('outerposition',[300 300 901 901],'PaperUnits','points','PaperSize',[901 901]); hold on
