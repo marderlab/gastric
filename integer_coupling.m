@@ -42,6 +42,74 @@ data = crabsort.computePeriods(data,'PD',.2);
 data = crabsort.computePeriods(data,'LG',1);
 
 
+all_exp_ids = unique([data.experiment_idx]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% plot pyloric and gastric periods as a function of temperature
+figure('outerposition',[300 300 1200 901],'PaperUnits','points','PaperSize',[1200 901]); hold on
+clear ax
+N = length(all_exp_ids) + 1;
+for i = 1:N
+	ax(i) = figlib.autoPlot(N,i); hold on
+	ax(i).YScale = 'log';
+	xlabel(ax(i),'Temperature (C)')
+	ylabel(ax(i),'Period (s)')
+end
+
+for i = 1:length(data)
+
+	if isnan(data(i).LG_burst_periods)
+		continue
+	end
+
+	if isempty(data(i).LG_burst_periods)
+		continue
+	end
+
+	if min(data(i).mask) == 0
+		continue
+	end
+
+	this_exp = find(all_exp_ids == data(i).experiment_idx);
+
+	% LG
+	temperature = data(i).temperature(round(data(i).LG_burst_starts*1e3));
+	LG_burst_periods = data(i).LG_burst_periods;
+	plot(ax(this_exp),temperature,LG_burst_periods,'b.')
+
+	temperature = data(i).temperature(round(data(i).PD_burst_starts*1e3));
+	PD_burst_periods = data(i).PD_burst_periods;
+	plot(ax(this_exp),temperature,PD_burst_periods,'r.')
+
+	title(ax(this_exp),strlib.oval(data(i).experiment_idx))
+	
+end
+
+figlib.pretty('plw',1,'lw',1)
+
+
+
+return
+
 figure('outerposition',[300 300 700 700],'PaperUnits','points','PaperSize',[700 700]); hold on
 ax_int = gca;
 
@@ -110,9 +178,9 @@ for i = 1:length(data)
 		continue
 	end
 
-	% if any(data(i).artifacts)
-	% 	continue
-	% end
+	if min(data(i).mask) == 0
+		continue
+	end
 
 
 	LG_burst_starts = data(i).LG_burst_starts;
