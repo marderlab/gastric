@@ -3,6 +3,7 @@
 %% 
 % In this document we look at integer coupling b/w the pyloric and gastric burst periods
 
+close all
 
 % first, gather all the data 
 if ~exist('data','var')
@@ -38,7 +39,7 @@ for i = 1:length(data)
 end
 
 
- data = crabsort.computePeriods(data,'neurons',{'PD'},'ibis',.2,'min_spikes_per_burst',2);
+ data = crabsort.computePeriods(data,'neurons',{'PD'},'ibis',.15,'min_spikes_per_burst',2);
 data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',1,'min_spikes_per_burst',5);
 
 
@@ -301,8 +302,10 @@ ylabel(ax_PD(2),'PD_{start} \rightarrow LG_{end} (norm)')
 ylabel(ax_PD(3),'PD_{end} \rightarrow LG_{start} (norm)')
 ylabel(ax_PD(4),'PD_{end} \rightarrow LG_{end} (norm)')
 
-
-
+% assemble all data together
+all_temperature = [];
+all_intergerness = [];
+all_N = [];
 
 
 for i = 1:length(data)
@@ -386,6 +389,14 @@ for i = 1:length(data)
 	delay_PD_end_LG_end_norm_PD = delay_PD_end_LG_end./mean_PD_burst_periods;
 
 	this_temp = mean(data(i).temperature);
+
+	% append to all data
+	this_N = round(LG_burst_periods./mean_PD_burst_periods);
+	this_integerness = abs(LG_burst_periods./mean_PD_burst_periods - this_N)*2;
+	all_N = [all_N; this_N];
+	all_temperature = [all_temperature; this_temp + 0*this_N];
+	all_intergerness = [all_intergerness; this_integerness];
+
 	C = c(floor(1+(this_temp - min_temp)/(max_temp - min_temp)*99),:);
 
 	plot(ax_int,mean_PD_burst_periods,LG_burst_periods,'.','Color',C,'MarkerSize',10)
@@ -419,3 +430,59 @@ figlib.pretty('lw',1,'plw',1)
 
 
 
+
+
+figure('outerposition',[300 300 1001 901],'PaperUnits','points','PaperSize',[1001 901]); hold on
+
+
+subplot(2,2,1); hold on
+plot(all_temperature,all_N,'.','Color',[.8 .8 .8],'MarkerSize',24)
+xlabel('Temperature (C)')
+ylabel('N (pyloric/gastric)')
+
+
+% plot averages by temperatiure
+temp_space = 7:2:23;
+M = NaN*temp_space;
+E = NaN*temp_space;
+for i = 1:length(temp_space)
+	idx = (all_temperature > temp_space(i)-.5 & all_temperature < temp_space(i)+.5);
+	M(i) = nanmean(all_N(idx));
+	E(i) = corelib.sem(all_N(idx));
+end
+
+errorbar(temp_space,M,E,'k','LineWidth',2)
+set(gca,'YLim',[0 60],'XLim',[5 25])
+
+
+subplot(2,2,2); hold on
+plot(all_temperature,1-all_intergerness,'.','Color',[.8 .8 .8],'MarkerSize',24)
+xlabel('Temperature (C)')
+ylabel('Integerness')
+
+% plot averages by temperatiure
+temp_space = 7:2:23;
+M = NaN*temp_space;
+E = NaN*temp_space;
+for i = 1:length(temp_space)
+	idx = (all_temperature > temp_space(i)-.5 & all_temperature < temp_space(i)+.5);
+	M(i) = nanmean(1-all_intergerness(idx));
+	E(i) = corelib.sem(1-all_intergerness(idx));
+end
+
+errorbar(temp_space,M,E,'k','LineWidth',2)
+set(gca,'YLim',[0 1],'XLim',[5 25])
+
+ax = subplot(2,2,3); hold on
+p = plotlib.cplot(all_N,1-all_intergerness,all_temperature);
+p.Marker = 'o';
+p.SizeData = 48;
+p.MarkerFaceAlpha = .8;
+xlabel('N (pyloric/gastric)')
+ylabel('Integerness')
+set(ax,'XScale','log')
+
+
+
+figlib.pretty('lw',1,'plw',1)
+ax.XLim = [5 100];
