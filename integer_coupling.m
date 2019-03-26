@@ -38,8 +38,8 @@ for i = 1:length(data)
 end
 
 
-data = crabsort.computePeriods(data,'PD',.2);
-data = crabsort.computePeriods(data,'LG',1);
+ data = crabsort.computePeriods(data,'neurons',{'PD'},'ibis',.2,'min_spikes_per_burst',2);
+data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',1,'min_spikes_per_burst',5);
 
 
 unique_exp_ids = unique([data.experiment_idx]);
@@ -191,7 +191,7 @@ for i = 1:length(first_file_after_stim)
 
 		plot(ax(this_exp),x,y,'.','Color',C,'MarkerSize',10)
 
-		title(ax(this_exp),strlib.oval(data(idx).experiment_idx))
+		title(ax(this_exp),strlib.oval(data(j).experiment_idx))
 
 	end	
 
@@ -332,9 +332,9 @@ for i = 1:length(data)
 	delay_PD_end_LG_end = NaN*LG_burst_starts;
 
 
-	for j = 1:length(LG_burst_starts)
+	for j = 1:length(LG_burst_starts)-1
 		closest_PD_a = corelib.closest(data(i).PD_burst_starts,LG_burst_starts(j));
-		closest_PD_z = corelib.closest(data(i).PD_burst_starts,LG_burst_ends(j));
+		closest_PD_z = corelib.closest(data(i).PD_burst_starts,LG_burst_ends(j+1));
 
 
 		n_pyloric_cyles(j) = closest_PD_z - closest_PD_a;
