@@ -13,7 +13,7 @@ if ~exist('data','var')
 	else
 
 		data_root = '/Volumes/HYDROGEN/srinivas_data/gastric-data';
-		include_these = {'901_046','901_049','901_052','901_062','901_080'};
+		include_these = {'901_086','901_046','901_049','901_052','901_062','901_080','901_095','901_098'};
 
 
 		data = crabsort.consolidate('neurons',{'PD','LG'},'data_fun',{@crabsort.getTemperature,@crabsort.getDataStatistics},'data_dir',[data_root filesep include_these{1}]);
@@ -139,6 +139,7 @@ figlib.pretty('plw',1,'lw',1)
 
 
 
+
 % plot gastric period after stimulation as a function of time since stim
 
 
@@ -208,9 +209,9 @@ figlib.pretty('plw',1,'lw',1)
 
 
 % plot pyloric and gastric periods as a function of temperature
-figure('outerposition',[300 300 1200 901],'PaperUnits','points','PaperSize',[1200 901]); hold on
+figure('outerposition',[300 300 1400 901],'PaperUnits','points','PaperSize',[1400 901]); hold on
 clear ax
-N = length(unique_exp_ids) + 1;
+N = length(unique_exp_ids);
 for i = 1:N
 	ax(i) = figlib.autoPlot(N,i); hold on
 	ax(i).YScale = 'log';
@@ -304,6 +305,7 @@ ylabel(ax_PD(4),'PD_{end} \rightarrow LG_{end} (norm)')
 
 % assemble all data together
 all_temperature = [];
+all_exp_ids = [];
 all_intergerness = [];
 all_N = [];
 
@@ -396,6 +398,7 @@ for i = 1:length(data)
 	all_N = [all_N; this_N];
 	all_temperature = [all_temperature; this_temp + 0*this_N];
 	all_intergerness = [all_intergerness; this_integerness];
+	all_exp_ids = [all_exp_ids; data(i).experiment_idx + 0*this_N];
 
 	C = c(floor(1+(this_temp - min_temp)/(max_temp - min_temp)*99),:);
 
@@ -440,6 +443,18 @@ plot(all_temperature,all_N,'.','Color',[.8 .8 .8],'MarkerSize',24)
 xlabel('Temperature (C)')
 ylabel('N (pyloric/gastric)')
 
+% also group by exp id
+for j = 1:length(unique_exp_ids)
+	M = NaN*temp_space;
+	E = NaN*temp_space;
+	for i = 1:length(temp_space)
+		idx = (all_temperature > temp_space(i)-.5 & all_temperature < temp_space(i)+.5 & all_exp_ids == unique_exp_ids(j));
+		M(i) = nanmean(all_N(idx));
+		E(i) = corelib.sem(all_N(idx));
+	end
+	errorbar(temp_space,M,E,'LineWidth',2)
+
+end
 
 % plot averages by temperatiure
 temp_space = 7:2:23;
@@ -450,8 +465,9 @@ for i = 1:length(temp_space)
 	M(i) = nanmean(all_N(idx));
 	E(i) = corelib.sem(all_N(idx));
 end
+errorbar(temp_space,M,E,'k','LineWidth',3)
 
-errorbar(temp_space,M,E,'k','LineWidth',2)
+
 set(gca,'YLim',[0 60],'XLim',[5 25])
 
 
@@ -459,6 +475,21 @@ subplot(2,2,2); hold on
 plot(all_temperature,1-all_intergerness,'.','Color',[.8 .8 .8],'MarkerSize',24)
 xlabel('Temperature (C)')
 ylabel('Integerness')
+
+
+% also group by exp id
+for j = 1:length(unique_exp_ids)
+	M = NaN*temp_space;
+	E = NaN*temp_space;
+	for i = 1:length(temp_space)
+		idx = (all_temperature > temp_space(i)-.5 & all_temperature < temp_space(i)+.5 & all_exp_ids == unique_exp_ids(j));
+		M(i) = nanmean(1-all_intergerness(idx));
+		E(i) = corelib.sem(1-all_intergerness(idx));
+	end
+	errorbar(temp_space,M,E,'LineWidth',2)
+
+end
+
 
 % plot averages by temperatiure
 temp_space = 7:2:23;
@@ -470,7 +501,7 @@ for i = 1:length(temp_space)
 	E(i) = corelib.sem(1-all_intergerness(idx));
 end
 
-errorbar(temp_space,M,E,'k','LineWidth',2)
+errorbar(temp_space,M,E,'k','LineWidth',3)
 set(gca,'YLim',[0 1],'XLim',[5 25])
 
 ax = subplot(2,2,3); hold on
