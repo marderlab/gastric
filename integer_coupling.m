@@ -39,7 +39,7 @@ for i = 1:length(data)
 end
 
 
- data = crabsort.computePeriods(data,'neurons',{'PD'},'ibis',.15,'min_spikes_per_burst',2);
+data = crabsort.computePeriods(data,'neurons',{'PD'},'ibis',.15,'min_spikes_per_burst',2);
 data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',1,'min_spikes_per_burst',5);
 
 
@@ -442,6 +442,8 @@ subplot(2,2,1); hold on
 plot(all_temperature,all_N,'.','Color',[.8 .8 .8],'MarkerSize',24)
 xlabel('Temperature (C)')
 ylabel('N (pyloric/gastric)')
+
+temp_space = 7:2:23;
 
 % also group by exp id
 for j = 1:length(unique_exp_ids)
