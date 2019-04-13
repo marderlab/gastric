@@ -339,7 +339,7 @@ for i = 1:length(data)
 
 	for j = 1:length(LG_burst_starts)-1
 		closest_PD_a = corelib.closest(data(i).PD_burst_starts,LG_burst_starts(j));
-		closest_PD_z = corelib.closest(data(i).PD_burst_starts,LG_burst_ends(j+1));
+		closest_PD_z = corelib.closest(data(i).PD_burst_starts,LG_burst_starts(j+1));
 
 
 		n_pyloric_cyles(j) = closest_PD_z - closest_PD_a;
