@@ -3,6 +3,7 @@
 %% 
 % In this document we look at integer coupling b/w the pyloric and gastric burst periods
 
+clear all
 close all
 
 % first, gather all the data 
