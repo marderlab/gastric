@@ -27,7 +27,7 @@ end
 
 
 %%
-% This figure shows the temperature in all the experiments. 
+% The following figure shows the temperature in all the experiments, together with a raster indicating when the LG neuron spikes. You can see from this figure that gastric rhythms were elicted at many different temperatures, once the temperature had been stabilized to the desired value. 
 
 figure('outerposition',[300 300 901 1200],'PaperUnits','points','PaperSize',[901 1200]); hold on
 
@@ -63,8 +63,13 @@ end
 data = crabsort.computePeriods(data,'neurons',{'PD'},'ibis',.18,'min_spikes_per_burst',2);
 data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',1,'min_spikes_per_burst',5);
 
+
+
+
+
+
 %% Variability in PD burst periods
-% In this section, I look at cycle-to-cycle variability in the PD burst periods. Specifically, I compare PD burst periods in one cycle to the burst periods in the next cycle. 
+% In this section, I look at cycle-to-cycle variability in the PD burst periods. Specifically, I compare PD burst periods in one cycle to the burst periods in the next cycle. I observed that PD neurons tended to sometimes skip a spike (the last one was quite variable). These cycle-to-cycle variations in PD period manifest as deviations from the diagonal in the following plots. 
 
 figure('outerposition',[300 300 903 901],'PaperUnits','points','PaperSize',[903 901]); hold on
 
@@ -102,6 +107,34 @@ ch.Position(1) = .75;
 
 figlib.pretty
 
+
+%% Variability of PD period: dependence on the gastric rhythm
+% One question in this data is if the gastric rhythm influences the pyloric rhythm in any way. If it does, one would expect the pyloric period to be a little more variable when the gastric rhythm is on compared to when the gastric rhythm is off. That's what the next figure shows: it compares the variability (CV) of the pyloric burst periods when the gastric rhythm is on and when it is off.
+
+%%
+% By "gastric rhythm on", we mean that PD bursts occur within 10 seconds following a LG spike, and by "gastric rhythm off", we mean PD bursts more than 100s since the last LG spike. Note that almost every dot lies below the diagonal, suggesting that G bursting makes PD bursting more variable. 
+
+figure('outerposition',[300 300 1200 600],'PaperUnits','points','PaperSize',[1200 600]); hold on
+
+c = parula(5);
+
+for i = 1:length(data)
+	[cv_mean_on, cv_mean_off, cv_std_on, cv_std_off] = gastric.comparePDVariability(data(i), 7:4:19, 10, 2.5);
+	for j = 1:4
+		scatter(cv_mean_on(j),cv_mean_off(j),64,c(j,:),'MarkerFaceColor',c(j,:),'MarkerEdgeColor',c(j,:),'MarkerFaceAlpha',.5)
+	end
+end
+
+plotlib.drawDiag;
+axis square
+
+set(gca,'XLim',[0 .15],'YLim',[0 .15])
+xlabel('Gastric rhythm on')
+ylabel('Gastric rhythm off')
+title('Variability in PD periods')
+
+figlib.pretty()
+
 %% Integer coupling
 % In this section I look at the integer coupling b/w PD and LG burst periods. 
 
@@ -110,7 +143,7 @@ figlib.pretty
 
 
 %% Burst period vs. temperature
-% In the following figure, I plot burst periods of LG and PD neurons as a function of temperature for each prep. 
+% In the following figure, I plot burst periods of LG and PD neurons as a function of temperature for each prep. Black dots are PD bursts, red dots are LG bursts. Note that they both decrease at approximately the same rate. 
 
 figure('outerposition',[300 300 1200 600],'PaperUnits','points','PaperSize',[1200 600]); hold on
 for i = 1:length(data)
@@ -132,6 +165,7 @@ end
 figlib.pretty('fs',14)
 
 %% Duty cycles vs temperature
+% In the following figure, I plot the uty cycles of PD and LG as a function of temperature. note that the PD neuron maintains a constant duty cycle over the temperatures tested. 
 
 figure('outerposition',[300 300 1301 801],'PaperUnits','points','PaperSize',[1301 801]); hold on
 for i = 1:length(data)
@@ -147,14 +181,55 @@ for i = 1:length(data)
 	set(gca,'YScale','linear','YLim',[0 1],'YTick',0:.2:1,'XLim',[6 24])
 
 	title(data(i).experiment_idx)
-	xlabel('Temperature (C)')
+
+	if i > 4
+		xlabel('Temperature (C)')
+	end
+	if i == 1 || i == 5
+		ylabel('Duty cycle')
+	end
+
+end
+
+figlib.pretty('fs',14)
+
+%% Spikes per burst vs. temperature
+% In the following figure, I plot the # of spikes/burst as a function of temperature for both the PD neurons (black) and the LG neurons (red). Note that the # of spikes/burst decreases for the PD neuron with temperature, as that is what it does to maintain its duty cycle. 
+
+figure('outerposition',[300 300 1301 801],'PaperUnits','points','PaperSize',[1301 801]); hold on
+for i = 1:length(data)
+	subplot(2,4,i); hold on
+
+
+	x = round(data(i).PD_burst_starts*1e3);
+	plot(data(i).temperature(x),data(i).PD_n_spikes_per_burst,'k.')
+
+	x = round(data(i).LG_burst_starts*1e3);
+	plot(data(i).temperature(x),data(i).LG_n_spikes_per_burst,'r.')
+
+	set(gca,'YScale','log','YLim',[0 1e3],'XLim',[6 24])
+
+	title(data(i).experiment_idx)
+
+	if i > 4
+		xlabel('Temperature (C)')
+	end
+	if i == 1 || i == 5
+		ylabel('# spikes/burst')
+	end
+
 end
 
 figlib.pretty('fs',14)
 
 
+
+
+%% LG-PD coupling
+% I now look at the fine structure of the LG-PD coupling. The hypothesis here is that the gastric rhythm, in some manner, affects the pyloric rhythm. One way to look a this is to plot the PD inter-spike-intervals triggered by start of LG bursts. That's what the next figure shows. Notice the striking fan-like structure in all preps (different colours are different temperatures). This suggests that the PD neuron is in phase with the LG start (or the LG neuron is starting at a particular phase of PD). 
+
 %%
-% In the following figure I plot PD ISIs triggered by when LG starts. 
+% Note also that the PD ISIs seem to increase and decrease with the LG start (this is expecially clear in 901_062). This suggests that the LG neuron is affecting the PD neuron, though we cannot rule out PD affecting LG. 
 
 
 ax = gastric.PlotISITriggeredBy(data, 'PD', 'LG_burst_starts');
@@ -166,7 +241,7 @@ figlib.pretty
 
 
 %%
-% Now a similar figure, but triggered when LG ends. 
+% Now a similar figure, but triggered when LG ends. The effect is less clear here. One reason why is that the LG burst periods are less clearly defined, and the LG neuron tends to peter out slowly. 
 
 ax = gastric.PlotISITriggeredBy(data, 'PD', 'LG_burst_ends');
 
@@ -180,99 +255,42 @@ figlib.pretty
 
 
 
+%% Integer coupling b/w PD and LG periods
+% The periods of PD and LG neurons have previously been shown the be integer-coupled, that is, the LG periods is an integer mulitple of the PD period. Here we see the same thing: the following figure plots the LG period vs. the mean PD periods during taht LG burst. Note that the gray lines are not fits to the data -- they are merely lines with integer slopes. Note that the data naturally falls on top of these lines. 
 
 
+all_x = [];
+all_temp = [];
+all_y = [];
 
-figure('outerposition',[300 300 1200 600],'PaperUnits','points','PaperSize',[1200 600]); hold on
+for i = 1:length(data)
+	[this_x,this_temp] = gastric.integerCoupling(data(i));
+	all_x = [all_x; this_x];
+	all_temp = [all_temp; this_temp];
+	all_y = [all_y; data(i).LG_burst_periods];
+end
 
-subplot(1,2,1); hold on
+figure('outerposition',[300 300 901 901],'PaperUnits','points','PaperSize',[1200 901]); hold on
 
-all_y = NaN(2042,100);
 
-idx = 1;
-
-for exp_idx = setdiff(1:length(data),3)
-
-	trigger_points = data(exp_idx).LG_burst_starts;
-
-	temperature = data(exp_idx).temperature(round(trigger_points*1e3));
-
-	y = data(exp_idx).PD_burst_periods;
-	x = data(exp_idx).PD_burst_starts;
-
-	xs = linspace(-5,10,100);
-
-	for i = 1:length(trigger_points)
-		
-		xx = x - trigger_points(i);
-
-		if min(xx) > -5 || max(xx) < 5
-			continue
-		end
-
-		all_y(idx,:) = interp1(xx,y,xs);	
-
-		all_y(idx,:) = all_y(idx,:)./mean(all_y(idx,1:50) );
-
-		idx = idx + 1;
-	end
-
+% plot gridlines
+for i = 4:30
+	xx = linspace(0,10,1e3);
+	yy = xx*i;
+	plot(gca,xx,yy,'Color',[.8 .8 .8])
 end
 
 
-% do for differnet temperatures
-for i = 1:length(all_temp)
-	do_this = abs(temperature - all_temp(i)) <  .5;
-	plot(xs,100*nanmean(all_y(do_this,:))-100,'Color',c(i,:),'LineWidth',3)
-end
-ylabel('% Change in PD burst period (s)')
-xlabel('Time since LG start (s)')
-set(gca,'YLim',[-10 20])
+[~,ch] = plotlib.cplot(all_x,all_y,all_temp);
+set(gca,'XLim',[0.2 2],'YLim',[0 30])
+xlabel('Mean PD period (s)')
+ylabel('LG periods (s)')
 
-subplot(1,2,2); hold on
+ch.Location = 'southoutside';
+ch.Position = [.52 .15 .4 .02];
+title(ch,'Temperature (C)')
 
-all_y = NaN(2042,100);
-
-idx = 1;
-
-for exp_idx = setdiff(1:length(data),3)
-
-	trigger_points = data(exp_idx).LG_burst_ends;
-
-	temperature = data(exp_idx).temperature(round(trigger_points*1e3));
-
-	y = data(exp_idx).PD_burst_periods;
-	x = data(exp_idx).PD_burst_starts;
-
-	xs = linspace(-5,10,100);
-
-	for i = 1:length(trigger_points)
-		
-		xx = x - trigger_points(i);
-
-		if min(xx) > -5 || max(xx) < 5
-			continue
-		end
-
-		all_y(idx,:) = interp1(xx,y,xs);	
-
-		all_y(idx,:) = all_y(idx,:)./mean(all_y(idx,1:50) );
-
-		idx = idx + 1;
-	end
-
-end
-
-
-% do for differnet temperatures
-for i = 1:length(all_temp)
-	do_this = abs(temperature - all_temp(i)) <  .5;
-	plot(xs,100*nanmean(all_y(do_this,:))-100,'Color',c(i,:),'LineWidth',3)
-end
-set(gca,'YLim',[-10 20])
-xlabel('Time since LG end')
-
-figlib.pretty
+figlib.pretty()
 
 %% Metadata
 % To reproduce this document:
