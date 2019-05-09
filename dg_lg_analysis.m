@@ -1,12 +1,12 @@
-
 pdflib.header
 
 
-data_root = '/home/cosmo/neurons';
+pref = corelib.readPref;
+data_root = pref.prep_path;
 
 
 %% Analysis of gastric and pyloric rhythms at different temperatures
-% In this document we look at pyloric and gastric rhtyhms at differnet temperatures.
+% In this document we look at pyloric and gastric rhythms at different temperatures.
 % This data is from Dan Powell and the experiments that go into this are:
 
 include_these = {'901_086','901_046','901_049','901_052','901_062','901_080','901_095','901_098'};
@@ -27,7 +27,7 @@ end
 
 
 %%
-% The following figure shows the temperature in all the experiments, together with a raster indicating when the LG neuron spikes. You can see from this figure that gastric rhythms were elicted at many different temperatures, once the temperature had been stabilized to the desired value. 
+% The following figure shows the temperature in all the experiments, together with a raster indicating when the LG neuron spikes. You can see from this figure that gastric rhythms were elicited at many different temperatures, once the temperature had been stabilized to the desired value. 
 
 figure('outerposition',[300 300 901 1200],'PaperUnits','points','PaperSize',[901 1200]); hold on
 
@@ -165,7 +165,7 @@ end
 figlib.pretty('fs',14)
 
 %% Duty cycles vs temperature
-% In the following figure, I plot the uty cycles of PD and LG as a function of temperature. note that the PD neuron maintains a constant duty cycle over the temperatures tested. 
+% In the following figure, I plot the duty cycles of PD and LG as a function of temperature. note that the PD neuron maintains a constant duty cycle over the temperatures tested. 
 
 figure('outerposition',[300 300 1301 801],'PaperUnits','points','PaperSize',[1301 801]); hold on
 for i = 1:length(data)
@@ -229,7 +229,7 @@ figlib.pretty('fs',14)
 % I now look at the fine structure of the LG-PD coupling. The hypothesis here is that the gastric rhythm, in some manner, affects the pyloric rhythm. One way to look a this is to plot the PD inter-spike-intervals triggered by start of LG bursts. That's what the next figure shows. Notice the striking fan-like structure in all preps (different colours are different temperatures). This suggests that the PD neuron is in phase with the LG start (or the LG neuron is starting at a particular phase of PD). 
 
 %%
-% Note also that the PD ISIs seem to increase and decrease with the LG start (this is expecially clear in 901_062). This suggests that the LG neuron is affecting the PD neuron, though we cannot rule out PD affecting LG. 
+% Note also that the PD ISIs seem to increase and decrease with the LG start (this is especially clear in 901_062). This suggests that the LG neuron is affecting the PD neuron, though we cannot rule out PD affecting LG. 
 
 
 ax = gastric.PlotISITriggeredBy(data, 'PD', 'LG_burst_starts');
@@ -256,7 +256,7 @@ figlib.pretty
 
 
 %% Integer coupling b/w PD and LG periods
-% The periods of PD and LG neurons have previously been shown the be integer-coupled, that is, the LG periods is an integer mulitple of the PD period. Here we see the same thing: the following figure plots the LG period vs. the mean PD periods during taht LG burst. Note that the gray lines are not fits to the data -- they are merely lines with integer slopes. Note that the data naturally falls on top of these lines. 
+% The periods of PD and LG neurons have previously been shown the be integer-coupled, that is, the LG periods is an integer multiple of the PD period. Here we see the same thing: the following figure plots the LG period vs. the mean PD periods during that LG burst. Note that the gray lines are not fits to the data -- they are merely lines with integer slopes. Note that the data naturally falls on top of these lines. 
 
 
 all_x = [];
