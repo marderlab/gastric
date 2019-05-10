@@ -1,6 +1,7 @@
 pdflib.header
 
 
+% get data directory from defaults.m
 pref = corelib.readPref;
 data_root = pref.prep_path;
 
@@ -165,7 +166,7 @@ end
 figlib.pretty('fs',14)
 
 %% Duty cycles vs temperature
-% In the following figure, I plot the duty cycles of PD and LG as a function of temperature. note that the PD neuron maintains a constant duty cycle over the temperatures tested. 
+% In the following figure, I plot the duty cycles of PD and LG as a function of temperature. Note that the PD neuron maintains a constant duty cycle over the temperatures tested. 
 
 figure('outerposition',[300 300 1301 801],'PaperUnits','points','PaperSize',[1301 801]); hold on
 for i = 1:length(data)
@@ -291,6 +292,45 @@ ch.Position = [.52 .15 .4 .02];
 title(ch,'Temperature (C)')
 
 figlib.pretty()
+
+%% LG burst delay after PD vs temperature
+% The following figure compares the time elapsed between each LG burst and the PD burst immediately preceding it with the temperature of the preparation. Note the exponential decrease in LG burst delay as temperature increases. 
+
+figure('outerposition',[300 300 1301 801],'PaperUnits','points','PaperSize',[1301 801]); hold on
+for i = 1:length(data)
+	subplot(2,4,i); hold on
+
+	% find PD bursts immediately preceding LG bursts
+	relevant_PDbs = zeros(size(data(i).LG_burst_starts));
+	for j = 1:length(data(i).LG_burst_starts)
+		for k = 1:length(data(i).PD_burst_starts)
+			if data(i).PD_burst_starts(k) > data(i).LG_burst_starts(j)
+				relevant_PDbs(j) = data(i).PD_burst_starts(k-1);
+				break;
+			end
+		end
+	end
+
+	% calculate LG burst delay following PD burst
+	LG_burst_delay = data(i).LG_burst_starts - relevant_PDbs;
+
+	x = round(data(i).LG_burst_starts*1e3);
+	plot(data(i).temperature(x),(LG_burst_delay./data(i).LG_burst_starts),'r.')
+
+	set(gca,'YScale','log','YLim',[0 1e-1],'XLim',[6 24])
+
+	title(data(i).experiment_idx)
+
+	if i > 4
+		xlabel('Temperature (C)')
+	end
+	if i == 1 || i == 5
+		ylabel('LG Burst Delay (s)')
+	end
+
+end
+
+figlib.pretty('fs',14)
 
 %% Metadata
 % To reproduce this document:
