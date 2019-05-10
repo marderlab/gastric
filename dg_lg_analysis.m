@@ -293,19 +293,21 @@ title(ch,'Temperature (C)')
 
 figlib.pretty()
 
-%% LG burst delay after PD vs temperature
-% The following figure compares the time elapsed between each LG burst and the PD burst immediately preceding it with the temperature of the preparation. Note the exponential decrease in LG burst delay as temperature increases. 
+%% LG start phase vs temperature
+% The following figures compare LG start phase as a fraction of PD burst period with the temperature of the preparation. 
 
 figure('outerposition',[300 300 1301 801],'PaperUnits','points','PaperSize',[1301 801]); hold on
 for i = 1:length(data)
-	subplot(2,4,i); hold on
+	subplot(3,3,i); hold on
 
 	% find PD bursts immediately preceding LG bursts
 	relevant_PDbs = zeros(size(data(i).LG_burst_starts));
+	relevant_PDbp = zeros(size(data(i).LG_burst_starts));
 	for j = 1:length(data(i).LG_burst_starts)
 		for k = 1:length(data(i).PD_burst_starts)
 			if data(i).PD_burst_starts(k) > data(i).LG_burst_starts(j)
 				relevant_PDbs(j) = data(i).PD_burst_starts(k-1);
+				relevant_PDbp(j) = data(i).PD_burst_periods(k-1);
 				break;
 			end
 		end
@@ -313,24 +315,53 @@ for i = 1:length(data)
 
 	% calculate LG burst delay following PD burst
 	LG_burst_delay = data(i).LG_burst_starts - relevant_PDbs;
+	yax = LG_burst_delay./relevant_PDbp;
 
+	% bin temperatures for plotting errorbars
 	x = round(data(i).LG_burst_starts*1e3);
-	plot(data(i).temperature(x),(LG_burst_delay./data(i).LG_burst_starts),'r.')
+	temp_space = [7 9 11 13 15 17 19 21 23];
+	c = parula(length(temp_space));
+	M = NaN*temp_space;
+	E = NaN*temp_space;
+	for j = 1:length(temp_space)
+		idx = (data(i).temperature(x) > temp_space(j)-.5 & data(i).temperature(x) < temp_space(j)+.5);
+		M(j) = nanmean(yax(idx));
+		E(j) = corelib.sem(yax(idx));
+	end
 
-	set(gca,'YScale','log','YLim',[0 1e-1],'XLim',[6 24])
+	scatter(data(i).temperature(x),yax,'filled','MarkerFaceAlpha',0.1);
+	errorbar(temp_space,M,E,'LineWidth',2,'LineStyle','none')
+
+	set(gca,'YScale','linear','YLim',[0 1],'XLim',[6 24])
 
 	title(data(i).experiment_idx)
 
-	if i > 4
+	if i == 7
 		xlabel('Temperature (C)')
-	end
-	if i == 1 || i == 5
-		ylabel('LG Burst Delay (s)')
+		ylabel('LG Start Phase')
 	end
 
 end
 
 figlib.pretty('fs',14)
+
+figure('outerposition',[300 300 1301 801],'PaperUnits','points','PaperSize',[1301 801]); hold on
+for i = 1:length(data)
+	subplot(1,1,1); hold on
+	errorbar(temp_space,M,E,'LineWidth',2,'LineStyle','none','MarkerFaceColor',c(i,:),'MarkerEdgeColor',c(i,:))
+	set(gca,'YScale','linear','YLim',[0 1],'XLim',[6 24])
+
+	title('LG Start Phase vs Temperature (C)')
+
+	if i == 7
+		xlabel('Temperature (C)')
+		ylabel('LG Start Phase')
+	end
+
+end
+
+figlib.pretty('fs',14)
+
 
 %% Metadata
 % To reproduce this document:
