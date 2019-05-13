@@ -253,6 +253,34 @@ figlib.pretty
 
 
 
+%% Phase coupling between LG and PD
+% All of this hints at a phase coupling between LG and PD. Here I measure the phase in the PD cycle where LG starts and plot that as a function of temperature. 
+
+figure('outerposition',[300 300 1200 601],'PaperUnits','points','PaperSize',[1200 601]); hold on
+
+temp_space = 7:2:23;
+
+all_phase = [];
+all_temp = [];
+all_prep = [];
+
+for i = 1:length(data)
+	[this_phase,this_temp] = gastric.measurePhase(data(i),'LG_burst_starts','PD');
+	all_phase = [all_phase; this_phase];
+	all_temp = [all_temp; this_temp];
+	all_prep = [all_prep; this_phase*0 + i];
+end
+
+
+subplot(1,2,1); hold on
+gastric.groupAndPlotErrorBars(temp_space, all_temp, all_prep, all_phase);
+
+set(gca,'YLim',[0 1],'YScale','linear')
+ylabel('LG start in PD phase')
+xlabel('Temperature (C)')
+
+figlib.pretty()
+
 
 
 %% Integer coupling b/w PD and LG periods
