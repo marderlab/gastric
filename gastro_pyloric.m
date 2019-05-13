@@ -262,12 +262,14 @@ figlib.pretty
 all_x = [];
 all_temp = [];
 all_y = [];
+all_prep = [];
 
 for i = 1:length(data)
 	[this_x,this_temp] = gastric.integerCoupling(data(i));
 	all_x = [all_x; this_x];
 	all_temp = [all_temp; this_temp];
 	all_y = [all_y; data(i).LG_burst_periods];
+	all_prep = [all_prep; this_x*0 + i];
 end
 
 figure('outerposition',[300 300 901 901],'PaperUnits','points','PaperSize',[1200 901]); hold on
@@ -291,6 +293,56 @@ ch.Position = [.52 .15 .4 .02];
 title(ch,'Temperature (C)')
 
 figlib.pretty()
+
+%%
+% How does integer coupling vary with temperature?
+
+N_pyloric_gastric = round(all_y./all_x);
+integerness = 1- abs(all_y./all_x - N_pyloric_gastric)*2;
+
+
+
+
+figure('outerposition',[300 300 903 901],'PaperUnits','points','PaperSize',[903 901]); hold on
+
+temp_space = 7:2:23;
+PD_space = .2:.2:2;
+
+% plot N/plyoric and group by temperature
+subplot(2,2,1); hold on
+gastric.groupAndPlotErrorBars(temp_space, all_temp, all_prep, N_pyloric_gastric);
+
+set(gca,'YLim',[1 400],'YScale','log')
+ylabel('N gastric/pyloric')
+xlabel('Temperature (C)')
+
+
+% plot integerness and group by temperature
+subplot(2,2,2); hold on
+gastric.groupAndPlotErrorBars(temp_space, all_temp, all_prep, integerness);
+
+set(gca,'YLim',[0 1])
+ylabel('Integerness')
+xlabel('Temperature (C)')
+
+
+% now group by PD periods
+subplot(2,2,3); hold on
+gastric.groupAndPlotErrorBars(PD_space, all_x, all_prep, N_pyloric_gastric);
+
+set(gca,'YLim',[1 400],'YScale','log')
+ylabel('N gastric/pyloric')
+xlabel('PD period (s)')
+
+
+subplot(2,2,4); hold on
+gastric.groupAndPlotErrorBars(PD_space, all_x, all_prep, integerness);
+ylabel('Integerness')
+xlabel('PD period (s)')
+
+figlib.pretty('plw',1)
+
+
 
 %% Metadata
 % To reproduce this document:
