@@ -347,8 +347,16 @@ figlib.pretty('fs',14)
 
 figure('outerposition',[300 300 1301 801],'PaperUnits','points','PaperSize',[1301 801]); hold on
 for i = 1:length(data)
-	subplot(1,1,1); hold on
+	M = NaN*temp_space;
+	E = NaN*temp_space;
+	for j = 1:length(temp_space)
+		idx = (data(i).temperature(x) > temp_space(j)-.5 & data(i).temperature(x) < temp_space(j)+.5);
+		M(j) = nanmean(yax(idx));
+		E(j) = corelib.sem(yax(idx));
+	end
+
 	errorbar(temp_space,M,E,'LineWidth',2,'LineStyle','none','MarkerFaceColor',c(i,:),'MarkerEdgeColor',c(i,:))
+
 	set(gca,'YScale','linear','YLim',[0 1],'XLim',[6 24])
 
 	title('LG Start Phase vs Temperature (C)')
