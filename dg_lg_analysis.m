@@ -10,7 +10,7 @@ data_root = pref.prep_path;
 % In this document we look at pyloric and gastric rhythms at different temperatures.
 % This data is from Dan Powell and the experiments that go into this are:
 
-include_these = {'901_086','901_046','901_049','901_052','901_062','901_080','901_095','901_098'};
+include_these = {'901_046','901_052','901_062'};
 
 disp(include_these')
 
@@ -19,7 +19,7 @@ if exist('dan_stacked_data.mat','file') == 2
 	load('dan_stacked_data','data')
 else
 	for i = 1:length(include_these)
-		data(i)  = crabsort.consolidate('neurons',{'PD','LG'},'DataFun',{@crabsort.getTemperature},'DataDir',[data_root filesep include_these{i}],'stack',true);
+		data(i)  = crabsort.consolidate('neurons',{'PD','LG','DG'},'DataFun',{@crabsort.getTemperature},'DataDir',[data_root filesep include_these{i}],'stack',true);
 	end
 
 	save('dan_stacked_data','data','-nocompression','-v7.3')
@@ -63,7 +63,7 @@ end
 % compute burst metrics of all LG neurons
 data = crabsort.computePeriods(data,'neurons',{'PD'},'ibis',.18,'min_spikes_per_burst',2);
 data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',1,'min_spikes_per_burst',5);
-
+data = crabsort.computePeriods(data,'neurons',{'DG'},'ibis',1,'min_spikes_per_burst',5);
 
 
 
@@ -235,8 +235,8 @@ figlib.pretty('fs',14)
 
 ax = gastric.PlotISITriggeredBy(data, 'PD', 'LG_burst_starts');
 
-ylabel(ax(7),'PD ISI (s)')
-xlabel(ax(7),'Time since LG start (s)')
+ylabel(ax(length(data(i))),'PD ISI (s)')
+xlabel(ax(length(data(i))),'Time since LG start (s)')
 
 figlib.pretty
 
@@ -246,8 +246,8 @@ figlib.pretty
 
 ax = gastric.PlotISITriggeredBy(data, 'PD', 'LG_burst_ends');
 
-ylabel(ax(7),'PD ISI (s)')
-xlabel(ax(7),'Time since LG end (s)')
+ylabel(ax(length(data(i))),'PD ISI (s)')
+xlabel(ax(length(data(i))),'Time since LG end (s)')
 
 figlib.pretty
 
@@ -347,6 +347,28 @@ figlib.pretty('fs',14)
 
 figure('outerposition',[300 300 1301 801],'PaperUnits','points','PaperSize',[1301 801]); hold on
 for i = 1:length(data)
+	% find PD bursts immediately preceding LG bursts
+	relevant_PDbs = zeros(size(data(i).LG_burst_starts));
+	relevant_PDbp = zeros(size(data(i).LG_burst_starts));
+	for j = 1:length(data(i).LG_burst_starts)
+		for k = 1:length(data(i).PD_burst_starts)
+			if data(i).PD_burst_starts(k) > data(i).LG_burst_starts(j)
+				relevant_PDbs(j) = data(i).PD_burst_starts(k-1);
+				relevant_PDbp(j) = data(i).PD_burst_periods(k-1);
+				break;
+			end
+		end
+	end
+
+
+	% calculate LG burst delay following PD burst
+	LG_burst_delay = data(i).LG_burst_starts - relevant_PDbs;
+	yax = LG_burst_delay./relevant_PDbp;
+
+	% bin temperatures for plotting errorbars
+	x = round(data(i).LG_burst_starts*1e3);
+	temp_space = [7 9 11 13 15 17 19 21 23];
+	c = parula(length(temp_space));
 	M = NaN*temp_space;
 	E = NaN*temp_space;
 	for j = 1:length(temp_space)
@@ -369,6 +391,131 @@ for i = 1:length(data)
 end
 
 figlib.pretty('fs',14)
+
+%% DG start phase vs temperature
+% The following figures compare DG start phase as a fraction of PD burst period with the temperature of the preparation. 
+
+figure('outerposition',[300 300 1301 801],'PaperUnits','points','PaperSize',[1301 801]); hold on
+for i = 1:length(data)
+	subplot(3,3,i); hold on
+
+	% find PD bursts immediately preceding DG bursts
+	relevant_PDbs = zeros(size(data(i).DG_burst_starts));
+	relevant_PDbp = zeros(size(data(i).DG_burst_starts));
+	for j = 1:length(data(i).DG_burst_starts)
+		for k = 1:length(data(i).PD_burst_starts)
+			if data(i).PD_burst_starts(k) > data(i).DG_burst_starts(j)
+				relevant_PDbs(j) = data(i).PD_burst_starts(k-1);
+				relevant_PDbp(j) = data(i).PD_burst_periods(k-1);
+				break;
+			end
+		end
+	end
+
+	% calculate DG burst delay following PD burst
+	DG_burst_delay = data(i).DG_burst_starts - relevant_PDbs;
+	yax = DG_burst_delay./relevant_PDbp;
+
+	% bin temperatures for plotting errorbars
+	x = round(data(i).DG_burst_starts*1e3);
+	temp_space = [7 9 11 13 15 17 19 21 23];
+	c = parula(length(temp_space));
+	M = NaN*temp_space;
+	E = NaN*temp_space;
+	for j = 1:length(temp_space)
+		idx = (data(i).temperature(x) > temp_space(j)-.5 & data(i).temperature(x) < temp_space(j)+.5);
+		M(j) = nanmean(yax(idx));
+		E(j) = corelib.sem(yax(idx));
+	end
+
+	scatter(data(i).temperature(x),yax,'filled','MarkerFaceAlpha',0.1);
+	errorbar(temp_space,M,E,'LineWidth',2,'LineStyle','none')
+
+	set(gca,'YScale','linear','YLim',[0 1],'XLim',[6 24])
+
+	title(data(i).experiment_idx)
+
+	if i == 7
+		xlabel('Temperature (C)')
+		ylabel('DG Start Phase')
+	end
+
+end
+
+figlib.pretty('fs',14)
+
+figure('outerposition',[300 300 1301 801],'PaperUnits','points','PaperSize',[1301 801]); hold on
+for i = 1:length(data)
+	% find PD bursts immediately preceding DG bursts
+	relevant_PDbs = zeros(size(data(i).DG_burst_starts));
+	relevant_PDbp = zeros(size(data(i).DG_burst_starts));
+	for j = 1:length(data(i).DG_burst_starts)
+		for k = 1:length(data(i).PD_burst_starts)
+			if data(i).PD_burst_starts(k) > data(i).DG_burst_starts(j)
+				relevant_PDbs(j) = data(i).PD_burst_starts(k-1);
+				relevant_PDbp(j) = data(i).PD_burst_periods(k-1);
+				break;
+			end
+		end
+	end
+
+
+	% calculate DG burst delay following PD burst
+	DG_burst_delay = data(i).DG_burst_starts - relevant_PDbs;
+	yax = DG_burst_delay./relevant_PDbp;
+
+	% bin temperatures for plotting errorbars
+	x = round(data(i).DG_burst_starts*1e3);
+	temp_space = [7 9 11 13 15 17 19 21 23];
+	c = parula(length(temp_space));
+	M = NaN*temp_space;
+	E = NaN*temp_space;
+	for j = 1:length(temp_space)
+		idx = (data(i).temperature(x) > temp_space(j)-.5 & data(i).temperature(x) < temp_space(j)+.5);
+		M(j) = nanmean(yax(idx));
+		E(j) = corelib.sem(yax(idx));
+	end
+
+	errorbar(temp_space,M,E,'LineWidth',2,'LineStyle','none','MarkerFaceColor',c(i,:),'MarkerEdgeColor',c(i,:))
+
+	set(gca,'YScale','linear','YLim',[0 1],'XLim',[6 24])
+
+	title('DG Start Phase vs Temperature (C)')
+
+	if i == 7
+		xlabel('Temperature (C)')
+		ylabel('DG Start Phase')
+	end
+
+end
+
+figlib.pretty('fs',14)
+
+%% DG-PD coupling
+% The following figures explore the fine structure of DG-PD coupling. The hypothesis here is that the gastric rhythm, in some manner, affects the pyloric rhythm. One way to look a this is to plot the PD inter-spike-intervals triggered by start of DG bursts. That's what the next figure shows. Notice the striking fan-like structure in all preps (different colours are different temperatures). This suggests that the PD neuron is in phase with the DG start (or the DG neuron is starting at a particular phase of PD). 
+
+%%
+% Note also that the PD ISIs seem to increase and decrease with the DG start (this is especially clear in 901_062). This suggests that the DG neuron is affecting the PD neuron, though we cannot rule out PD affecting DG. 
+
+
+ax = gastric.PlotISITriggeredBy(data, 'PD', 'DG_burst_starts');
+
+ylabel(ax(length(data(i))),'PD ISI (s)')
+xlabel(ax(length(data(i))),'Time since DG start (s)')
+
+figlib.pretty
+
+
+%%
+% Now a similar figure, but triggered when DG ends. The effect is less clear here. One reason why is that the DG burst periods are less clearly defined, and the DG neuron tends to peter out slowly. 
+
+ax = gastric.PlotISITriggeredBy(data, 'PD', 'DG_burst_ends');
+
+ylabel(ax(length(data(i))),'PD ISI (s)')
+xlabel(ax(length(data(i))),'Time since DG end (s)')
+
+figlib.pretty
+
 
 
 %% Metadata
