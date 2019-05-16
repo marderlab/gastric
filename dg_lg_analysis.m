@@ -95,7 +95,7 @@ for i = 1:length(data)
 	end
 	title(data(i).experiment_idx)
 
-	if i == 7
+	if i == 1
 		xlabel('PD burst period (s)')
 		ylabel('Next cycle period (s)')
 	end
@@ -235,8 +235,8 @@ figlib.pretty('fs',14)
 
 ax = gastric.PlotISITriggeredBy(data, 'PD', 'LG_burst_starts');
 
-ylabel(ax(length(data)),'PD ISI (s)')
-xlabel(ax(length(data)),'Time since LG start (s)')
+ylabel(ax(1),'PD ISI (s)')
+xlabel(ax(1),'Time since LG start (s)')
 
 figlib.pretty
 
@@ -246,8 +246,8 @@ figlib.pretty
 
 ax = gastric.PlotISITriggeredBy(data, 'PD', 'LG_burst_ends');
 
-ylabel(ax(length(data)),'PD ISI (s)')
-xlabel(ax(length(data)),'Time since LG end (s)')
+ylabel(ax(1),'PD ISI (s)')
+xlabel(ax(1),'Time since LG end (s)')
 
 figlib.pretty
 
@@ -336,7 +336,7 @@ for i = 1:length(data)
 
 	title(data(i).experiment_idx)
 
-	if i == 7
+	if i == 1
 		xlabel('Temperature (C)')
 		ylabel('LG Start Phase')
 	end
@@ -383,7 +383,7 @@ for i = 1:length(data)
 
 	title('LG Start Phase vs Temperature (C)')
 
-	if i == 7
+	if i == 1
 		xlabel('Temperature (C)')
 		ylabel('LG Start Phase')
 	end
@@ -435,7 +435,7 @@ for i = 1:length(data)
 
 	title(data(i).experiment_idx)
 
-	if i == 7
+	if i == 1
 		xlabel('Temperature (C)')
 		ylabel('DG Start Phase')
 	end
@@ -482,7 +482,7 @@ for i = 1:length(data)
 
 	title('DG Start Phase vs Temperature (C)')
 
-	if i == 7
+	if i == 1
 		xlabel('Temperature (C)')
 		ylabel('DG Start Phase')
 	end
@@ -500,8 +500,8 @@ figlib.pretty('fs',14)
 
 ax = gastric.PlotISITriggeredBy(data, 'PD', 'DG_burst_starts');
 
-ylabel(ax(length(data)),'PD ISI (s)')
-xlabel(ax(length(data)),'Time since DG start (s)')
+ylabel(ax(1),'PD ISI (s)')
+xlabel(ax(1),'Time since DG start (s)')
 
 figlib.pretty
 
@@ -511,8 +511,8 @@ figlib.pretty
 
 ax = gastric.PlotISITriggeredBy(data, 'PD', 'DG_burst_ends');
 
-ylabel(ax(length(data)),'PD ISI (s)')
-xlabel(ax(length(data)),'Time since DG end (s)')
+ylabel(ax(1),'PD ISI (s)')
+xlabel(ax(1),'Time since DG end (s)')
 
 figlib.pretty
 
