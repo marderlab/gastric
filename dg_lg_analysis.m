@@ -235,8 +235,8 @@ figlib.pretty('fs',14)
 
 ax = gastric.PlotISITriggeredBy(data, 'PD', 'LG_burst_starts');
 
-ylabel(ax(length(data(i))),'PD ISI (s)')
-xlabel(ax(length(data(i))),'Time since LG start (s)')
+ylabel(ax(length(data)),'PD ISI (s)')
+xlabel(ax(length(data)),'Time since LG start (s)')
 
 figlib.pretty
 
@@ -246,8 +246,8 @@ figlib.pretty
 
 ax = gastric.PlotISITriggeredBy(data, 'PD', 'LG_burst_ends');
 
-ylabel(ax(length(data(i))),'PD ISI (s)')
-xlabel(ax(length(data(i))),'Time since LG end (s)')
+ylabel(ax(length(data)),'PD ISI (s)')
+xlabel(ax(length(data)),'Time since LG end (s)')
 
 figlib.pretty
 
@@ -500,8 +500,8 @@ figlib.pretty('fs',14)
 
 ax = gastric.PlotISITriggeredBy(data, 'PD', 'DG_burst_starts');
 
-ylabel(ax(length(data(i))),'PD ISI (s)')
-xlabel(ax(length(data(i))),'Time since DG start (s)')
+ylabel(ax(length(data)),'PD ISI (s)')
+xlabel(ax(length(data)),'Time since DG start (s)')
 
 figlib.pretty
 
@@ -511,8 +511,8 @@ figlib.pretty
 
 ax = gastric.PlotISITriggeredBy(data, 'PD', 'DG_burst_ends');
 
-ylabel(ax(length(data(i))),'PD ISI (s)')
-xlabel(ax(length(data(i))),'Time since DG end (s)')
+ylabel(ax(length(data)),'PD ISI (s)')
+xlabel(ax(length(data)),'Time since DG end (s)')
 
 figlib.pretty
 
