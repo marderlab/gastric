@@ -322,6 +322,30 @@ title(ch,'Temperature (C)')
 
 figlib.pretty()
 
+
+%%
+% Now I colour the dots in the integer coupling plot by prep ID. 
+figure('outerposition',[300 300 901 901],'PaperUnits','points','PaperSize',[1200 901]); hold on
+
+
+% plot gridlines
+for i = 4:30
+	xx = linspace(0,10,1e3);
+	yy = xx*i;
+	plot(gca,xx,yy,'Color',[.8 .8 .8])
+end
+
+
+[~,ch] = plotlib.cplot(all_x,all_y,all_prep,'colormap','lines');
+delete(ch);
+set(gca,'XLim',[0.2 2],'YLim',[0 30])
+xlabel('Mean PD period (s)')
+ylabel('LG periods (s)')
+
+figlib.pretty()
+
+
+
 %%
 % How does integer coupling vary with temperature?
 
