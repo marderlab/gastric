@@ -158,7 +158,7 @@ xlabel('Gastric rhythm on')
 ylabel('Gastric rhythm off')
 title('Variability in PD periods')
 
-figlib.pretty()
+figlib.pretty('fs',16)
 pdflib.snap()
 
 
@@ -198,7 +198,7 @@ for i = 1:length(data)
 	xlabel('Temperature (C)')
 end
 
-figlib.pretty('fs',14)
+figlib.pretty('fs',16)
 pdflib.snap()
 
 
@@ -239,7 +239,7 @@ for i = 1:length(data)
 
 end
 
-figlib.pretty('fs',14)
+figlib.pretty('fs',16)
 pdflib.snap()
 
 
@@ -282,7 +282,7 @@ for i = 1:length(data)
 
 end
 
-figlib.pretty('fs',14)
+figlib.pretty('fs',16)
 pdflib.snap()
 
 
@@ -314,7 +314,7 @@ fig.PaperSize = [1700 1e3];
 ylabel(ax(1),'PD ISI (s)')
 xlabel(ax(1),'Time since LG start (s)')
 
-figlib.pretty
+figlib.pretty('fs',16)
 pdflib.snap()
 
 
@@ -338,7 +338,7 @@ fig.PaperSize = [1700 1e3];
 ylabel(ax(1),'PD ISI (s)')
 xlabel(ax(1),'Time since LG end (s)')
 
-figlib.pretty
+figlib.pretty('fs',16)
 pdflib.snap()
 
 
@@ -378,7 +378,7 @@ set(gca,'YLim',[0 1],'YScale','linear')
 ylabel('LG start in PD phase')
 xlabel('Temperature (C)')
 
-figlib.pretty()
+figlib.pretty('fs',16)
 pdflib.snap()
 
 
@@ -427,7 +427,7 @@ ch.Location = 'southoutside';
 ch.Position = [.52 .15 .4 .02];
 title(ch,'Temperature (C)')
 
-figlib.pretty()
+figlib.pretty('fs',16)
 pdflib.snap()
 
 
@@ -459,7 +459,19 @@ set(gca,'XLim',[0.2 2],'YLim',[0 30])
 xlabel('Mean PD period (s)')
 ylabel('LG periods (s)')
 
-figlib.pretty()
+figlib.pretty('fs',16)
+pdflib.snap()
+
+
+
+
+
+
+
+
+
+
+
 
 
 
