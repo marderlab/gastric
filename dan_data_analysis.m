@@ -307,10 +307,12 @@ pdflib.snap()
 % Note also that the PD ISIs seem to increase and decrease with the LG start (this is expecially clear in 901_062). This suggests that the LG neuron is affecting the PD neuron, though we cannot rule out PD affecting LG. 
 
 
-ax = gastric.PlotISITriggeredBy(data, 'PD', 'LG_burst_starts');
+[ax, fig] = gastric.PlotISITriggeredBy(data, 'PD', 'LG_burst_starts');
+fig.OuterPosition = [300 300 1700 1e3];
+fig.PaperSize = [1700 1e3];
 
-ylabel(ax(7),'PD ISI (s)')
-xlabel(ax(7),'Time since LG start (s)')
+ylabel(ax(1),'PD ISI (s)')
+xlabel(ax(1),'Time since LG start (s)')
 
 figlib.pretty
 pdflib.snap()
@@ -328,10 +330,13 @@ pdflib.snap()
 %%
 % Now a similar figure, but triggered when LG ends. The effect is less clear here. One reason why is that the LG burst periods are less clearly defined, and the LG neuron tends to peter out slowly. 
 
-ax = gastric.PlotISITriggeredBy(data, 'PD', 'LG_burst_ends');
+[ax, fig] = gastric.PlotISITriggeredBy(data, 'PD', 'LG_burst_ends');
+fig.OuterPosition = [300 300 1700 1e3];
+fig.PaperSize = [1700 1e3];
 
-ylabel(ax(7),'PD ISI (s)')
-xlabel(ax(7),'Time since LG end (s)')
+
+ylabel(ax(1),'PD ISI (s)')
+xlabel(ax(1),'Time since LG end (s)')
 
 figlib.pretty
 pdflib.snap()

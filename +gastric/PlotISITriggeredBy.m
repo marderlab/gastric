@@ -70,7 +70,12 @@ for exp_idx = 1:length(data)
 		plot(all_x,all_y,'.','Color',c(j,:))
 	end
 
-	set(gca,'YScale','linear','XLim',[-before after],'YLim',[.1 2])
-	title(char(data(exp_idx).experiment_idx),'interpreter','none')
+	set(gca,'YScale','linear','XLim',[-before after],'YLim',[.1 2],'YTick',[.5 1 1.5 2])
+
+	if isnumeric(data(exp_idx).experiment_idx)
+		title(mat2str(data(exp_idx).experiment_idx),'interpreter','none')
+	else
+		title(char(data(exp_idx).experiment_idx),'interpreter','none')
+	end
 
 end
