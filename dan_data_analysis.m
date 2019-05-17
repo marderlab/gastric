@@ -47,9 +47,20 @@ end
 
 xlabel('Time (s)')
 
+figlib.pretty('fs',20)
 pdflib.snap()
 
-figlib.pretty('fs',20)
+
+
+
+
+
+
+
+
+
+
+
 
 
 % make sure spiketimes are sorted
@@ -106,6 +117,20 @@ title(ch,'Temperature (C)')
 ch.Position(1) = .75;
 
 figlib.pretty
+pdflib.snap()
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 %% Variability of PD period: dependence on the gastric rhythm
@@ -134,6 +159,21 @@ ylabel('Gastric rhythm off')
 title('Variability in PD periods')
 
 figlib.pretty()
+pdflib.snap()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -159,8 +199,20 @@ for i = 1:length(data)
 end
 
 figlib.pretty('fs',14)
+pdflib.snap()
 
-%% Duty cycles vs temperature
+
+
+
+
+
+
+
+
+
+
+
+%% Duty cycles vs. temperature
 % In the following figure, I plot the uty cycles of PD and LG as a function of temperature. note that the PD neuron maintains a constant duty cycle over the temperatures tested. 
 
 figure('outerposition',[300 300 1301 801],'PaperUnits','points','PaperSize',[1301 801]); hold on
@@ -188,6 +240,20 @@ for i = 1:length(data)
 end
 
 figlib.pretty('fs',14)
+pdflib.snap()
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 %% Spikes per burst vs. temperature
 % In the following figure, I plot the # of spikes/burst as a function of temperature for both the PD neurons (black) and the LG neurons (red). Note that the # of spikes/burst decreases for the PD neuron with temperature, as that is what it does to maintain its duty cycle. 
@@ -217,6 +283,19 @@ for i = 1:length(data)
 end
 
 figlib.pretty('fs',14)
+pdflib.snap()
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -234,6 +313,16 @@ ylabel(ax(7),'PD ISI (s)')
 xlabel(ax(7),'Time since LG start (s)')
 
 figlib.pretty
+pdflib.snap()
+
+
+
+
+
+
+
+
+
 
 
 %%
@@ -245,6 +334,15 @@ ylabel(ax(7),'PD ISI (s)')
 xlabel(ax(7),'Time since LG end (s)')
 
 figlib.pretty
+pdflib.snap()
+
+
+
+
+
+
+
+
 
 
 
@@ -276,6 +374,14 @@ ylabel('LG start in PD phase')
 xlabel('Temperature (C)')
 
 figlib.pretty()
+pdflib.snap()
+
+
+
+
+
+
+
 
 
 
@@ -317,6 +423,16 @@ ch.Position = [.52 .15 .4 .02];
 title(ch,'Temperature (C)')
 
 figlib.pretty()
+pdflib.snap()
+
+
+
+
+
+
+
+
+
 
 
 %%
@@ -389,6 +505,18 @@ ylabel('Integerness')
 xlabel('PD period (s)')
 
 figlib.pretty('plw',1)
+pdflib.snap()
+
+
+
+
+
+
+
+
+
+
+
 
 
 
