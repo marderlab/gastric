@@ -1,6 +1,6 @@
 % measures PD period variability when gastric is on or off
 
-function [cv_mean_on, cv_mean_off, cv_std_on, cv_std_off] = comparePDVariability(data, all_temp, N_periods, max_burst_period)
+function [cv_mean_on, cv_mean_off, cv_std_on, cv_std_off, time_since_gastric, PD_period_cv, temperature] = comparePDVariability(data, all_temp, N_periods, max_burst_period)
 
 
 time_since_gastric = NaN*data.PD_burst_starts;
@@ -19,13 +19,16 @@ for i = N_periods+1:length(PD_period_cv)
 
 
 	time_since_gastric(i) = data.PD_burst_starts(i) - data.LG(last_LG);
-
-
 	PD_period_cv(i) = statlib.cv(data.PD_burst_periods(i-N_periods:i));
-
 	temperature(i) = data.temperature(round(1e3*data.PD_burst_starts(i)));
 
+
+
 end
+
+
+
+
 
 % build averages 
 cv_mean_off = NaN*all_temp;

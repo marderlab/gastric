@@ -140,26 +140,61 @@ pdflib.snap()
 % By "gastric rhythm on", we mean that PD bursts occur within 10 seconds following a LG spike, and by "gastric rhythm off", we mean PD bursts more than 100s since the last LG spike. Note that almost every dot lies below the diagonal, suggesting that G bursting makes PD bursting more variable. 
 
 figure('outerposition',[300 300 1200 600],'PaperUnits','points','PaperSize',[1200 600]); hold on
+clear ax
+ax(2) = subplot(1,2,2); hold on
+ax(1) = subplot(1,2,1); hold on
+set(ax(1),'XScale','log','YLim',[0 .2])
 
-c = parula(5);
+
+temp_space = 7:2:21;
+c = parula(length(temp_space)+1);
+
+all_x = [];
+all_y = [];
+all_temp = [];
 
 for i = 1:length(data)
-	[cv_mean_on, cv_mean_off, cv_std_on, cv_std_off] = gastric.comparePDVariability(data(i), 7:4:19, 10, 2.5);
-	for j = 1:4
-		scatter(cv_mean_on(j),cv_mean_off(j),64,c(j,:),'MarkerFaceColor',c(j,:),'MarkerEdgeColor',c(j,:),'MarkerFaceAlpha',.5)
+	[cv_mean_on, cv_mean_off, cv_std_on, cv_std_off, time_since_gastric, PD_period_cv, temperature]  = gastric.comparePDVariability(data(i), temp_space, 10, 2.5);
+
+	all_x = [time_since_gastric; all_x];
+	all_y = [PD_period_cv; all_y];
+	all_temp = [temperature; all_temp];
+
+	
+
+	for j = 1:length(temp_space)
+		scatter(ax(2),cv_mean_on(j),cv_mean_off(j),64,c(j,:),'MarkerFaceColor',c(j,:),'MarkerEdgeColor',c(j,:),'MarkerFaceAlpha',.5)
 	end
 end
 
-plotlib.drawDiag;
-axis square
 
-set(gca,'XLim',[0 .15],'YLim',[0 .15])
-xlabel('Gastric rhythm on')
-ylabel('Gastric rhythm off')
-title('Variability in PD periods')
+for i = 1:length(temp_space)
+	ok = abs(temp_space(i) - all_temp) < 1;
+	plotlib.pieceWiseLinear(ax(1),all_x(ok),all_y(ok),'nbins',10,'Color',c(i,:));
+
+
+end
+
+xlabel(ax(1),'Time since LG spike (s)')
+ylabel(ax(1),'PD burst variability')
+
+
+plotlib.drawDiag(ax(2));
+axis(ax(2),'square')
+
+set(ax(2),'XLim',[0 .15],'YLim',[0 .15])
+xlabel(ax(2),'Gastric rhythm on')
+ylabel(ax(2),'Gastric rhythm off')
+suptitle('Variability in PD periods')
+
+ch = colorbar(ax(2));
+caxis(ax(2),[min(temp_space) max(temp_space)]);
+title(ch,'Temperature (C)')
 
 figlib.pretty('fs',16)
 pdflib.snap()
+
+
 
 
 
@@ -291,6 +326,54 @@ pdflib.snap()
 
 
 
+%% LG-PD coupling: PD spiking triggered by LG starts
+% To look at the interaction between LG and PD (a proxy for the interaction b/w the gastric and pyloric rhythms), I will plot PD spikes triggered by LG burst starts. 
+
+
+
+
+figure('outerposition',[300 300 1002 901],'PaperUnits','points','PaperSize',[1002 901]); hold on
+
+for i = 1:8
+	subplot(3,3,i); hold on
+	gastric.plotRasterTriggeredBy(data(i),'PD', 'LG_burst_starts')
+	set(gca,'YTick',[])
+	ylabel(mat2str(data(i).experiment_idx))
+	if i == 7
+		xlabel('Time since LG start (s)')
+	end
+end
+
+suptitle('PD spikes')
+figlib.pretty
+pdflib.snap()
+
+
+
+
+
+
+%%
+% Now I look at PD spiking triggered by LG burst ends
+
+
+figure('outerposition',[300 300 1002 901],'PaperUnits','points','PaperSize',[1002 901]); hold on
+
+for i = 1:8
+	subplot(3,3,i); hold on
+	gastric.plotRasterTriggeredBy(data(i),'PD', 'LG_burst_ends')
+	set(gca,'YTick',[])
+	ylabel(mat2str(data(i).experiment_idx))
+	if i == 7
+		xlabel('Time since LG end (s)')
+	end
+end
+
+suptitle('PD spikes')
+
+figlib.pretty
+pdflib.snap()
+
 
 
 
@@ -307,17 +390,30 @@ pdflib.snap()
 % Note also that the PD ISIs seem to increase and decrease with the LG start (this is expecially clear in 901_062). This suggests that the LG neuron is affecting the PD neuron, though we cannot rule out PD affecting LG. 
 
 
-[ax, fig] = gastric.PlotISITriggeredBy(data, 'PD', 'LG_burst_starts');
-fig.OuterPosition = [300 300 1700 1e3];
-fig.PaperSize = [1700 1e3];
 
-ylabel(ax(1),'PD ISI (s)')
-xlabel(ax(1),'Time since LG start (s)')
+figure('outerposition',[300 300 1002 901],'PaperUnits','points','PaperSize',[1002 901]); hold on
+
+for i = 1:length(data)
+	subplot(3,3,i); hold on
+	[~, ph, ch] = gastric.plotISITriggeredBy(data(i), 'PD', 'LG_burst_starts',[6 23]);
+	if i == 7
+		ylabel(gca,'PD ISI (s)')
+		xlabel(gca,'Time since LG start (s)')
+	end
+	set(gca,'YLim',[0 2])
+
+	ph.SizeData = 10;
+	ph.Marker = 'o';
+
+	if i < length(data)
+		delete(ch)
+	end
+
+end
+
 
 figlib.pretty('fs',16)
 pdflib.snap()
-
-
 
 
 
@@ -330,16 +426,30 @@ pdflib.snap()
 %%
 % Now a similar figure, but triggered when LG ends. The effect is less clear here. One reason why is that the LG burst periods are less clearly defined, and the LG neuron tends to peter out slowly. 
 
-[ax, fig] = gastric.PlotISITriggeredBy(data, 'PD', 'LG_burst_ends');
-fig.OuterPosition = [300 300 1700 1e3];
-fig.PaperSize = [1700 1e3];
+figure('outerposition',[300 300 1002 901],'PaperUnits','points','PaperSize',[1002 901]); hold on
 
+for i = 1:length(data)
+	subplot(3,3,i); hold on
+	[~, ph, ch] = gastric.plotISITriggeredBy(data(i), 'PD', 'LG_burst_ends',[6 23]);
+	if i == 7
+		ylabel(gca,'PD ISI (s)')
+		xlabel(gca,'Time since LG start (s)')
+	end
+	set(gca,'YLim',[0 2])
 
-ylabel(ax(1),'PD ISI (s)')
-xlabel(ax(1),'Time since LG end (s)')
+	ph.SizeData = 10;
+	ph.Marker = 'o';
+
+	if i < length(data)
+		delete(ch)
+	end
+
+end
+
 
 figlib.pretty('fs',16)
 pdflib.snap()
+
 
 
 
