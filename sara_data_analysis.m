@@ -10,19 +10,48 @@ pdflib.header
 % In this document we look at pyloric and gastric rhtyhms at differnet temperatures.
 % This data is from Sara Haddad and the experiments that go into this are:
 
+
 data_root = '/Volumes/HYDROGEN/srinivas_data/temperature-data-for-embedding';
-include_these = {'857_144','857_142','857_138_1','857_134_1','857_130','857_052','857_016','857_012','857_010','857_001_2'};
+avail_exps = dir(data_root);
+exp_ids = {};
+neurons = {'PD','LG'};
 
 
-disp(include_these')
+% automatically figure out the usable data
+for i = 1:length(avail_exps)
+    if strcmp(avail_exps(i).name(1),'.')
+        continue
+    end
+    allfiles = dir([avail_exps(i).folder filesep avail_exps(i).name filesep '*.crabsort']);
+
+    if length(allfiles) < 3
+        % can't be any data here
+        continue
+    end
+
+    not_sorted = crabsort.checkSorted(allfiles, neurons, true);
+
+    if ~not_sorted
+        exp_ids{end+1} = avail_exps(i).name;
+    end
+
+end
+
+
+return
+
+
+
+
+disp(exp_ids')
 
 if exist('sara_stacked_data.mat','file') == 2
 
 	load('sara_stacked_data','data')
 else
 	data_s = struct;
-	for i = 1:length(include_these)
-		this_data  = crabsort.consolidate('neurons',{'PD','LG'},'DataDir',[data_root filesep include_these{i}],'stack',true);
+	for i = 1:length(exp_ids)
+		this_data  = crabsort.consolidate('neurons',{'PD','LG'},'DataDir',[data_root filesep exp_ids{i}],'stack',true);
 
 		data_s = structlib.merge(data_s,this_data);
 	end

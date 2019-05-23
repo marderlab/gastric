@@ -216,9 +216,9 @@ pdflib.snap()
 %% Burst period vs. temperature
 % In the following figure, I plot burst periods of LG and PD neurons as a function of temperature for each prep. Black dots are PD bursts, red dots are LG bursts. Note that they both decrease at approximately the same rate. 
 
-figure('outerposition',[300 300 1200 600],'PaperUnits','points','PaperSize',[1200 600]); hold on
+figure('outerposition',[300 300 1001 901],'PaperUnits','points','PaperSize',[1001 901]); hold on
 for i = 1:length(data)
-	subplot(2,4,i); hold on
+	subplot(3,3,i); hold on
 
 
 	x = round(data(i).PD_burst_starts*1e3);
@@ -230,7 +230,10 @@ for i = 1:length(data)
 	set(gca,'YScale','log','XLim',[6 24])
 
 	title(data(i).experiment_idx)
-	xlabel('Temperature (C)')
+	if i == 7
+		xlabel('Temperature (C)')
+		ylabel('Burst period (s)')
+	end
 end
 
 figlib.pretty('fs',16)
@@ -250,9 +253,9 @@ pdflib.snap()
 %% Duty cycles vs. temperature
 % In the following figure, I plot the uty cycles of PD and LG as a function of temperature. note that the PD neuron maintains a constant duty cycle over the temperatures tested. 
 
-figure('outerposition',[300 300 1301 801],'PaperUnits','points','PaperSize',[1301 801]); hold on
+figure('outerposition',[300 300 901 801],'PaperUnits','points','PaperSize',[901 801]); hold on
 for i = 1:length(data)
-	subplot(2,4,i); hold on
+	subplot(3,3,i); hold on
 
 
 	x = round(data(i).PD_burst_starts*1e3);
@@ -265,10 +268,8 @@ for i = 1:length(data)
 
 	title(data(i).experiment_idx)
 
-	if i > 4
+	if i == 7
 		xlabel('Temperature (C)')
-	end
-	if i == 1 || i == 5
 		ylabel('Duty cycle')
 	end
 
@@ -397,7 +398,7 @@ for i = 1:length(data)
 	subplot(3,3,i); hold on
 	[~, ph, ch] = gastric.plotISITriggeredBy(data(i), 'PD', 'LG_burst_starts',[6 23]);
 	if i == 7
-		ylabel(gca,'PD ISI (s)')
+		ylabel(gca,'PD IBI (s)')
 		xlabel(gca,'Time since LG start (s)')
 	end
 	set(gca,'YLim',[0 2])
@@ -433,7 +434,7 @@ for i = 1:length(data)
 	[~, ph, ch] = gastric.plotISITriggeredBy(data(i), 'PD', 'LG_burst_ends',[6 23]);
 	if i == 7
 		ylabel(gca,'PD ISI (s)')
-		xlabel(gca,'Time since LG start (s)')
+		xlabel(gca,'Time since LG end (s)')
 	end
 	set(gca,'YLim',[0 2])
 
