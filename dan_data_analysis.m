@@ -78,7 +78,6 @@ data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',1,'min_spikes_per_bu
 
 
 
-
 %% Variability in PD burst periods
 % In this section, I look at cycle-to-cycle variability in the PD burst periods. Specifically, I compare PD burst periods in one cycle to the burst periods in the next cycle. I observed that PD neurons tended to sometimes skip a spike (the last one was quite variable). These cycle-to-cycle variations in PD period manifest as deviations from the diagonal in the following plots. 
 

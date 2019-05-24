@@ -34,7 +34,13 @@ C =  C - min(C);
 C = C/max(C);
 C = round(C*99 + 1);
 
+
 c = parula(120);
+c(end,:) = [0 0 0];
+
+% if no temp data avaialble, set to black
+C(isnan(C)) = length(c);
+
 for j = 1:length(trigger_points)
 	neurolib.raster(spikes(:,j),'Color',c(C(j),:),'deltat',1,'yoffset',j,'center',false)
 end

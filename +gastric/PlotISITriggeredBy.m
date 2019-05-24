@@ -29,6 +29,9 @@ for i = 1:length(trigger_points)
 	xx = x - trigger_points(i);
 	show_this = xx > -before & xx < after;
 
+	this_x = xx(show_this);
+	this_y = isis(show_this);
+
 	rm_this = this_y < smallest_isi;
 
 	all_x = [all_x; this_x(~rm_this)];
@@ -68,7 +71,6 @@ for i = 1:length(trigger_points)
 	all_temp = [all_temp; this_y(~rm_this)*0 + temperature(i)];
 	
 end
-
 
 [ph2, ch] = plotlib.cplot(all_x,all_y,all_temp,'clim',clim);
 
