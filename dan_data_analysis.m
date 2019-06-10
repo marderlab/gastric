@@ -9,7 +9,7 @@ data_root = '/Volumes/HYDROGEN/srinivas_data/gastric-data';
 % In this document we look at pyloric and gastric rhtyhms at differnet temperatures.
 % This data is from Dan Powell and the experiments that go into this are:
 
-include_these = {'901_086','901_046','901_049','901_052','901_062','901_080','901_095','901_098'};
+include_these = sort({'901_005','901_086','901_046','901_049','901_052','901_062','901_080','901_095','901_098','932_151'});
 
 disp(include_these')
 
@@ -24,39 +24,6 @@ else
 	save('dan_stacked_data','data','-nocompression','-v7.3')
 
 end
-
-
-%%
-% The following figure shows the temperature in all the experiments, together with a raster indicating when the LG neuron spikes. You can see from this figure that gastric rhythms were elicted at many different temperatures, once the temperature had been stabilized to the desired value. 
-
-figure('outerposition',[300 300 901 1200],'PaperUnits','points','PaperSize',[901 1200]); hold on
-
-for i = 1:length(data)
-	subplot(8,1,i); hold on
-	time = (1:length(data(i).temperature))*1e-3;
-	time = time(1:100:end);
-	plot(time,data(i).temperature(1:100:end),'k')
-	set(gca,'XLim',[0 9e3])
-	if i < length(data)
-		set(gca,'XTick',[])
-	end
-	set(gca,'YLim',[5 23])
-
-	neurolib.raster(data(i).LG,'deltat',1,'yoffset',5)
-end
-
-xlabel('Time (s)')
-
-figlib.pretty('fs',20)
-pdflib.snap()
-
-
-
-
-
-
-
-
 
 
 
@@ -84,21 +51,15 @@ figure('outerposition',[300 300 1200 901],'PaperUnits','points','PaperSize',[120
 
 
 for i = 1:length(data)
-	subplot(3,3,i); hold on
+	subplot(3,4,i); hold on
 	isis = diff(data(i).PD);
 	% isis(isis>2) = NaN;
 	isis(isis<1e-2) = NaN;
 	spiketimes = data(i).PD(1:end-1);
 	plotlib.cplot(spiketimes,isis,data(i).temperature(round(spiketimes*1e3)))
 		
-	isis(isnan(isis)) = [];
 
-
-	ibi = nanmin(nanmax(veclib.stagger(isis,100,100)))/2;
-
-	plotlib.horzline(ibi);
-
-	set(gca,'YScale','linear','YLim',[0 2])
+	set(gca,'YScale','log','YLim',[1e-2 2],'YTick',[1e-2 1e-1 1])
 	title(char(data(i).experiment_idx),'interpreter','none')
 end
 
@@ -115,7 +76,7 @@ figure('outerposition',[300 300 1200 901],'PaperUnits','points','PaperSize',[120
 
 
 for i = 1:length(data)
-	subplot(3,3,i); hold on
+	subplot(3,4,i); hold on
 	isis = diff(data(i).LG);
 	isis(isis>20) = NaN;
 	isis(isis<1e-2) = NaN;
@@ -145,15 +106,9 @@ pdflib.snap()
 figure('outerposition',[300 300 1002 901],'PaperUnits','points','PaperSize',[1002 901]); hold on
 
 for i = 1:length(data)
-	subplot(2,4,i); hold on
+	subplot(3,4,i); hold on
 	gastric.plotRasterTriggeredBy(data(i),'LG', 'LG_burst_starts',[20 20])
 end
-
-
-
-
-return
-
 
 
 
@@ -170,7 +125,7 @@ return
 figure('outerposition',[300 300 903 901],'PaperUnits','points','PaperSize',[903 901]); hold on
 
 for i = 1:length(data)
-	subplot(3,3,i); hold on
+	subplot(3,4,i); hold on
 
 
 	x = data(i).PD_burst_periods(1:end-1);
@@ -188,7 +143,7 @@ for i = 1:length(data)
 	if i < length(data)
 		delete(ch)
 	end
-	title(data(i).experiment_idx)
+	title(char(data(i).experiment_idx),'interpreter','none')
 
 	if i == 7
 		xlabel('PD burst period (s)')
@@ -303,7 +258,7 @@ pdflib.snap()
 
 figure('outerposition',[300 300 1001 901],'PaperUnits','points','PaperSize',[1001 901]); hold on
 for i = 1:length(data)
-	subplot(3,3,i); hold on
+	subplot(3,4,i); hold on
 
 
 	x = round(data(i).PD_burst_starts*1e3);
@@ -314,7 +269,7 @@ for i = 1:length(data)
 
 	set(gca,'YScale','log','XLim',[6 24])
 
-	title(data(i).experiment_idx)
+	title(char(data(i).experiment_idx),'interpreter','none')
 	if i == 7
 		xlabel('Temperature (C)')
 		ylabel('Burst period (s)')
@@ -340,7 +295,7 @@ pdflib.snap()
 
 figure('outerposition',[300 300 901 801],'PaperUnits','points','PaperSize',[901 801]); hold on
 for i = 1:length(data)
-	subplot(3,3,i); hold on
+	subplot(3,4,i); hold on
 
 
 	x = round(data(i).PD_burst_starts*1e3);
@@ -351,7 +306,7 @@ for i = 1:length(data)
 
 	set(gca,'YScale','linear','YLim',[0 1],'YTick',0:.2:1,'XLim',[6 24])
 
-	title(data(i).experiment_idx)
+	title(char(data(i).experiment_idx),'interpreter','none')
 
 	if i == 7
 		xlabel('Temperature (C)')
@@ -381,7 +336,7 @@ pdflib.snap()
 
 figure('outerposition',[300 300 1301 801],'PaperUnits','points','PaperSize',[1301 801]); hold on
 for i = 1:length(data)
-	subplot(2,4,i); hold on
+	subplot(3,4,i); hold on
 
 
 	x = round(data(i).PD_burst_starts*1e3);
@@ -392,7 +347,7 @@ for i = 1:length(data)
 
 	set(gca,'YScale','log','YLim',[0 1e3],'XLim',[6 24])
 
-	title(data(i).experiment_idx)
+	title(char(data(i).experiment_idx),'interpreter','none')
 
 	if i > 4
 		xlabel('Temperature (C)')
@@ -420,11 +375,11 @@ pdflib.snap()
 
 figure('outerposition',[300 300 1002 901],'PaperUnits','points','PaperSize',[1002 901]); hold on
 
-for i = 1:8
-	subplot(3,3,i); hold on
+for i = 1:length(data)
+	subplot(3,4,i); hold on
 	gastric.plotRasterTriggeredBy(data(i),'PD', 'LG_burst_starts')
 	set(gca,'YTick',[])
-	ylabel(mat2str(data(i).experiment_idx))
+	ylabel(char(data(i).experiment_idx),'interpreter','none')
 	if i == 7
 		xlabel('Time since LG start (s)')
 	end
@@ -445,11 +400,11 @@ pdflib.snap()
 
 figure('outerposition',[300 300 1002 901],'PaperUnits','points','PaperSize',[1002 901]); hold on
 
-for i = 1:8
-	subplot(3,3,i); hold on
+for i = 1:length(data)
+	subplot(3,4,i); hold on
 	gastric.plotRasterTriggeredBy(data(i),'PD', 'LG_burst_ends')
 	set(gca,'YTick',[])
-	ylabel(mat2str(data(i).experiment_idx))
+	ylabel(char(data(i).experiment_idx),'interpreter','none')
 	if i == 7
 		xlabel('Time since LG end (s)')
 	end
@@ -480,7 +435,7 @@ pdflib.snap()
 figure('outerposition',[300 300 1002 901],'PaperUnits','points','PaperSize',[1002 901]); hold on
 
 for i = 1:length(data)
-	subplot(3,3,i); hold on
+	subplot(3,4,i); hold on
 	[~, ph, ch] = gastric.plotISITriggeredBy(data(i), 'PD', 'LG_burst_starts',[6 23]);
 	if i == 7
 		ylabel(gca,'PD IBI (s)')
@@ -515,7 +470,7 @@ pdflib.snap()
 figure('outerposition',[300 300 1002 901],'PaperUnits','points','PaperSize',[1002 901]); hold on
 
 for i = 1:length(data)
-	subplot(3,3,i); hold on
+	subplot(3,4,i); hold on
 	[~, ph, ch] = gastric.plotISITriggeredBy(data(i), 'PD', 'LG_burst_ends',[6 23]);
 	if i == 7
 		ylabel(gca,'PD ISI (s)')
@@ -719,13 +674,6 @@ xlabel('PD period (s)')
 
 figlib.pretty('plw',1)
 pdflib.snap()
-
-
-
-
-
-
-
 
 
 

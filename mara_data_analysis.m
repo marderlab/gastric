@@ -136,45 +136,17 @@ return
 
 
 
+data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',1,'min_spikes_per_burst',5);
 
-%%
-% In the following figure, I plot every ISI from the PD and LG neurons, to get a sense of what these neurons are doing
-
-figure('outerposition',[300 300 1200 600],'PaperUnits','points','PaperSize',[1200 600]); hold on
-
-% dummy
-data = crabsort.computePeriods(data,'neurons',{'PD'},'ibis',.2,'min_spikes_per_burst',2);
-
-
-for i = 1:length(data)
-	subplot(2,4,i); hold on
-	isis = diff(data(i).PD);
-	isis(isis>2) = NaN;
-	isis(isis<1e-2) = NaN;
-	plot(data(i).PD(1:end-1),isis,'k.')
-		
-	isis(isnan(isis)) = [];
-
-
-	ibi = nanmin(nanmax(veclib.stagger(isis,100,100)))/2;
-
-	plotlib.horzline(ibi);
-
-
-	data(i) = crabsort.computePeriods(data(i),'neurons',{'PD'},'ibis',ibi,'min_spikes_per_burst',2);
-
-	% isis = diff(data(i).LG);
-	% plot(data(i).LG(1:end-1),isis,'r.')
-	set(gca,'YScale','log')
-	title(char(data(i).experiment_idx),'interpreter','none')
-end
-
-
-data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',3,'min_spikes_per_burst',10);
+i=2;
 
 figure('outerposition',[300 300 1002 901],'PaperUnits','points','PaperSize',[1002 901]); hold on
 
-gastric.plotRasterTriggeredBy(data(7),'LG', 'LG_burst_starts',[20 20])
+neurolib.raster(data(i).LG,'deltat',1,'center',false)
+plot(data(i).LG_burst_starts,data(i).LG_burst_starts*0+.95,'ro')
+
+
+gastric.plotRasterTriggeredBy(data(3),'LG', 'LG_burst_starts',[30 30])
 
 
 
