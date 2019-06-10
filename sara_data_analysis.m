@@ -90,6 +90,80 @@ end
 
 
 
+
+
+
+
+%% PD bursts
+
+figure('outerposition',[300 300 1200 1100],'PaperUnits','points','PaperSize',[1200 1100]); hold on
+
+
+for i = 1:length(data)
+	subplot(5,3,i); hold on
+	isis = diff(data(i).PD);
+	% isis(isis>2) = NaN;
+	isis(isis<1e-2) = NaN;
+	spiketimes = data(i).PD(1:end-1);
+	plot(spiketimes,isis,'k.')
+		
+	isis(isnan(isis)) = [];
+
+
+	ibi = nanmin(nanmax(veclib.stagger(isis,100,100)))/2;
+
+	plotlib.horzline(ibi);
+
+	set(gca,'YScale','log','YLim',[.01 5])
+	title(char(data(i).experiment_idx),'interpreter','none')
+end
+
+suptitle('PD neurons, Sara data')
+
+figlib.pretty('fs',12)
+pdflib.snap()
+
+
+%% LG bursts
+% How regular is LG bursting? Is it meaningful to measure LG burst metrics? To get a sense of this, I plot all ISIs from the LG neuron in all preps. 
+
+figure('outerposition',[300 300 1200 1100],'PaperUnits','points','PaperSize',[1200 1100]); hold on
+
+
+for i = 1:length(data)
+	subplot(5,3,i); hold on
+	isis = diff(data(i).LG);
+	% isis(isis>2) = NaN;
+	isis(isis<1e-2) = NaN;
+	spiketimes = data(i).LG(1:end-1);
+	plot(spiketimes,isis,'k.')
+		
+	isis(isnan(isis)) = [];
+
+
+	ibi = nanmin(nanmax(veclib.stagger(isis,100,100)))/2;
+
+	plotlib.horzline(ibi);
+
+	set(gca,'YScale','log','YLim',[.01 50])
+	title(char(data(i).experiment_idx),'interpreter','none')
+end
+
+suptitle('LG neurons, Sara data')
+
+figlib.pretty('fs',12)
+pdflib.snap()
+
+
+
+
+
+return
+
+
+
+
+
 data = crabsort.computePeriods(data,'neurons',{'PD'},'ibis',.15,'min_spikes_per_burst',2);
 data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',1,'min_spikes_per_burst',5);
 

@@ -1,8 +1,12 @@
-function plotRasterTriggeredBy(data,neuron, trigger)
+function plotRasterTriggeredBy(data,neuron, trigger, before_after)
 
-
-before = 3;
-after = 3;
+if nargin < 4
+	before = 3;
+	after = 3;
+else
+	before = before_after(1);
+	after = before_after(2);
+end
 
 
 
@@ -17,8 +21,8 @@ for j = 1:length(trigger_points)
 		continue
 	end
 
-	if length(these_spikes) > 200
-		these_spikes = these_spikes(1:200);
+	if length(these_spikes) > 2e3
+		these_spikes = these_spikes(1:2e3);
 	end
 
 	these_spikes = these_spikes - trigger_points(j);

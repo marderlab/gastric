@@ -1,4 +1,3 @@
-
 pdflib.header
 
 
@@ -7,57 +6,49 @@ data_root = '/Volumes/HYDROGEN/srinivas_data/gastric-data';
 
 %% Analysis of gastric and pyloric rhythms at different temperatures
 % In this document we look at pyloric and gastric rhtyhms at differnet temperatures.
-% This data is from Dan Powell and the experiments that go into this are:
+% This data is from Mara Rue and the experiments that go into this are:
 
-include_these = {'901_086','901_046','901_049','901_052','901_062','901_080','901_095','901_098'};
+include_these = {'940_011','940_015','940_019','940_021','940_023','940_027','940_031'};
 
 disp(include_these')
 
-if exist('dan_stacked_data.mat','file') == 2
+if exist('mara_stacked_data.mat','file') == 2
 
-	load('dan_stacked_data','data')
+	load('mara_stacked_data','data')
 else
 	for i = 1:length(include_these)
 		data(i)  = crabsort.consolidate('neurons',{'PD','LG'},'DataFun',{@crabsort.getTemperature},'DataDir',[data_root filesep include_these{i}],'stack',true);
 	end
 
-	save('dan_stacked_data','data','-nocompression','-v7.3')
+	save('mara_stacked_data','data','-nocompression','-v7.3')
 
 end
+
 
 
 %%
 % The following figure shows the temperature in all the experiments, together with a raster indicating when the LG neuron spikes. You can see from this figure that gastric rhythms were elicted at many different temperatures, once the temperature had been stabilized to the desired value. 
 
-figure('outerposition',[300 300 901 1200],'PaperUnits','points','PaperSize',[901 1200]); hold on
+figure('outerposition',[300 300 1300 701],'PaperUnits','points','PaperSize',[1300 701]); hold on
+
+c = lines;
 
 for i = 1:length(data)
-	subplot(8,1,i); hold on
-	time = (1:length(data(i).temperature))*1e-3;
-	time = time(1:100:end);
-	plot(time,data(i).temperature(1:100:end),'k')
-	set(gca,'XLim',[0 9e3])
-	if i < length(data)
-		set(gca,'XTick',[])
-	end
-	set(gca,'YLim',[5 23])
 
-	neurolib.raster(data(i).LG,'deltat',1,'yoffset',5)
+	time = (1:length(data(i).temperature))*1e-3;
+	time = time(1:100:end)/60;
+	plot(time,data(i).temperature(1:100:end))
+
+	set(gca,'YLim',[0 30])
+
+	neurolib.raster(data(i).LG,'deltat',1/60,'yoffset',0+i,'Color',c(i,:),'fill_fraction',.8)
 end
 
-xlabel('Time (s)')
+xlabel('Time (min)')
+ylabel('Temperature (C)')
 
 figlib.pretty('fs',20)
 pdflib.snap()
-
-
-
-
-
-
-
-
-
 
 
 
@@ -69,10 +60,6 @@ for i = 1:length(data)
 	data(i).LG = sort(data(i).LG);
 end
 
-
-% compute burst metrics of all LG neurons
-data = crabsort.computePeriods(data,'neurons',{'PD'},'ibis',.18,'min_spikes_per_burst',2);
-data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',1,'min_spikes_per_burst',5);
 
 
 
@@ -102,7 +89,7 @@ for i = 1:length(data)
 	title(char(data(i).experiment_idx),'interpreter','none')
 end
 
-suptitle('PD neurons, Dans data')
+suptitle('PD neurons, Mara data')
 
 figlib.pretty
 pdflib.snap()
@@ -134,7 +121,7 @@ for i = 1:length(data)
 end
 
 
-suptitle('LG neurons, Dans data')
+suptitle('LG neurons, Mara data')
 
 figlib.pretty
 pdflib.snap()
@@ -142,12 +129,115 @@ pdflib.snap()
 
 
 
-figure('outerposition',[300 300 1002 901],'PaperUnits','points','PaperSize',[1002 901]); hold on
+
+
+
+return
+
+
+
+
+%%
+% In the following figure, I plot every ISI from the PD and LG neurons, to get a sense of what these neurons are doing
+
+figure('outerposition',[300 300 1200 600],'PaperUnits','points','PaperSize',[1200 600]); hold on
+
+% dummy
+data = crabsort.computePeriods(data,'neurons',{'PD'},'ibis',.2,'min_spikes_per_burst',2);
+
 
 for i = 1:length(data)
 	subplot(2,4,i); hold on
-	gastric.plotRasterTriggeredBy(data(i),'LG', 'LG_burst_starts',[20 20])
+	isis = diff(data(i).PD);
+	isis(isis>2) = NaN;
+	isis(isis<1e-2) = NaN;
+	plot(data(i).PD(1:end-1),isis,'k.')
+		
+	isis(isnan(isis)) = [];
+
+
+	ibi = nanmin(nanmax(veclib.stagger(isis,100,100)))/2;
+
+	plotlib.horzline(ibi);
+
+
+	data(i) = crabsort.computePeriods(data(i),'neurons',{'PD'},'ibis',ibi,'min_spikes_per_burst',2);
+
+	% isis = diff(data(i).LG);
+	% plot(data(i).LG(1:end-1),isis,'r.')
+	set(gca,'YScale','log')
+	title(char(data(i).experiment_idx),'interpreter','none')
 end
+
+
+data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',3,'min_spikes_per_burst',10);
+
+figure('outerposition',[300 300 1002 901],'PaperUnits','points','PaperSize',[1002 901]); hold on
+
+gastric.plotRasterTriggeredBy(data(7),'LG', 'LG_burst_starts',[20 20])
+
+
+
+
+
+
+
+
+
+
+
+figure('outerposition',[300 300 1200 600],'PaperUnits','points','PaperSize',[1200 600]); hold on
+
+% dummy
+data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',3,'min_spikes_per_burst',5);
+
+
+for i = 1:length(data)
+	subplot(2,4,i); hold on
+	isis = diff(data(i).LG);
+	isis(isis>30) = NaN;
+	isis(isis<1e-2) = NaN;
+	plot(data(i).LG(1:end-1),isis,'k.')
+		
+	isis(isnan(isis)) = [];
+
+
+	ibi = nanmin(nanmax(veclib.stagger(isis,100,100)))/2;
+
+	plotlib.horzline(ibi);
+
+
+	data(i) = crabsort.computePeriods(data(i),'neurons',{'LG'},'ibis',ibi,'min_spikes_per_burst',2);
+
+	% isis = diff(data(i).LG);
+	% plot(data(i).LG(1:end-1),isis,'r.')
+	set(gca,'YScale','log')
+	title(char(data(i).experiment_idx),'interpreter','none')
+end
+
+
+
+
+
+
+
+for i = 1:length(data)
+	subplot(3,3,i); hold on
+	
+	set(gca,'YTick',[])
+	ylabel(char(data(i).experiment_idx),'interpreter','none')
+	if i == 7
+		xlabel('Time since LG start (s)')
+	end
+
+end
+
+suptitle('PD spikes')
+figlib.pretty
+pdflib.snap()
+
+
+
 
 
 
@@ -158,62 +248,34 @@ return
 
 
 
+figure('outerposition',[300 300 1200 600],'PaperUnits','points','PaperSize',[1200 600]); hold on
 
+% dummy
+data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',1,'min_spikes_per_burst',5);
 
-
-
-
-
-%% Variability in PD burst periods
-% In this section, I look at cycle-to-cycle variability in the PD burst periods. Specifically, I compare PD burst periods in one cycle to the burst periods in the next cycle. I observed that PD neurons tended to sometimes skip a spike (the last one was quite variable). These cycle-to-cycle variations in PD period manifest as deviations from the diagonal in the following plots. 
-
-figure('outerposition',[300 300 903 901],'PaperUnits','points','PaperSize',[903 901]); hold on
 
 for i = 1:length(data)
-	subplot(3,3,i); hold on
+	subplot(2,4,i); hold on
+	isis = diff(data(i).LG);
+	% isis(isis>100) = NaN;
+	% isis(isis<1e-2) = NaN;
+	plot(data(i).LG(1:end-1),isis,'k.')
+		
+	isis(isnan(isis)) = [];
 
 
-	x = data(i).PD_burst_periods(1:end-1);
-	xx = round(data(i).PD_burst_starts(1:end-1)*1e3);
+	ibi = nanmin(nanmax(veclib.stagger(isis,100,100)))/2;
 
-	y = data(i).PD_burst_periods(2:end);
+	plotlib.horzline(ibi);
+	title(char(data(i).experiment_idx),'interpreter','none')
 
 
+	data(i) = crabsort.computePeriods(data(i),'neurons',{'LG'},'ibis',ibi,'min_spikes_per_burst',2);
 
-	C = data(i).temperature(xx);
-	[~,ch]=plotlib.cplot(x,y,C);
-	caxis([7 23])
-	set(gca,'XLim',[0 2],'YLim',[0 2],'XScale','linear','YScale','linear')
-
-	if i < length(data)
-		delete(ch)
-	end
-	title(data(i).experiment_idx)
-
-	if i == 7
-		xlabel('PD burst period (s)')
-		ylabel('Next cycle period (s)')
-	end
+	% isis = diff(data(i).LG);
+	% plot(data(i).LG(1:end-1),isis,'r.')
+	set(gca,'YScale','log')
 end
-
-
-
-title(ch,'Temperature (C)')
-ch.Position(1) = .75;
-
-figlib.pretty
-pdflib.snap()
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -287,17 +349,6 @@ pdflib.snap()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 %% Burst period vs. temperature
 % In the following figure, I plot burst periods of LG and PD neurons as a function of temperature for each prep. Black dots are PD bursts, red dots are LG bursts. Note that they both decrease at approximately the same rate. 
 
@@ -312,9 +363,9 @@ for i = 1:length(data)
 	x = round(data(i).LG_burst_starts*1e3);
 	plot(data(i).temperature(x),data(i).LG_burst_periods,'r.')
 
-	set(gca,'YScale','log','XLim',[6 24])
+	set(gca,'YScale','log','XLim',[7 30])
 
-	title(data(i).experiment_idx)
+	title(char(data(i).experiment_idx),'interpreter','none')
 	if i == 7
 		xlabel('Temperature (C)')
 		ylabel('Burst period (s)')
@@ -326,11 +377,7 @@ pdflib.snap()
 
 
 
-
-
-
-
-
+return
 
 
 
@@ -351,54 +398,11 @@ for i = 1:length(data)
 
 	set(gca,'YScale','linear','YLim',[0 1],'YTick',0:.2:1,'XLim',[6 24])
 
-	title(data(i).experiment_idx)
+	title(char(data(i).experiment_idx),'interpreter','none')
 
 	if i == 7
 		xlabel('Temperature (C)')
 		ylabel('Duty cycle')
-	end
-
-end
-
-figlib.pretty('fs',16)
-pdflib.snap()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%% Spikes per burst vs. temperature
-% In the following figure, I plot the # of spikes/burst as a function of temperature for both the PD neurons (black) and the LG neurons (red). Note that the # of spikes/burst decreases for the PD neuron with temperature, as that is what it does to maintain its duty cycle. 
-
-figure('outerposition',[300 300 1301 801],'PaperUnits','points','PaperSize',[1301 801]); hold on
-for i = 1:length(data)
-	subplot(2,4,i); hold on
-
-
-	x = round(data(i).PD_burst_starts*1e3);
-	plot(data(i).temperature(x),data(i).PD_n_spikes_per_burst,'k.')
-
-	x = round(data(i).LG_burst_starts*1e3);
-	plot(data(i).temperature(x),data(i).LG_n_spikes_per_burst,'r.')
-
-	set(gca,'YScale','log','YLim',[0 1e3],'XLim',[6 24])
-
-	title(data(i).experiment_idx)
-
-	if i > 4
-		xlabel('Temperature (C)')
-	end
-	if i == 1 || i == 5
-		ylabel('# spikes/burst')
 	end
 
 end
@@ -420,11 +424,11 @@ pdflib.snap()
 
 figure('outerposition',[300 300 1002 901],'PaperUnits','points','PaperSize',[1002 901]); hold on
 
-for i = 1:8
+for i = 1:length(data)
 	subplot(3,3,i); hold on
 	gastric.plotRasterTriggeredBy(data(i),'PD', 'LG_burst_starts')
 	set(gca,'YTick',[])
-	ylabel(mat2str(data(i).experiment_idx))
+	ylabel(char(data(i).experiment_idx),'interpreter','none')
 	if i == 7
 		xlabel('Time since LG start (s)')
 	end
@@ -445,11 +449,11 @@ pdflib.snap()
 
 figure('outerposition',[300 300 1002 901],'PaperUnits','points','PaperSize',[1002 901]); hold on
 
-for i = 1:8
+for i = 1:length(data)
 	subplot(3,3,i); hold on
 	gastric.plotRasterTriggeredBy(data(i),'PD', 'LG_burst_ends')
 	set(gca,'YTick',[])
-	ylabel(mat2str(data(i).experiment_idx))
+	ylabel(char(data(i).experiment_idx),'interpreter','none')
 	if i == 7
 		xlabel('Time since LG end (s)')
 	end
@@ -459,11 +463,6 @@ suptitle('PD spikes')
 
 figlib.pretty
 pdflib.snap()
-
-
-
-
-
 
 
 
@@ -481,7 +480,7 @@ figure('outerposition',[300 300 1002 901],'PaperUnits','points','PaperSize',[100
 
 for i = 1:length(data)
 	subplot(3,3,i); hold on
-	[~, ph, ch] = gastric.plotISITriggeredBy(data(i), 'PD', 'LG_burst_starts',[6 23]);
+	[~, ph, ch] = gastric.plotISITriggeredBy(data(i), 'PD', 'LG_burst_starts',[6 30]);
 	if i == 7
 		ylabel(gca,'PD IBI (s)')
 		xlabel(gca,'Time since LG start (s)')
@@ -506,54 +505,12 @@ pdflib.snap()
 
 
 
-
-
-
-%%
-% Now a similar figure, but triggered when LG ends. The effect is less clear here. One reason why is that the LG burst periods are less clearly defined, and the LG neuron tends to peter out slowly. 
-
-figure('outerposition',[300 300 1002 901],'PaperUnits','points','PaperSize',[1002 901]); hold on
-
-for i = 1:length(data)
-	subplot(3,3,i); hold on
-	[~, ph, ch] = gastric.plotISITriggeredBy(data(i), 'PD', 'LG_burst_ends',[6 23]);
-	if i == 7
-		ylabel(gca,'PD ISI (s)')
-		xlabel(gca,'Time since LG end (s)')
-	end
-	set(gca,'YLim',[0 2])
-
-	ph.SizeData = 10;
-	ph.Marker = 'o';
-
-	if i < length(data)
-		delete(ch)
-	end
-
-end
-
-
-figlib.pretty('fs',16)
-pdflib.snap()
-
-
-
-
-
-
-
-
-
-
-
-
-
 %% Phase coupling between LG and PD
 % All of this hints at a phase coupling between LG and PD. Here I measure the phase in the PD cycle where LG starts and plot that as a function of temperature. 
 
 figure('outerposition',[300 300 1200 601],'PaperUnits','points','PaperSize',[1200 601]); hold on
 
-temp_space = 7:2:23;
+temp_space = 7:2:30;
 
 all_phase = [];
 all_temp = [];
@@ -576,11 +533,6 @@ xlabel('Temperature (C)')
 
 figlib.pretty('fs',16)
 pdflib.snap()
-
-
-
-
-
 
 
 
@@ -631,11 +583,6 @@ pdflib.snap()
 
 
 
-
-
-
-
-
 %%
 % Now I colour the dots in the integer coupling plot by prep ID. 
 figure('outerposition',[300 300 901 901],'PaperUnits','points','PaperSize',[1200 901]); hold on
@@ -657,15 +604,6 @@ ylabel('LG periods (s)')
 
 figlib.pretty('fs',16)
 pdflib.snap()
-
-
-
-
-
-
-
-
-
 
 
 
@@ -719,21 +657,3 @@ xlabel('PD period (s)')
 
 figlib.pretty('plw',1)
 pdflib.snap()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%% Metadata
-% To reproduce this document:
-
-pdflib.footer
