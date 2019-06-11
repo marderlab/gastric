@@ -231,7 +231,7 @@ ch = colorbar(ax(2));
 caxis(ax(2),[min(temp_space) max(temp_space)]);
 title(ch,'Temperature (C)')
 
-figlib.pretty('fs',16)
+figlib.pretty('FontSize',16)
 pdflib.snap()
 
 
@@ -276,7 +276,7 @@ for i = 1:length(data)
 	end
 end
 
-figlib.pretty('fs',16)
+figlib.pretty('FontSize',16)
 pdflib.snap()
 
 
@@ -315,7 +315,7 @@ for i = 1:length(data)
 
 end
 
-figlib.pretty('fs',16)
+figlib.pretty('FontSize',16)
 pdflib.snap()
 
 
@@ -358,7 +358,7 @@ for i = 1:length(data)
 
 end
 
-figlib.pretty('fs',16)
+figlib.pretty('FontSize',16)
 pdflib.snap()
 
 
@@ -453,7 +453,7 @@ for i = 1:length(data)
 end
 
 
-figlib.pretty('fs',16)
+figlib.pretty('FontSize',16)
 pdflib.snap()
 
 
@@ -488,7 +488,7 @@ for i = 1:length(data)
 end
 
 
-figlib.pretty('fs',16)
+figlib.pretty('FontSize',16)
 pdflib.snap()
 
 
@@ -529,7 +529,7 @@ set(gca,'YLim',[0 1],'YScale','linear')
 ylabel('LG start in PD phase')
 xlabel('Temperature (C)')
 
-figlib.pretty('fs',16)
+figlib.pretty('FontSize',16)
 pdflib.snap()
 
 
@@ -578,7 +578,7 @@ ch.Location = 'southoutside';
 ch.Position = [.52 .15 .4 .02];
 title(ch,'Temperature (C)')
 
-figlib.pretty('fs',16)
+figlib.pretty('FontSize',16)
 pdflib.snap()
 
 
@@ -610,7 +610,7 @@ set(gca,'XLim',[0.2 2],'YLim',[0 30])
 xlabel('Mean PD period (s)')
 ylabel('LG periods (s)')
 
-figlib.pretty('fs',16)
+figlib.pretty('FontSize',16)
 pdflib.snap()
 
 
@@ -672,7 +672,7 @@ gastric.groupAndPlotErrorBars(PD_space, all_x, all_prep, integerness);
 ylabel('Integerness')
 xlabel('PD period (s)')
 
-figlib.pretty('plw',1)
+figlib.pretty('PlotLineWidth',1)
 pdflib.snap()
 
 
