@@ -83,12 +83,6 @@ for i = 1:length(data)
 	spiketimes = data(i).LG(1:end-1);
 	plotlib.cplot(spiketimes,isis,data(i).temperature(round(spiketimes*1e3)))
 		
-	isis(isnan(isis)) = [];
-
-
-	ibi = nanmin(nanmax(veclib.stagger(isis,100,100)))/2;
-
-	plotlib.horzline(ibi);
 
 	set(gca,'YScale','log','YLim',[1e-2 100])
 	title(char(data(i).experiment_idx),'interpreter','none')
