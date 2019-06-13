@@ -9,7 +9,7 @@ data_root = '/Volumes/HYDROGEN/srinivas_data/gastric-data';
 % In this document we look at pyloric and gastric rhtyhms at differnet temperatures.
 % This data is from Dan Powell and the experiments that go into this are:
 
-include_these = sort({'901_005','901_086','901_046','901_049','901_052','901_062','901_080','901_095','901_098','932_151'});
+include_these = sort({'901_005','901_086','901_046','901_049','901_052','901_062','901_080','901_095','901_098','932_151','941_003','941_006'});
 
 disp(include_these')
 
