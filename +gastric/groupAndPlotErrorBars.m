@@ -2,8 +2,10 @@
 % and plot errors bars, for each prep,
 % and then group them all together and plot errorbars
 
-function groupAndPlotErrorBars(group_bins, group_idx, prep_idx, Y)
+function plot_handles = groupAndPlotErrorBars(group_bins, group_idx, prep_idx, Y)
 
+
+plot_handles = [];
 
 n_preps = length(unique(prep_idx(~isnan(prep_idx))));
 
@@ -19,11 +21,11 @@ for i = 1:n_preps
 
 	for j = 1:length(group_bins)
 		idx = abs(this_group - group_bins(j)) < bin_width;
-		M(j) = mean(this_Y(idx));
+		M(j) = nanmean(this_Y(idx));
 		E(j) = corelib.sem(this_Y(idx));
 	end
 
-	errorbar(group_bins(~isnan(M)),M(~isnan(M)),E(~isnan(M)))
+	plot_handles(end+1) = errorbar(group_bins(~isnan(M)),M(~isnan(M)),E(~isnan(M)));
 
 end
 
@@ -38,4 +40,4 @@ for j = 1:length(group_bins)
 	E(j) = corelib.sem(Y(idx));
 end
 
-errorbar(group_bins(~isnan(M)),M(~isnan(M)),E(~isnan(M)),'LineWidth',3,'Color','k')
+plot_handles(end+1) = errorbar(group_bins(~isnan(M)),M(~isnan(M)),E(~isnan(M)),'LineWidth',3,'Color','k');

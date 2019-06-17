@@ -54,13 +54,13 @@ for i = 1:length(show_these)
 	lgn = c.raw_data(:,channel);
 	lgn = lgn/std(lgn);
 
-	subplot(length(show_these),2,1+(i-1)*2); hold on
+	subplot(length(show_these),1,i); hold on
 	time = (1:length(lgn))*c.dt;
 	plot(time,lgn,'Color',C(temp,:))
 	set(gca,'XLim',[0 30])
 
-	neurolib.raster(c.spikes.lgn.LG*c.dt,'deltat',1,'yoffset',min(lgn)-1,'Color','k','center',false)
-	neurolib.raster(c.spikes.pdn.PD*c.dt,'deltat',1,'yoffset',min(lgn)-2,'Color','r','center',false)
+	neurolib.raster(c.spikes.lgn.LG*c.dt,'deltat',1,'yoffset',min(lgn)-1,'Color','r','center',false)
+	neurolib.raster(c.spikes.pdn.PD*c.dt,'deltat',1,'yoffset',min(lgn)-2,'Color','k','center',false)
 
 	if i < length(show_these)
 		set(gca,'XColor','w')
@@ -79,4 +79,4 @@ for i = 1:length(show_these)
 	end
 end
 
-figlib.pretty()
+figlib.pretty('PlotLineWidth',1)
