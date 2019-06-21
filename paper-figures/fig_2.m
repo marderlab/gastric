@@ -12,6 +12,7 @@ data_root = '/Volumes/HYDROGEN/srinivas_data/gastric-data';
 include_these = {'901_086','901_046','901_049','901_052','901_062','901_080','901_095','901_098'};
 
 disp(include_these')
+clear data
 
 if exist('dan_stacked_data.mat','file') == 2
 

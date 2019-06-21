@@ -1,3 +1,5 @@
+*.docx
+*.cache
 *.mat
 *.sublime-workspace
 *.eps
