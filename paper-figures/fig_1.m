@@ -43,15 +43,22 @@ for i = 6:-1:1
 
 	idx = ceil(((all_temp(i) - min_temp)/(max_temp - min_temp))*100);
 
+
+	
+
 	plot(C.time(1:z), lgn(1:z) ,'Color',c(idx,:))
 	plot(C.time(1:z), dgn(1:z)-2 ,'Color',c(idx,:))
 
+	neurolib.raster(C.spikes.lgn.LG,'deltat',C.dt,'center',false,'Color',c(idx,:),'yoffset',1.1,'fill_fraction',.1)
+	neurolib.raster(C.spikes.dgn.DG,'deltat',C.dt,'center',false,'Color',c(idx,:),'yoffset',-3,'fill_fraction',.1)
 
 	set(gca,'XLim',[0 60])
 
 	axis off
 
-	title(ax(i),[mat2str(all_temp(i)) 'C'])
+	title(ax(i),[mat2str(all_temp(i)) 'C'],'FontWeight','normal')
+
+
 
 
 end
@@ -66,7 +73,7 @@ th = text(ax(1),-10,-2,'dgn');
 
 % now show ISIs of LG to show all the data
 data_root = '/Volumes/HYDROGEN/srinivas_data/temperature-data-for-embedding/';
-data_files = {'845_070','828_086_2','828_114_2','828_128','830_100','830_116_2','830_116_1','830_120_1','834_022','834_086'};
+data_files = {'845_070','828_086_2','828_114_2','828_128','830_100','830_116_2','830_116_1','830_120_1','834_022','834_086_2'};
 
 H = hashlib.md5hash([data_files{:}]);
 
