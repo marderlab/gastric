@@ -19,7 +19,7 @@ all_temp = [11 15 19 23 27 30];
 figure('outerposition',[300 300 1200 901],'PaperUnits','points','PaperSize',[1200 901]); hold on
 
 c = parula(100);
-min_temp = 10;
+min_temp = 5;
 max_temp = 35;
 
 for i = 6:-1:1
