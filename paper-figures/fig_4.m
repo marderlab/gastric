@@ -112,3 +112,50 @@ set(gca,'YLim',[0 .1],'XLim',[0 1])
 
 figlib.pretty
 pdflib.snap()
+
+
+
+
+% supplementary figure -- all rasters
+
+
+
+figure('outerposition',[300 300 1002 901],'PaperUnits','points','PaperSize',[1002 901]); hold on
+
+for i = 1:length(data)
+	subplot(3,4,i); hold on
+	gastric.plotRasterTriggeredBy(data(i),'neuron','PD', 'trigger','LG_burst_starts','N_rescale',NaN)
+	set(gca,'YTick',[])
+	if i == 9
+		xlabel('Time since LG burst start (s)')
+	end
+	if i < 9
+		set(gca,'XTickLabel','')
+	end
+	set(gca,'YColor','w')
+end
+
+figlib.pretty('LineWidth',1)
+pdflib.snap()
+
+
+
+% supplementary figure -- all rasters rescaled by PD period
+
+figure('outerposition',[300 300 1002 901],'PaperUnits','points','PaperSize',[1002 901]); hold on
+
+for i = 1:length(data)
+	subplot(3,4,i); hold on
+	gastric.plotRasterTriggeredBy(data(i),'neuron','PD', 'trigger','LG_burst_starts','N_rescale',3)
+	set(gca,'YTick',[])
+	if i == 9
+		xlabel('PD Phase since LG burst start')
+	end
+	if i < 9
+		set(gca,'XTickLabel','')
+	end
+	set(gca,'YColor','w')
+end
+
+figlib.pretty('LineWidth',1)
+pdflib.snap()
