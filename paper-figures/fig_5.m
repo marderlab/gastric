@@ -2,33 +2,15 @@
 % This figure shows that integer coupling persists across temperatures
 
 
-clear all
 close all
 addpath('../')
-
-data_root = '/Volumes/HYDROGEN/srinivas_data/gastric-data';
 
 
 %% Analysis of gastric and pyloric rhythms at different temperatures
 % In this document we look at pyloric and gastric rhtyhms at differnet temperatures.
 % This data is from Dan Powell and the experiments that go into this are:
 
-include_these = sort({'901_005','901_086','901_046','901_049','901_052','901_062','901_080','901_095','901_098','932_151','941_003','941_006'});
-
-disp(include_these')
-
-if exist('../dan_stacked_data.mat','file') == 2
-
-	load('../dan_stacked_data','data')
-else
-	for i = 1:length(include_these)
-		data(i)  = crabsort.consolidate('neurons',{'PD','LG'},'DataFun',{@crabsort.getTemperature},'DataDir',[data_root filesep include_these{i}],'stack',true);
-	end
-
-	save('../dan_stacked_data','data','-nocompression','-v7.3')
-
-end
-
+data = gastric.getEvokedData();
 
 
 % make sure spiketimes are sorted
@@ -50,10 +32,10 @@ data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',1,'min_spikes_per_bu
 % The periods of PD and LG neurons have previously been shown the be integer-coupled, that is, the LG periods is an integer mulitple of the PD period. Here we see the same thing: the following figure plots the LG period vs. the mean PD periods during taht LG burst. Note that the gray lines are not fits to the data -- they are merely lines with integer slopes. Note that the data naturally falls on top of these lines. 
 
 
-all_x = [];
-all_temp = [];
-all_y = [];
-all_prep = [];
+all_x = [20; 20];
+all_temp = [5; 35];
+all_y = [20; 20];
+all_prep = [1; 1];
 
 for i = 1:length(data)
 	[this_x,this_temp] = gastric.integerCoupling(data(i));
@@ -73,6 +55,10 @@ for i = 4:30
 	yy = xx*i;
 	plot(gca,xx,yy,'Color',[.8 .8 .8])
 end
+
+
+% add some fake data to get the colorbars to be consistent across all figures
+
 
 
 [~,ch] = plotlib.cplot(all_x,all_y,all_temp);

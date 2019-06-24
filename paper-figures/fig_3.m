@@ -2,39 +2,15 @@
 % The point of fig 3 is to compare burst periods of PD and LG as temperature is varied. 
 
 
-clear all
 close all
-
-data_root = '/Volumes/HYDROGEN/srinivas_data/gastric-data';
+addpath('../')
 
 
 %% Analysis of gastric and pyloric rhythms at different temperatures
 % In this document we look at pyloric and gastric rhtyhms at differnet temperatures.
 % This data is from Dan Powell and the experiments that go into this are:
 
-include_these = sort({'901_005','901_086','901_046','901_049','901_052','901_062','901_080','901_095','901_098','932_151','941_003','941_006'});
-
-disp(include_these')
-
-if exist('../dan_stacked_data.mat','file') == 2
-
-	load('../dan_stacked_data','data')
-else
-	for i = 1:length(include_these)
-		data(i)  = crabsort.consolidate('neurons',{'PD','LG'},'DataFun',{@crabsort.getTemperature},'DataDir',[data_root filesep include_these{i}],'stack',true);
-	end
-
-	save('../dan_stacked_data','data','-nocompression','-v7.3')
-
-end
-
-
-
-% make sure spiketimes are sorted
-for i = 1:length(data)
-	data(i).PD = sort(data(i).PD);
-	data(i).LG = sort(data(i).LG);
-end
+data = gastric.getEvokedData();
 
 
 % compute burst metrics of all LG neurons
@@ -114,12 +90,21 @@ for i = 1:length(data)
 	end
 end
 
+clear l
+l(1) = plot(NaN,NaN,'o','MarkerFaceColor','k','MarkerEdgeColor','k');
+l(2) = plot(NaN,NaN,'o','MarkerFaceColor','r','MarkerEdgeColor','r');
+lh = legend(l,{'PD','LG'});
+lh.Position = [.02 .8 .05 .05];
+
 figlib.pretty('FontSize',16)
 
 
 
 
-figure('outerposition',[300 300 1800 600],'PaperUnits','points','PaperSize',[1800 600]); hold on
+% now make the main figure
+
+
+figure('outerposition',[300 300 1500 499],'PaperUnits','points','PaperSize',[1500 499]); hold on
 
 
 
@@ -242,7 +227,7 @@ axis square
 xlabel('Temperature (C)')
 ylabel('Intra-burst frequency (Hz)')
 
-figlib.pretty('FontSize',16)
+figlib.pretty('FontSize',20)
 
 
 

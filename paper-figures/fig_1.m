@@ -6,6 +6,8 @@ clearvars data ax
 
 % load the example dataset
 
+addpath('../')
+
 C = crabsort(false);
 
 

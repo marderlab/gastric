@@ -1,18 +1,32 @@
-function plotRasterTriggeredBy(data,neuron, trigger, before_after)
+function plotRasterTriggeredBy(data, varargin)
 
-if nargin < 4
-	before = 3;
-	after = 3;
-else
-	before = before_after(1);
-	after = before_after(2);
+
+options.neuron = '';
+options.trigger = '';
+options.before = 3;
+options.after = 3;
+options.min_temp = 5;
+options.max_temp = 25;
+options.N_rescale = NaN;
+
+options = corelib.parseNameValueArguments(options, varargin{:});
+
+
+structlib.packUnpack(options)
+
+
+if ~isnan(N_rescale)
+	assert(N_rescale>0,'N_rescale must be a +ve integer')
+	assert(isscalar(N_rescale),'N_rescale must be a +ve integer')
+	assert(N_rescale == round(N_rescale),'N_rescale must be a +ve integer')
 end
-
-
 
 trigger_points = data.(trigger);
 spikes = NaN(200,length(trigger_points));
 temperature = NaN*trigger_points;
+
+neuron_burst_starts = data.([neuron '_burst_starts']);
+neuron_burst_periods = data.([neuron '_burst_periods']);
 
 for j = 1:length(trigger_points)
 	these_spikes = data.(neuron)(data.(neuron) > (trigger_points(j) - before) & data.(neuron) < (trigger_points(j) + after));
@@ -26,18 +40,31 @@ for j = 1:length(trigger_points)
 	end
 
 	these_spikes = these_spikes - trigger_points(j);
-	spikes(1:length(these_spikes),j) = these_spikes;
+	
 	temperature(j) = data.temperature(round(trigger_points(j)*1e3));
+
+	% should we rescale time? 
+	if ~isnan(N_rescale)
+		idx = find(neuron_burst_starts<trigger_points(j),1,'last');
+		mean_neuron_period = nanmean(neuron_burst_periods(idx-N_rescale:idx));
+		these_spikes = these_spikes/mean_neuron_period;
+
+	end
+	spikes(1:length(these_spikes),j) = these_spikes;
+
 end
 
 [temperature,idx] = sort(temperature);
 spikes = spikes(:,idx);
 
 C = temperature;
-C =  C - min(C);
-C = C/max(C);
+C =  C - min_temp;
+C = C/max_temp;
 C = round(C*99 + 1);
 
+% prevent over or underflows
+C(C>100) = 100;
+C(C<1) = 1;
 
 c = parula(120);
 c(end,:) = [0 0 0];
