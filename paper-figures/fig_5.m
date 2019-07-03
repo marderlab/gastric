@@ -61,7 +61,7 @@ end
 
 
 
-[~,ch] = plotlib.cplot(all_x,all_y,all_temp);
+[~,ch] = plotlib.cplot(all_x,all_y,all_temp,'colormap',colormaps.redula(20),'use_scatter',false,'clim',[5 23]);
 set(gca,'XLim',[0.2 2],'YLim',[0 30])
 xlabel('Mean PD period (s)')
 ylabel('LG periods (s)')
@@ -69,8 +69,7 @@ ylabel('LG periods (s)')
 ch.Location = 'southoutside';
 ch.Position = [.37 .18 .1 .02];
 title(ch,'Temperature (C)')
-
-
+colormap(colormaps.redula)
 
 
 
@@ -87,7 +86,20 @@ PD_space = .2:.2:2;
 
 % plot N/plyoric and group by temperature
 subplot(2,2,2); hold on
-gastric.groupAndPlotErrorBars(temp_space, all_temp, all_prep, N_pyloric_gastric);
+ph = gastric.groupAndPlotErrorBars(temp_space, all_temp, all_prep, N_pyloric_gastric);
+
+R = randn(length(ph),1);
+C = ones(length(ph),3);
+C(:,1) = .8+ .05*R;
+C(:,2) = .8+ .05*R;
+C(:,3) = .8+ .05*R;
+
+C(C>1) = 1;
+C(C<0) = 0;
+
+for i = 1:length(ph)-1
+	set(ph(i),'Color',C(i,:))
+end
 
 set(gca,'YLim',[1 400],'YScale','log','XTickLabel',{})
 ylabel('N gastric/pyloric')
@@ -95,7 +107,20 @@ ylabel('N gastric/pyloric')
 
 % plot integerness and group by temperature
 subplot(2,2,4); hold on
-gastric.groupAndPlotErrorBars(temp_space, all_temp, all_prep, integerness);
+ph = gastric.groupAndPlotErrorBars(temp_space, all_temp, all_prep, integerness);
+
+R = randn(length(ph),1);
+C = ones(length(ph),3);
+C(:,1) = .8+ .05*R;
+C(:,2) = .8+ .05*R;
+C(:,3) = .8+ .05*R;
+
+C(C>1) = 1;
+C(C<0) = 0;
+
+for i = 1:length(ph)-1
+	set(ph(i),'Color',C(i,:))
+end
 
 set(gca,'YLim',[0 1])
 ylabel('Integerness')

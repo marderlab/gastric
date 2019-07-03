@@ -6,8 +6,10 @@ options.trigger = '';
 options.before = 3;
 options.after = 3;
 options.min_temp = 5;
-options.max_temp = 25;
+options.max_temp = 23;
 options.N_rescale = NaN;
+options.use_raster = false;
+options.MarkerSize = 1;
 
 options = corelib.parseNameValueArguments(options, varargin{:});
 
@@ -57,23 +59,28 @@ end
 [temperature,idx] = sort(temperature);
 spikes = spikes(:,idx);
 
+
 C = temperature;
 C =  C - min_temp;
-C = C/max_temp;
+C = C/(max_temp - min_temp);
 C = round(C*99 + 1);
 
 % prevent over or underflows
 C(C>100) = 100;
 C(C<1) = 1;
 
-c = parula(120);
+c = colormaps.redula(101);
 c(end,:) = [0 0 0];
 
 % if no temp data avaialble, set to black
 C(isnan(C)) = length(c);
 
 for j = 1:length(trigger_points)
-	neurolib.raster(spikes(:,j),'Color',c(C(j),:),'deltat',1,'yoffset',j,'center',false)
+	if options.use_raster
+		neurolib.raster(spikes(:,j),'Color',c(C(j),:),'deltat',1,'yoffset',j,'center',false)
+	else
+		plot(spikes(:,j),spikes(:,j)*0 + j,'.', 'Color',c(C(j),:),'MarkerSize',MarkerSize)
+	end
 end
 
 plot([0 0],[0 length(trigger_points)],'k--')

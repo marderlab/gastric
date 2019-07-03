@@ -225,7 +225,7 @@ end
 axis square
 
 xlabel('Temperature (C)')
-ylabel('Intra-burst frequency (Hz)')
+ylabel('Within-burst frequency (Hz)')
 
 figlib.pretty('FontSize',20)
 

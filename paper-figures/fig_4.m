@@ -7,6 +7,10 @@ addpath('../')
 data = gastric.getEvokedData();
 
 
+min_temp = 5;
+max_temp = 25;
+
+
 % make sure spiketimes are sorted
 for i = 1:length(data)
 	data(i).PD = sort(data(i).PD);
@@ -26,23 +30,29 @@ data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',1,'min_spikes_per_bu
 
 
 figure('outerposition',[300 300 1202 901],'PaperUnits','points','PaperSize',[1202 901]); hold on
+clear ax
 
-subplot(2,2,1); hold on
+ax(1) = subplot(2,2,1); hold on
 set(gca,'YColor','w')
-gastric.plotRasterTriggeredBy(data(2),'neuron','PD', 'trigger','LG_burst_starts')
+gastric.plotRasterTriggeredBy(data(2),'neuron','PD', 'trigger','LG_burst_starts','before',2,'after',2,'min_temp',min_temp,'max_temp',max_temp)
 xlabel('Time since LG burst start (s)')
 
-subplot(2,2,2); hold on
+ax(2) = subplot(2,2,2); hold on
 set(gca,'YColor','w')
-gastric.plotRasterTriggeredBy(data(2),'neuron','PD', 'trigger','LG_burst_starts','N_rescale',3)
+gastric.plotRasterTriggeredBy(data(2),'neuron','PD', 'trigger','LG_burst_starts','N_rescale',3,'min_temp',min_temp,'max_temp',max_temp)
 xlabel('PD Phase since LG burst start')
 
+ch = colorbar;
+caxis([min_temp max_temp]);
+title(ch,'Temperature (C)')
+colormap(colormaps.redula)
+
+ax(1).Position(3:4) = [.33 .33]
+ax(2).Position(3:4) = [.33 .33];
 
 
 
-
-
-temp_space = 7:2:23;
+temp_space = min_temp:2:max_temp;
 
 all_phase = [];
 all_temp = [];
@@ -57,7 +67,20 @@ end
 
 
 subplot(2,2,3); hold on
-gastric.groupAndPlotErrorBars(temp_space, all_temp, all_prep, all_phase);
+ph = gastric.groupAndPlotErrorBars(temp_space, all_temp, all_prep, all_phase);
+
+R = randn(length(ph),1);
+C = ones(length(ph),3);
+C(:,1) = .8+ .05*R;
+C(:,2) = .8+ .05*R;
+C(:,3) = .8+ .05*R;
+
+C(C>1) = 1;
+C(C<0) = 0;
+
+for i = 1:length(ph)-1
+	set(ph(i),'Color',C(i,:))
+end
 
 set(gca,'YLim',[0 1],'YScale','linear')
 ylabel('LG start in PD phase')
@@ -73,18 +96,7 @@ xlabel('Temperature (C)')
 
 
 
-
-[all_phases, all_temp] = gastric.measurePhase(data(2),'LG','PD');
-
-
-
-c = parula(100);
-min_temp = 5;
-max_temp = 25;
-
-
-temp_space = 7:2:21;
-
+c = colormaps.redula(100);
 
 
 
@@ -94,21 +106,33 @@ end
 all_phases = vertcat(data.all_phases);
 all_temp = vertcat(data.all_temp);
 
+hx = linspace(0,1,20);
+
 % average across preps and plot by temperature
 subplot(2,2,4); hold on
 
 for i = 1:length(temp_space)
 	plot_this = round(all_temp) == temp_space(i);
 	hy = histcounts(all_phases(plot_this),hx);
+	hy = hy/sum(hy);
+	hy = hy/mean(diff(hx));
+
 
 	idx = ceil(((temp_space(i) - min_temp)/(max_temp - min_temp))*100);
+	if idx < 1
+		idx = 1;
+	end
+	if idx > length(c)
+		idx = length(c);
+	end
 
-	plot(hx(2:end),hy/sum(hy),'Color',c(idx,:))
+
+	plot(hx(2:end),hy,'Color',c(idx,:))
 
 end
 xlabel('PD phase')
 ylabel('LG spike probability')
-set(gca,'YLim',[0 .1],'XLim',[0 1])
+set(gca,'XLim',[0 1])
 
 figlib.pretty
 pdflib.snap()
@@ -124,7 +148,7 @@ figure('outerposition',[300 300 1002 901],'PaperUnits','points','PaperSize',[100
 
 for i = 1:length(data)
 	subplot(3,4,i); hold on
-	gastric.plotRasterTriggeredBy(data(i),'neuron','PD', 'trigger','LG_burst_starts','N_rescale',NaN)
+	gastric.plotRasterTriggeredBy(data(i),'neuron','PD', 'trigger','LG_burst_starts','N_rescale',NaN,'min_temp',min_temp,'max_temp',max_temp,'before',2,'after',2)
 	set(gca,'YTick',[])
 	if i == 9
 		xlabel('Time since LG burst start (s)')
@@ -146,7 +170,7 @@ figure('outerposition',[300 300 1002 901],'PaperUnits','points','PaperSize',[100
 
 for i = 1:length(data)
 	subplot(3,4,i); hold on
-	gastric.plotRasterTriggeredBy(data(i),'neuron','PD', 'trigger','LG_burst_starts','N_rescale',3)
+	gastric.plotRasterTriggeredBy(data(i),'neuron','PD', 'trigger','LG_burst_starts','N_rescale',3,'min_temp',min_temp,'max_temp',max_temp)
 	set(gca,'YTick',[])
 	if i == 9
 		xlabel('PD Phase since LG burst start')
