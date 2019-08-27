@@ -4,9 +4,9 @@ function data = getEvokedData()
 
 data_root = '/Volumes/HYDROGEN/srinivas_data/gastric-data';
 
+% 901_005 not included because DG not sorted--ask Dan
 
-
-include_these = sort({'901_005','901_086','901_046','901_049','901_052','901_062','901_080','901_095','901_098','932_151','941_003','941_006'});
+include_these = sort({'901_086','901_046','901_049','901_052','901_062','901_080','901_095','901_098','932_151'});
 
 disp(include_these')
 
@@ -15,7 +15,7 @@ if exist('dan_stacked_data.mat','file') == 2
 	load('dan_stacked_data','data')
 else
 	for i = 1:length(include_these)
-		data(i)  = crabsort.consolidate('neurons',{'PD','LG'},'DataFun',{@crabsort.getTemperature},'DataDir',[data_root filesep include_these{i}],'stack',true);
+		data(i)  = crabsort.consolidate('neurons',{'PD','LG','DG'},'DataFun',{@crabsort.getTemperature},'DataDir',[data_root filesep include_these{i}],'stack',true);
 	end
 
 	save('dan_stacked_data','data','-nocompression','-v7.3')

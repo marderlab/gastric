@@ -14,70 +14,68 @@ data_root = '/Volumes/HYDROGEN/srinivas_data/gastric-data';
 
 data = gastric.getEvokedData();
 
-
+example_data = '901_049';
 
 
 C = crabsort(false);
-C.path_name = [data_root filesep '901_046'];
+C.path_name = [data_root filesep char(example_data)];
 
-show_these = {'0006','0027','0054','0069','0072','0079'};
+show_these = {'0004','0039'};
 
 
 
-figure('outerposition',[300 300 1200 901],'PaperUnits','points','PaperSize',[1200 901]); hold on
+figure('outerposition',[300 300 1200 1300],'PaperUnits','points','PaperSize',[1200 1300]); hold on
 
 c = colormaps.redula(100);
 min_temp = 5;
 max_temp = 23;
 
-for i = 6:-1:1
-	ax(i) = subplot(5,3,i); hold on
+show_these_channels = {'lvn','pdn','mvn','dgn','lgn','ogn'};
 
-	C.file_name = ['901_046_' show_these{i} '.abf'];
 
+clear ax
+ax.raw_data(1) = subplot(4,1,1); hold on
+ax.raw_data(2) = subplot(4,1,2); hold on
+
+
+for i = 1:length(show_these)
+
+	C.file_name = [char(example_data) '_' show_these{i} '.crab'];
 	C.loadFile;
 
-	lgn_channel = find(strcmp(C.common.data_channel_names,'lgn'));
-	dgn_channel = find(strcmp(C.common.data_channel_names,'dgn'));
-
-	lgn = C.raw_data(:,lgn_channel); 
-	dgn = C.raw_data(:,dgn_channel);
-
-	z = find(C.time>60,1,'first');
-
-	lgn = lgn/max(1.1*abs(lgn(1:z)));
-	dgn = dgn/max(1.1*abs(dgn(1:z)));
-
+	for j = length(show_these_channels):-1:1
+		channel_idx(j) = find(strcmp(C.common.data_channel_names,show_these_channels{j}));
+	end
 
 	this_temp = round(mean(C.raw_data(:,strcmp(C.common.data_channel_names,'temperature'))));
 	idx = ceil(((this_temp - min_temp)/(max_temp - min_temp))*100);
 
+	raw_data = C.raw_data(:,channel_idx);
+	time = C.time;
 
+	% normalize
+	z = find(time>60,1,'first');
+
+	for j = 1:size(raw_data,2)
+		raw_data(:,j) = raw_data(:,j)/max(2*abs(raw_data(1:z,j)));
+	end
 	
 
-	plot(C.time(1:z), lgn(1:z) ,'Color',c(idx,:))
-	plot(C.time(1:z), dgn(1:z)-2 ,'Color',c(idx,:))
+	% show raw_data
+	for j = 1:size(raw_data,2)
+		plot(ax.raw_data(i),time,raw_data(:,j)+j,'Color',c(idx,:));
+		th = text(ax.raw_data(i),-1,0,show_these_channels{j});
+		th.Position = [-3 j];
+	end
 
-	neurolib.raster(C.spikes.lgn.LG,'deltat',C.dt,'center',false,'Color',c(idx,:),'yoffset',1.1,'fill_fraction',.1)
-	neurolib.raster(C.spikes.dgn.DG,'deltat',C.dt,'center',false,'Color',c(idx,:),'yoffset',-3,'fill_fraction',.1)
-
-	set(gca,'XLim',[0 60])
-
-	axis off
-
-	title(ax(i),[mat2str(this_temp) char(176) 'C'],'FontWeight','normal')
+	set(ax.raw_data(i),'XLim',[0 60],'YColor','w')
 
 
+	ax.raw_data(i).XColor = 'w';
+	ax.raw_data(i).XTick = [];
 
 
 end
-
-th = text(ax(1),-1,0,'lgn');
-th.Position = [-10 0];
-
-
-th = text(ax(1),-10,-2,'dgn');
-
 
 
 
@@ -86,15 +84,17 @@ th = text(ax(1),-10,-2,'dgn');
 data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',1,'min_spikes_per_burst',7);
 
 % make an axes to show rasters
-ax(end+1) = subplot(5,3,7:12); hold on
+ax.rasters = subplot(4,1,3); hold on
 
 
-ax(end+1) = subplot(5,3,13:15); hold on
-set(ax(end),'YLim',[1 100],'YScale','log')
+ax.LG_burst_periods = subplot(4,1,4); hold on
+set(ax.LG_burst_periods,'YLim',[1 100],'YScale','log')
 
 
 xoffset = 0;
 
+show_neuron_rasters = {'LG','DG'};
+yoffset = 0;
 
 for i = 1:length(data)
 
@@ -108,7 +108,7 @@ for i = 1:length(data)
 
 
 
-	yoffset = 0;
+
 
 	for j = 1:length(stim_times)
 
@@ -135,13 +135,28 @@ for i = 1:length(data)
 
 		idx = ceil(((stim_temp - min_temp)/(max_temp - min_temp))*100);
 
-		if i == 2
+		if data(i).experiment_idx == example_data
 
-			these_spikes = (data(i).LG(data(i).LG > stim_times(j)*1e-3 & data(i).LG < z*1e-3));
-			
-			neurolib.raster(ax(end-1),these_spikes,'Color',c(idx,:),'deltat',1,'yoffset',yoffset)
 
-			yoffset = yoffset - 1;
+			for k = 1:length(show_neuron_rasters)
+				these_spikes = data(i).(show_neuron_rasters{k});
+				these_spikes(these_spikes < stim_times(j)*1e-3) = [];
+				these_spikes(these_spikes > z*1e-3) = [];
+
+				if k == 1
+					this_file_name = data(i).filename(these_spikes(100)*1e3);
+					rx = find(data(i).filename == this_file_name,1,'first')*1e-3;
+				end
+				rx
+				these_spikes = these_spikes - rx;
+
+				neurolib.raster(ax.rasters,these_spikes,'Color',c(idx,:),'deltat',1,'yoffset',yoffset,'center',false,'fill_fraction',.75)
+				yoffset = yoffset - 1;
+			end
+			yoffset = yoffset - .5;
+
+
+
 		end
 
 
@@ -161,7 +176,7 @@ for i = 1:length(data)
 		Y = data(i).LG_burst_periods(only_these);
 		Y(Y>30) = NaN;
 
-		plot(ax(end),xoffset + time, Y,'Color',c(idx,:));
+		plot(ax.LG_burst_periods,xoffset + time, Y,'Color',c(idx,:));
 
 
 	end
@@ -173,33 +188,44 @@ for i = 1:length(data)
 end
 
 
+set(ax.rasters,'XLim',[0 60],'YLim',[yoffset-1, 1])
 
 
 
-set(ax(end-1),'XLim',[0 200])
-ax(end-1).YLim = [-8 1];
-axis(ax(end-1),'off')
-ax(end-1).Position = [.13 .4 .775 .2];
+ax.rasters.YTick = [];
+ax.rasters.YLim = [-12 1];
+ax.rasters.YColor = 'w';
 
 
-figlib.pretty('PlotLineWidth',1,'LineWidth',1)
+xlabel(ax.rasters,'Time (s)')
 
 
-ax(end).Position = [.13 .11 .7 .25];
-ax(end).XColor = 'w';
-ax(end).YMinorGrid = 'on';
-ax(end).YMinorTick = 'on';
+ax.LG_burst_periods.XColor = 'w';
+ax.LG_burst_periods.YMinorGrid = 'on';
+ax.LG_burst_periods.YMinorTick = 'on';
+ylabel(ax.LG_burst_periods,'LG burst period (s)')
 
 
 
-ylabel(ax(end),'LG burst period (s)')
-
-
-ch = colorbar(ax(end));
+ch = colorbar(ax.LG_burst_periods);
 colormap(ch,colormaps.redula);
 title(ch,['Temperature'  char(176) '(C)'])
-ch.Position = [.88 .1 .01 .25];
+ch.Position = [.88 .07 .01 .18];
 caxis([min_temp max_temp])
+
+ax.LG_burst_periods.Position = [.13 .07 .7 .2];
+
+ax.raw_data(1).Position = [.13 .75 .775 .2];
+ax.raw_data(2).Position = [.13 .525 .775 .2];
+
+figlib.pretty('PlotLineWidth',1,'LineWidth',1)
+return
+
+
+
+
+
+
 
 
 
