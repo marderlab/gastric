@@ -4,9 +4,8 @@ function data = getEvokedData()
 
 data_root = '/Volumes/HYDROGEN/srinivas_data/gastric-data';
 
-% 901_005 not included because DG not sorted--ask Dan
 
-include_these = sort({'901_086','901_046','901_049','901_052','901_062','901_080','901_095','901_098','932_151'});
+include_these = sort({'901_005','901_086','901_046','901_049','901_052','901_062','901_080','901_095','901_098','932_151'});
 
 disp(include_these')
 
