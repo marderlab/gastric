@@ -5,7 +5,7 @@
 close all
 addpath('../')
 
-data_root = '/Volumes/HYDROGEN/srinivas_data/gastric-data';
+data_root = '/Volumes/DATA/gastric-data';
 
 
 %% Analysis of gastric and pyloric rhythms at different temperatures
@@ -14,21 +14,21 @@ data_root = '/Volumes/HYDROGEN/srinivas_data/gastric-data';
 
 data = gastric.getEvokedData();
 
-example_data = '901_049';
+example_data = '901_046';
 
 
 C = crabsort(false);
 C.path_name = [data_root filesep char(example_data)];
 
-show_these = {'0004','0039'};
-
+show_these = {'0006','0079'};
+show_these_rasters = {'0006', '0015','0026','0041','0053','0062','0084','0072','0079'};
 
 
 figure('outerposition',[300 300 1200 1300],'PaperUnits','points','PaperSize',[1200 1300]); hold on
 
 c = colormaps.redula(100);
 min_temp = 5;
-max_temp = 23;
+max_temp = 25;
 
 show_these_channels = {'lvn','pdn','mvn','dgn','lgn'};
 
@@ -40,7 +40,7 @@ ax.raw_data(2) = subplot(4,1,2); hold on
 
 for i = 1:length(show_these)
 
-	C.file_name = [char(example_data) '_' show_these{i} '.crab'];
+	C.file_name = [char(example_data) '_' show_these{i} '.abf'];
 	C.loadFile;
 
 	for j = length(show_these_channels):-1:1
@@ -79,12 +79,63 @@ end
 
 
 
+% show rasters at all temperatures
+% make an axes to show rasters
+ax.rasters = subplot(4,1,3); hold on
+
+
+this_data = data([data.experiment_idx] == example_data);
+yoffset = 0;
+for i = 1:length(show_these_rasters)
+	a = find(this_data.filename == [example_data '_' show_these_rasters{i}],1,'first')*1e-3;
+	z = find(this_data.filename == [example_data '_' show_these_rasters{i}],1,'last')*1e-3;
+
+	LG = this_data.LG;
+	LG(LG<a) = [];
+	LG(LG>z) = [];
+	LG = LG - a;
+
+	stim_temp = mean(this_data.temperature(a*1e3:z*1e3));
+
+	idx = ceil(((stim_temp - min_temp)/(max_temp - min_temp))*100);
+
+	neurolib.raster(ax.rasters,LG,'Color',c(idx,:),'deltat',1,'yoffset',yoffset,'center',false,'fill_fraction',.75)
+				yoffset = yoffset - 1;
+
+	DG = this_data.DG;
+	DG(DG<a) = [];
+	DG(DG>z) = [];
+	DG = DG - a;
+
+	stim_temp = mean(this_data.temperature(a*1e3:z*1e3));
+
+	idx = ceil(((stim_temp - min_temp)/(max_temp - min_temp))*100);
+
+	neurolib.raster(ax.rasters,DG,'Color',c(idx,:),'deltat',1,'yoffset',yoffset,'center',false,'fill_fraction',.75)
+				yoffset = yoffset - 1.5;
+
+
+end
+
+
+
+set(ax.rasters,'XLim',[0 60],'YLim',[yoffset-1, 1])
+ax.rasters.YTick = [];
+ax.rasters.YLim = [-21 1];
+ax.rasters.YColor = 'w';
+xlabel(ax.rasters,'Time (s)')
+
+
+
+
+
+
+
 % show burst periods of LG
 
 data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',1,'min_spikes_per_burst',7);
 
-% make an axes to show rasters
-ax.rasters = subplot(4,1,3); hold on
+
 
 
 ax.LG_burst_periods = subplot(4,1,4); hold on
@@ -135,30 +186,6 @@ for i = 1:length(data)
 
 		idx = ceil(((stim_temp - min_temp)/(max_temp - min_temp))*100);
 
-		if data(i).experiment_idx == example_data
-
-
-			for k = 1:length(show_neuron_rasters)
-				these_spikes = data(i).(show_neuron_rasters{k});
-				these_spikes(these_spikes < stim_times(j)*1e-3) = [];
-				these_spikes(these_spikes > z*1e-3) = [];
-
-				if k == 1
-					this_file_name = data(i).filename(these_spikes(100)*1e3);
-					rx = find(data(i).filename == this_file_name,1,'first')*1e-3;
-				end
-				rx
-				these_spikes = these_spikes - rx;
-
-				neurolib.raster(ax.rasters,these_spikes,'Color',c(idx,:),'deltat',1,'yoffset',yoffset,'center',false,'fill_fraction',.75)
-				yoffset = yoffset - 1;
-			end
-			yoffset = yoffset - .5;
-
-
-
-		end
-
 
 		% get all burst periods in this duration
 
@@ -188,16 +215,6 @@ for i = 1:length(data)
 end
 
 
-set(ax.rasters,'XLim',[0 60],'YLim',[yoffset-1, 1])
-
-
-
-ax.rasters.YTick = [];
-ax.rasters.YLim = [-12 1];
-ax.rasters.YColor = 'w';
-
-
-xlabel(ax.rasters,'Time (s)')
 
 
 ax.LG_burst_periods.XColor = 'w';
