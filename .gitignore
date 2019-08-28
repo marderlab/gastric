@@ -7,3 +7,10 @@
 *.pdf
 *.DS_Store
 *.pages
+*.suppinfo
+*.bst
+*.gz
+*.out
+*.log
+*.aux
+*.lyx~

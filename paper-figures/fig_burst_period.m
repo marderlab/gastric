@@ -1,7 +1,7 @@
 %%
 % The point of fig 3 is to compare burst periods of PD and LG as temperature is varied. 
 
-
+clearvars
 close all
 addpath('../')
 
@@ -16,10 +16,10 @@ data = gastric.getEvokedData();
 % compute burst metrics of all LG neurons
 data = crabsort.computePeriods(data,'neurons',{'PD'},'ibis',.18,'min_spikes_per_burst',2);
 data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',1,'min_spikes_per_burst',5);
+data = crabsort.computePeriods(data,'neurons',{'DG'},'ibis',1,'min_spikes_per_burst',5);
 
 
 
-%% supplementarty figure - show every prep 
 
 all_x_PD = [];
 all_y_PD = [];
@@ -29,9 +29,11 @@ all_x_LG = [];
 all_y_LG = [];
 all_prep_LG = [];
 
+
+clear ax
 figure('outerposition',[300 300 1001 901],'PaperUnits','points','PaperSize',[1001 901]); hold on
 for i = 1:length(data)
-	subplot(3,4,i); hold on
+	ax.preps(i) = subplot(3,5,i); hold on
 
 	y = data(i).PD_burst_periods;
 	% remove some outliers
@@ -54,6 +56,11 @@ for i = 1:length(data)
 	data(i).Q_PD_std = nanstd(q10)/sqrt(sum(~isnan(q10)));
 
 
+
+
+
+	% LG
+
 	y = data(i).LG_burst_periods;
 	% remove some outliers
 	y(y>50)= NaN;
@@ -74,41 +81,26 @@ for i = 1:length(data)
 	data(i).Q_LG_mean = nanmean(q10);
 	data(i).Q_LG_std =nanstd(q10)/sqrt(sum(~isnan(q10)));
 
-	set(gca,'YScale','log','XLim',[6 24])
+	set(gca,'YScale','log','XLim',[6 24],'YTick',[.1 1 10 100])
 
-	title(char(data(i).experiment_idx),'interpreter','none')
-	if i == 9
-		xlabel('Temperature (C)')
+	%title(char(data(i).experiment_idx),'interpreter','none')
+	if i == 6
+		xlabel(['Temperature (' char(176) 'C)'])
 		ylabel('Burst period (s)')
 	end
-	if i < 9
+	if i < 6
 		set(gca,'XTickLabel',{})
 	end
-	if rem(i,4) == 1
+	if rem(i,5) == 1
 	else
 		set(gca,'YTickLabel',{})
 	end
 end
 
-clear l
-l(1) = plot(NaN,NaN,'o','MarkerFaceColor','k','MarkerEdgeColor','k');
-l(2) = plot(NaN,NaN,'o','MarkerFaceColor','r','MarkerEdgeColor','r');
-lh = legend(l,{'PD','LG'});
-lh.Position = [.02 .8 .05 .05];
-
-figlib.pretty('FontSize',16)
 
 
 
-
-% now make the main figure
-
-
-figure('outerposition',[300 300 1500 499],'PaperUnits','points','PaperSize',[1500 499]); hold on
-
-
-
-subplot(1,3,1); hold on
+ax.all_periods = subplot(3,3,7); hold on
 temp_space = 7:2:23;
 ph_PD = gastric.groupAndPlotErrorBars(temp_space, all_x_PD, all_prep_PD, all_y_PD);
 
@@ -142,7 +134,7 @@ set(ph_LG(end),'Color','r')
 
 set(gca,'YScale','log')
 
-xlabel('Temperature (C)')
+xlabel(['Temperature (' char(176) 'C)'])
 ylabel('Burst period (s)')
 axis square
 
@@ -154,7 +146,14 @@ legend(l,{'PD','LG'});
 
 
 
-subplot(1,3,2); hold on
+
+
+
+
+
+
+
+ax.q10s = subplot(3,3,8); hold on
 LGE = [data.Q_LG_std]/2;
 PDE = [data.Q_PD_std]/2;
 errorbar([data.Q_LG_mean],[data.Q_PD_mean],PDE,PDE,LGE,LGE,'o');
@@ -193,7 +192,15 @@ end
 all_LG_isis(all_LG_isis<.01) = NaN;
 all_PD_isis(all_PD_isis<.01) = NaN;
 
-subplot(1,3,3); hold on
+
+
+
+
+
+
+
+
+ax.firing_rate = subplot(3,3,9); hold on
 ph_LG = gastric.groupAndPlotErrorBars(temp_space, all_LG_temp, all_LG_prep, 1./all_LG_isis);
 
 C = ones(length(ph_LG),3);
@@ -224,12 +231,30 @@ end
 
 axis square
 
-xlabel('Temperature (C)')
+xlabel(['Temperature (' char(176) 'C)'])
 ylabel('Within-burst frequency (Hz)')
 
-figlib.pretty('FontSize',20)
 
 
 
+figlib.pretty('FontSize',18)
 
 
+
+for i = 1:length(ax.preps)
+	ax.preps(i).Position(4) = .18;
+	if rem(i,5) ~= 1
+		ax.preps(i).OuterPosition(3) = .13;
+	end
+end
+
+for i = 1:5
+	ax.preps(i).Position(2) = .71;
+end
+
+for i = 6:length(ax.preps)
+	ax.preps(i).Position(2) = .5;
+end
+
+ax.all_periods.Position(1) = .11;
+ax.firing_rate.Position(1) = .71;

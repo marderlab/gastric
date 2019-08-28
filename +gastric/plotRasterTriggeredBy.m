@@ -47,9 +47,15 @@ for j = 1:length(trigger_points)
 
 	% should we rescale time? 
 	if ~isnan(N_rescale)
+
 		idx = find(neuron_burst_starts<trigger_points(j),1,'last');
-		mean_neuron_period = nanmean(neuron_burst_periods(idx-N_rescale:idx));
-		these_spikes = these_spikes/mean_neuron_period;
+		if idx - N_rescale > 0
+			mean_neuron_period = nanmean(neuron_burst_periods(idx-N_rescale:idx));
+			these_spikes = these_spikes/mean_neuron_period;
+		else
+			these_spikes = these_spikes*NaN;
+		end
+
 
 	end
 	spikes(1:length(these_spikes),j) = these_spikes;

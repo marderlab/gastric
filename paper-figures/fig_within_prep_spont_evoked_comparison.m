@@ -3,7 +3,7 @@
 close all
 clearvars
 
-data_root = '/Volumes/HYDROGEN/srinivas_data/gastric-data';
+data_root = '/Volumes/DATA/gastric-data';
 
 
 data = gastric.getEvokedData();

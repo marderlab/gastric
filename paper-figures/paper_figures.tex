@@ -1,0 +1,183 @@
+
+
+\documentclass[9pt,lineno]{elife}
+% Use the onehalfspacing option for 1.5 line spacing
+% Use the doublespacing option for 2.0 line spacing
+% Please note that these options may affect formatting.
+% Additionally, the use of the \newcommand function should be limited.
+
+
+\usepackage{lipsum} % Required to insert dummy text
+\usepackage[version=4]{mhchem}
+\usepackage{siunitx}
+\usepackage{soul}
+\usepackage[colorinlistoftodos]{todonotes}
+\DeclareSIUnit\Molar{M}
+
+
+\title{Title of Dan's paper}
+
+\author[1]{Author Name}
+\author[1]{Eve Marder}
+\affil[1]{Volen Center and Biology Department, Brandeis University, Waltham MA 02454 USA}
+
+
+
+\corr{marder@brandeis.edu}{EM}
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Dan's awesome abstract
+\end{abstract}
+
+
+\section*{Introduction}
+
+
+
+
+\section{Results}
+
+
+\subsection{Single-sensor homeostatic regulation can compensate for changes in cell size}
+
+
+\begin{figure}
+\includegraphics[width=\linewidth]{1.png}
+\caption{\textbf{Circuit Diagram + Example traces showing units on each nerve} More caption } 
+\label{fig:1}
+\end{figure}
+
+
+\begin{figure}
+\begin{fullwidth}
+\includegraphics[width=\linewidth]{2.pdf}
+
+\caption{\textbf{Gastric mill rhythms can be evoked at temperatures from 7 to 23 C } Let me know if you want me to write out the figure captions, or if you want to do it.   } 
+\label{fig:1}
+\end{fullwidth}
+\end{figure}
+
+
+
+
+\subsection{Robustness to perturbations analogous to size change results in sensitivity to some channel-specific perturbations}
+
+
+\begin{figure}
+\begin{fullwidth}
+\includegraphics[width=\linewidth]{3.pdf}
+
+\caption{\textbf{Within-preparation comparison of spontaneous and evoked gastric mill rhythms} Let me know if you want me to write out the figure captions, or if you want to do it.  }
+\label{fig:2}
+\end{fullwidth}
+\end{figure}
+
+
+To determine which perturbations could be recovered from, we numerically calculated the basins of attraction of these four dynamical states by initializing models at different points in the plane (Fig. \ref{fig:2}d) . For example, all perturbations that move the conductance densities of the neuron within the green basin can be compensated from, because homeostatic regulation drives the conductances back to the target state, and the neuron eventually generates its original voltage dynamics. There was a total overlap between the basin of attraction of the target state and the diagonal, suggesting that all size change perturbations can be compensated for perfectly. Strikingly, the basin of attraction of the target state was relatively broader close to the origin and relatively narrower at the reference state. This suggests that a larger relative de-correlation in ion channel conductance densities can be compensated for at low absolute values of ion channel densities, as would be seen in a developing neuron that had begun to express its ion channels.
+
+Finally, the calcium level set was an excellent predictor of asymptotic conductance densities of neurons perturbed to start from all over the plane (black crosses on red line, (Fig. \ref{fig:2}c)). This is surprising since the motion of the system is not restricted to this two-dimensional plane, but can instead exist in the full 8-dimensional space of conductance densities. The correspondence between the calcium level set (calculated without knowledge of the kinetic parameters of the homeostatic regulation) and the asymptotic states, suggests that trajectories tend to preserve ratios of conductance densities. 
+
+Robustness to perturbations along the diagonal (corresponding to changes in cell size) coexisted with sensitivity to off-diagonal perturbations. Mapping the flow field in this plane (Fig. \ref{fig:2}d) reveals that flows close to the diagonal are restorative and drive the neuron to the original set of conductance densities, while flows far from the diagonal can drive the neuron to homeostatic targets far from the reference model. Thus, perturbations in a direction orthogonal to the diagonal can lead to a very different steady-state outcome, resulting in pathological compensation.
+
+We constructed a map of the sensitivity of feedback regulation to perturbations (Fig. \ref{fig:2}e). Only a small region corresponded to acute robustness to perturbation (Fig. \ref{fig:2}e green). A much larger region, along the diagonal, corresponded to sensitivity to perturbation but where homeostasis could compensate for the perturbation (Fig. \ref{fig:2}e purple). Intriguingly, regions where the neuron was acutely robust to perturbations existed close to the reference model, where compensation was pathological, and drove the neuron to states with undesirable voltage dynamics (Fig. \ref{fig:2}e red). These regions, though close to the reference model, did not lie on the diagonal. This suggests that ratio-preserving regulation rules, which may have evolved biologically to confer robustness to size changes, are vulnerable to perturbations in the expression of some, but not all channel types. 
+
+
+\subsection{Predicting failure of homeostatic compensation}
+
+\begin{figure}[!hbp]
+\centering
+\begin{fullwidth}
+\includegraphics[width=\linewidth]{4.pdf}
+\end{fullwidth}
+\caption{\textbf{PD and LG bursting speeds up with increasing temperature in a similar manner.} Let me know if you want me to write out the figure captions, or if you want to do it.   }
+\end{figure}
+
+In the previous sections, we showed that that the calcium level sets correspond not only to the desired physiological bursting dynamics, but also other bursting dynamics, tonic spiking, and silence. The existence of these regions of parameter space are necessary, but not sufficient, for a pathological homeostatic outcome because the error of the feedback signal in these regions is zero.
+
+To find sufficient conditions for failure of a calcium-dependent feedback mechanism, we focussed on the region in parameter space where calcium level sets coincided with silence. While previous work had also suggested that homeostatic compensation to perturbations such as channel deletions could render neurons silent, it remains unclear, mechanistically, why some perturbations can be compensated for, and why some render the neuron silent, and cannot be recovered from. Periods of silence have been observed during "crashes" when experimental perturbations exceed the permissive range, and are typically beyond neurons' ability to compensate for  \citep{Haley:2018ky, Haddad:2018bs,Tang:2012ha}. 
+
+We hypothesized that homeostatic rules can trap neurons in silent states when the membrane potential is sufficiently depolarized so that a  constant influx of calcium through calcium channels occurs due to window currents. We assumed that the silent state corresponds to quenched dynamics in both voltage and calcium. Because the calcium level is constrained to be the same as that of the reference model (the calcium target), we can solve for the fixed points of Eq. \ref{eq:ca} to obtain the voltages at which the calcium dynamics are quenched. We note that voltages at which these fixed points occur do not depend on channels that are not calcium channels, since they do not affect calcium dynamics. Fixed points in the calcium ODE exist only for large values of the calcium channels conductance density (Fig. \ref{fig:analytic}a), suggesting that silent states that cannot be recovered from are impossible below a critical calcium channel conductance density. 
+
+Similarly, we can solve for fixed points in the voltage ODE (Eq. \ref{eq:voltage-density}). The intersection of these two sets of curves corresponds to fixed points in both the voltage and calcium dynamics (Fig. \ref{fig:analytic}a). Plotting the location of points in parameter space where both fixed points overlap reveals a smooth line (black) that partially overlaps with the calcium level set (red), and is entirely contained in the numerically computed basin of stability of the silent state (Fig. \ref{fig:analytic}b). 
+
+Why does the analytically calculated set of silent states contain a branch that does not overlap with the numerically computed calcium level set? One possibility is that while all points in the analytical set are indeed silent, their stability properties change along the curve. The voltage fixed points are always unstable, and the upper branch of the calcium fixed points are always stable, suggesting that the overall stability of the silent state may depend on which dynamics dominates as a function of position along the set. To test this, we examined two points along the analytical set, one where it coincided with the numerically measured calcium level set (Fig. \ref{fig:analytic}b, yellow star), and one on the branch that diverged from the numerically measured calcium level set (Fig. \ref{fig:analytic}b, purple diamond). While a neuron initialized at the yellow star remained quiescent (Fig. \ref{fig:analytic}c), a neuron initialized at the purple diamond spontaneously left the silent state, and settled on a periodic sub-threshold orbit (Fig. \ref{fig:analytic}c). Plotting the voltage as the parameters of the neuron model are varied along the analytically calculated set reveal that the neuron switches from a silence to sub-threshold oscillations to spiking (Fig. \ref{fig:analytic}d), which is caused not by the regulatory mechanism but by a destabilization of the fixed point in the intrinsic voltage and calcium dynamics of the neuron. 
+
+Together, these results show that simple, calcium-dependent channel regulation mechanisms can be inherently sensitive to channel deletions and produce pathological compensation, even for perturbations that may not affect neural behaviour acutely.
+
+\subsection{Robustness to scale perturbations persists across projections and neuron models}
+
+\begin{figure}[!hbp]
+\centering
+\begin{fullwidth}
+\includegraphics[width=\linewidth]{5.pdf}
+\end{fullwidth}
+\caption{\textbf{PD and LG bursting speeds up with increasing temperature in a similar manner.} Let me know if you want me to write out the figure captions, or if you want to do it.   }
+\end{figure}
+
+Up to this point, we have analyzed the effect of perturbations using a specific projection of the high-dimensional space of conductances. The dimension of the full space of conductance densities is equal to the number of distinct ion channel populations $N$, and the projections shown in the preceding sections do not capture the full space. Similarly, the full level set of calcium is also high dimensional, since it exists in the full $N$-dimensional space, and appears as lines in these projections only because intersections with the projection plane are plotted. The projection chosen in the preceding sections emphasized the distinct contribution of calcium currents, leading to the question if the general features seen hold true for other projections.
+
+We repeated the perturbation analysis for two additional perturbations (Fig. \ref{fig:4}a-b). No matter what projection is chosen, the diagonal always corresponds to a change in size, since along that line all conductance densities are scaled together. For both additional projections, we found that the diagonal is entirely contained in the basin of attraction of the canonical state (Fig. \ref{fig:4}a-b, green zone) and that the calcium level set intersects with the diagonal exactly once. Taken together, these results suggest that scale perturbations (size changes) can typically be compensated for by homeostasis, but off-diagonal perturbations (e.g. channel deletions, pharmacological manipulations) may not be. 
+
+A generic perturbation in the conductance densities of ion channels in a neuron is high-dimensional, and does not occur on a plane. What effect does a typical perturbation have on the homeostatic system, and what features of the perturbation determine if compensation is restorative or pathological? We parametrized random perturbations in the full-dimensional space by their mean and variance (relative to the conductance densities in the original model, see Methods), and measured the burst period of neuron models after recovery from perturbation (Fig \ref{fig:4}c). Consistent with our two-dimensional perturbation analysis, the ability of the homeostatic mechanism to recover from perturbations depended not on the mean value, but on the variance, suggesting that homeostasis could be simultaneously robust to large size changes (low-variance, correlated changes) and sensitive to ratio-disrupting perturbations. 
+
+Theoretical and experimental work has shown that many different sets of maximal conductances can lead to similar voltage dynamics \citep{Prinz:2003eza,Golowasch:2002cza,Goldman:2001vva,Taylor:2009kb, Marder:2011de,Caplan:2014jd,Swensen:2005bo, Aizenman:2003fc}. Are all models that share a similar dynamics equally robust to changes in size and off-diagonal perturbations? Picking a regularly bursting neuron with a well-defined burst period and duty cycle, we searched the 8-dimensional space of conductance densities to find ~350 sets of maximal conductance densities that disp For every model, we measured the average intracellular calcium at baseline, and then computed a level set of calcium for every model where the set of calcium was the same as in baseline. Despite the large variation in individual parameters, all calcium level sets were strikingly similar, and almost all level sets intersected with the diagonal exactly once (Fig. \ref{fig:4}d). The similarity of calcium level sets across neuron models suggests that different models with diverse maximal conductance densities are  robust to changes in size, and can behave similarly to perturbations in their ion channels. 
+
+
+
+\section{Discussion}
+
+
+\subsection{Consequences of using calcium concentration as a proxy for cell activity}
+
+For activity-dependent homeostatic regulation to work, a neuron must be able to measure the deviation of its own activity from some target. A common hypothesis, that we have adopted in this paper, is that neurons can estimate some features of their own dynamics using intracellular calcium concentrations as a proxy for activity \citep{LeMasson:1993jz,Siegel:1994ue,Gunay:2010jh,Golowasch:1999ha,Davis:2006wd,OLeary:2011fd}. Because baseline levels of intracellular calcium concentration are very low compared to extracellular levels, depolarization of the membrane that opens calcium channels can lead to a transient calcium influx. Calcium channels therefore can play an important role in directly mapping the voltage dynamics of a neuron onto its intracellular calcium levels. Intriguingly, calcium channels are expressed early in development, suggesting that this part of the feedback loop precedes regulation and expression of ion channels needed for the neuron's target behavior \citep{Baccaglini:1977, Liljelund:2000em, Yamashita:1993fy, Faure:2001gg,Heusser:2005jz}.
+
+However, our results suggest that having too many or too large a fraction of calcium channels can lead to undesirable outcomes, where calcium window currents can fool homeostatic regulation into perpetuating silent states (Fig. \ref{fig:analytic}). Intriguingly, a number of studies of calcium-dependent regulation show that calcium influx through specific channels is required for homeostatic responses, which may make homeostatic regulation more robust biologically \citep{OLeary:2010hq,wheeler2012cav1}. Developing and growing neurons likely switch regulation rules during their lifetime, using one rule to express channels needed for function and another to maintain ionic conductances within acceptable limits  \citep{Desai:1999ib}, suggesting that neurons may avoid some forms of pathological compensation by switching regulation rules based on developmental context. 
+
+
+\subsection{Consequences of modeling calcium concentration using a single variable}
+
+One of the consequences of the simple single-compartment model we have used in this paper is that we use a single variable to describe (a) the calcium concentration in the thin shell that affects the gating of KCa channels, (b) the calcium concentration in the bulk  of the soma that likely determines rates of translation, insertion or degradation of ion channel proteins (Eq. \ref{eq:translation}), and (c) the calcium concentration in the nucleus, that modulates transcription rates (Eq. \ref{eq:transcription}). In real neurons, these three calcium concentrations can likely be very different \citep{Sala:1990hi, DeSchutter:1998tl}, and can have different scaling properties. For example, while the thin-shell calcium concentration can scale with the surface area of the cell, the bulk calcium concentration may scale with the volume of the cell. While this model lacks the details to tease these disparate effects apart, it is useful to consider the biophysical models that are consistent with the assumptions we made to simplify our analysis. The discovery of protein synthesis in neuronal compartments far from the soma, including in dendrites, suggests that local activity-dependent mechanisms can regulate local protein levels \citep{Steward:1982tx,Miller:2002wh,Sutton:2004fq}. Such mechanisms likely depend on concentration of calcium in some small neighborhood, rather than the calcium concentration in the soma, suggesting that a one-compartment model can mimic some features of local, activity-dependent protein synthesis and degradation \citep{Ouyang:1999ud}. Another possibility is that detachment of granules of mRNA at a particular location \citep{Doyle:2011be}, or the insertion or removal of ion channels into the membrane, can depend on the local calcium concentration. In summary, local activity-dependent regulation mechanisms can be approximated by the model used here, and are an attractive formalism since they do not require co-ordination of sensors and regulators across the neuron. 
+
+
+\subsection{Homeostatic compensation of growth in spatially extended neurons is more complex}
+
+We examined how neurons could use homeostatic mechanisms to regulate their ion channel conductances to preserve intrinsic dynamics as their size changed in a single compartment model. A single compartment model neglects many of the complexities in real neurons since the neuron is described by a single membrane potential and a single value of intracellular calcium and is assumed to have no internal structural heterogeneity. While single compartment models are clearly only a coarse approximation of real neurons, recent work has suggested that some neurons are surprisingly electronically compact despite their large size and spatially complex morphology \citep{Otopalik:2017jr, Ray:2019fo}. Other neurons with long processes that extend their processes as the animal grows (e.g. motor neurons controlling muscles in the extremities) face several additional challenges. First, their dynamics are no longer described by a single membrane potential since they are not electronically compact. Second, channel expression is spatially regulated: for example, sodium channels occur at a higher density on the axon \citep{Kole:2008jv}. Third, intracellular calcium levels are not spatially uniform \citep{HernandezCruz:1990wv}, and can vary substantially along the length of thin processes \citep{Regehr:1994wg}. Finally, since all mRNA ultimately originates from the cell body, mRNA and ribosomes and other translation machinery, or entire ion channels, must be physically transported from the nucleus to parts of the cell where they are needed \citep{Doyle:2011be, Kosik:2016gs, Bramham:2007ii}, leading to other regulatory problems with the transport of cargo \citep{Doyle:2011be,Williams:2016cw}. Nevertheless, our formalism reveals certain fundamental problems that must be addressed even in more detailed analysis that models neurons as spatially extended.  
+
+
+\subsection{Stochastic effects can arise from low copy numbers}
+Following earlier work, we modeled the gating of ion channels as a deterministic process \citep{Hodgkin:1952gr}. Even though the gating of an individual ion channel is a stochastic process, this deterministic model approximates well a large number of ion channels, since their individual fluctuations average out  \citep{White:2000th}. However, when neurons are sufficiently small, or when conductance densities are sufficiently low, a neuron, or a piece of membrane in a neuron may have only a small number of channels \citep{Smith:2002cn}. In this limit, the stochastic gating of ion channels becomes substantial, and has been shown to qualitatively change the behavior of neurons  \citep{Chow:1996gz, Sengupta:2013ba}. Another source of stochasticity is in the regulation mechanism since mRNA copy numbers are typically low  \citep{Kosik:2016gs}. It is not clear whether homeostatic mechanisms continue to function in these extreme limits, and there is formal theory to show that low copy numbers present regulation problems that cannot be circumvented \citep{lestas2010fundamental}. Such effects will introduce perturbations in the physiology of a cell that we have not accounted for explicitly here.
+
+\subsection{Model predictions for non-neuronal cells}
+
+Our results suggest that cells that generate stereotyped voltage dynamics despite potential changes in size can use a single sensor, for instance intracellular calcium, to regulate abundances of several different protein types that contribute to the voltage dynamics. Neurons are the archetypal electrically active cells, and can realize this negative feedback loop using calcium-dependent transcription, translation, or channel insertion, voltage-gated channels, and calcium channels. Stereotyped electrical activity is widespread in many different cell types, including bacteria \citep{Masi:2015iy, Kralj:2011ke}, pancreatic $\beta$-cells \citep{Bertram:2010ff} and cardiac cells \citep{Hund:2000kz}. Bursting oscillations play an integral role in insulin secretion by pancreatic $\beta$-cells  \citep{Bertram:2010ff}, and these cells can compensate for genetic deletions of a critical channel K(ATP) channel population by over-expressing other potassium channels \citep{Yildirim:2017kj} in the mouse, but not in humans. Recent work suggests that these cells can use intracellular calcium as a sensor of voltage dynamics in a negative feedback loop to regulate activity \citep{Yildirim:2017fq}. Thus, many other cell types may share common features of homeostatic regulation with neurons such as robustness to size changes and sensitivity to some perturbations.  
+
+\subsection{Other mechanisms of compensation for growth}
+
+In this study, we analyzed how neurons can regulate the densities of ion channel populations as they grow. In addition to this, neurons can regulate a number of other properties during growth. The manner in which a neuron grows can have a critical role in shaping neuronal function. In \emph{isometric} growth, the length and diameter of a neuron or neuron component increase by the same factor, which increases input conductance by the square of the growth factor, and changes the passive properties of the neuron. In \emph{iso-electrotonic} growth, the diameters of neuronal processes increase as the square of their increase in length, which increases input conductance by the cube of the growth factor, but leaves passive properties of the neuron unchanged \citep{Olsen:1996im}. Lateral giant neurons in the crayfish grow isometrically, and and become progressively less sensitive to phasic components of inputs, since high-frequency signals are attenuated to a greater extent \citep{Edwards:omEiAjTW, Edwards:OcB8a57D}. Retzius neurons in the leech can compensate for an increase in size by increasing the membrane resistance of the dendrites \citep{DeLaRosaTovar:2016ed}.
+
+Compensation of size change of one neuron can also involve other neurons. In pyramidal cells, as dendrites grow, pre-existing synaptic sites become physically or electrically more distant to the soma \citep{Davis:2003ev, Stuart:1995cz}. Muscle cells in the crayfish neuromuscular junction maintain a constant level of  depolarization, despite a 50-fold increase in their size, by a regulated increase in the presynaptic release and quantal size \citep{Pulver:2004ic, Davis:2003ev, Lnenicka:1983ib}. Circuits early in development can express adult-like rhythmic activity, but their activity can be continuously inhibited by descending cells \citep{Fenelon:Dh60FeLw,Humphreys:2018ta, Bentley:1970kp}. Neuromodulators and co-transmitters \citep{Fenelon:1999vn, Kilman:1999vr} can be sequentially released onto neurons during development, which means that the neuromodulatory context a neuron exists in may depend on its size. Homeostatic mechanisms like synaptic scaling that can compensate for changing levels of input can also help a neuron compensate for changes in input resistance that may occur during growth \citep{Turrigiano:2012hw, Turrigiano:2007bl}. 
+
+
+
+
+\section{Methods and Materials}
+
+\subsection*{Data analysis}
+
+\subsubsection*{Spike identification and sorting}
+
+\subsubsection*{Measuring burst metrics}
+
+\subsubsection*{Estimating $Q_{10}$s of burst periods}
+
+
+
+
+\appendix
+
+\end{document}
