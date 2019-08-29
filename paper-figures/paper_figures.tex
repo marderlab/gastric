@@ -37,14 +37,16 @@ Dan's awesome abstract
 
 \section*{Introduction}
 
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla consequat tincidunt. Donec nec ornare leo. Nullam volutpat arcu ac placerat imperdiet. Mauris et tristique nisi. Nullam ac elit augue. Vivamus ullamcorper turpis id ipsum tincidunt, ac commodo risus lacinia. Donec ornare diam nisl, at molestie lectus commodo et. Sed scelerisque efficitur turpis, non sagittis elit pharetra vel. Sed luctus pharetra dolor, quis eleifend odio. Suspendisse lobortis nisl dui, in molestie mi consectetur sed. Aenean vitae ultricies massa. Mauris id tempor nulla. Nullam ac nisi erat. Cras congue aliquet vulputate. Nulla vel fermentum nisi. Praesent commodo, lacus at mollis luctus, arcu diam interdum tellus, nec consectetur turpis libero eget arcu.
 
-
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla consequat tincidunt. Donec nec ornare leo. Nullam volutpat arcu ac placerat imperdiet. Mauris et tristique nisi. Nullam ac elit augue. Vivamus ullamcorper turpis id ipsum tincidunt, ac commodo risus lacinia. Donec ornare diam nisl, at molestie lectus commodo et. Sed scelerisque efficitur turpis, non sagittis elit pharetra vel. Sed luctus pharetra dolor, quis eleifend odio. Suspendisse lobortis nisl dui, in molestie mi consectetur sed. Aenean vitae ultricies massa. Mauris id tempor nulla. Nullam ac nisi erat. Cras congue aliquet vulputate. Nulla vel fermentum nisi. Praesent commodo, lacus at mollis luctus, arcu diam interdum tellus, nec consectetur turpis libero eget arcu.
 
 \section{Results}
 
 
 \subsection{Single-sensor homeostatic regulation can compensate for changes in cell size}
 
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla consequat tincidunt. Donec nec ornare leo. Nullam volutpat arcu ac placerat imperdiet. Mauris et tristique nisi. Nullam ac elit augue. Vivamus ullamcorper turpis id ipsum tincidunt, ac commodo risus lacinia. Donec ornare diam nisl, at molestie lectus commodo et. Sed scelerisque efficitur turpis, non sagittis elit pharetra vel. Sed luctus pharetra dolor, quis eleifend odio. Suspendisse lobortis nisl dui, in molestie mi consectetur sed. Aenean vitae ultricies massa. Mauris id tempor nulla. Nullam ac nisi erat. Cras congue aliquet vulputate. Nulla vel fermentum nisi. Praesent commodo, lacus at mollis luctus, arcu diam interdum tellus, nec consectetur turpis libero eget arcu.
 
 \begin{figure}
 \includegraphics[width=\linewidth]{1.png}
@@ -116,7 +118,7 @@ Together, these results show that simple, calcium-dependent channel regulation m
 \begin{fullwidth}
 \includegraphics[width=\linewidth]{5.pdf}
 \end{fullwidth}
-\caption{\textbf{PD and LG bursting speeds up with increasing temperature in a similar manner.} Let me know if you want me to write out the figure captions, or if you want to do it.   }
+\caption{\textbf{PD spike rasters triggered by LG burst starts, but not DG, exhibit regularity across temperatures.} Let me know if you want me to write out the figure captions, or if you want to do it.   }
 \end{figure}
 
 Up to this point, we have analyzed the effect of perturbations using a specific projection of the high-dimensional space of conductances. The dimension of the full space of conductance densities is equal to the number of distinct ion channel populations $N$, and the projections shown in the preceding sections do not capture the full space. Similarly, the full level set of calcium is also high dimensional, since it exists in the full $N$-dimensional space, and appears as lines in these projections only because intersections with the projection plane are plotted. The projection chosen in the preceding sections emphasized the distinct contribution of calcium currents, leading to the question if the general features seen hold true for other projections.
@@ -125,11 +127,30 @@ We repeated the perturbation analysis for two additional perturbations (Fig. \re
 
 A generic perturbation in the conductance densities of ion channels in a neuron is high-dimensional, and does not occur on a plane. What effect does a typical perturbation have on the homeostatic system, and what features of the perturbation determine if compensation is restorative or pathological? We parametrized random perturbations in the full-dimensional space by their mean and variance (relative to the conductance densities in the original model, see Methods), and measured the burst period of neuron models after recovery from perturbation (Fig \ref{fig:4}c). Consistent with our two-dimensional perturbation analysis, the ability of the homeostatic mechanism to recover from perturbations depended not on the mean value, but on the variance, suggesting that homeostasis could be simultaneously robust to large size changes (low-variance, correlated changes) and sensitive to ratio-disrupting perturbations. 
 
+\begin{figure}[!hbp]
+\centering
+\begin{fullwidth}
+\includegraphics[width=\linewidth]{6.pdf}
+\end{fullwidth}
+\caption{\textbf{Phase locking of LG burst starts, but not DG, to PD cycle} Let me know if you want me to write out the figure captions, or if you want to do it.   }
+\end{figure}
+
+
 Theoretical and experimental work has shown that many different sets of maximal conductances can lead to similar voltage dynamics \citep{Prinz:2003eza,Golowasch:2002cza,Goldman:2001vva,Taylor:2009kb, Marder:2011de,Caplan:2014jd,Swensen:2005bo, Aizenman:2003fc}. Are all models that share a similar dynamics equally robust to changes in size and off-diagonal perturbations? Picking a regularly bursting neuron with a well-defined burst period and duty cycle, we searched the 8-dimensional space of conductance densities to find ~350 sets of maximal conductance densities that disp For every model, we measured the average intracellular calcium at baseline, and then computed a level set of calcium for every model where the set of calcium was the same as in baseline. Despite the large variation in individual parameters, all calcium level sets were strikingly similar, and almost all level sets intersected with the diagonal exactly once (Fig. \ref{fig:4}d). The similarity of calcium level sets across neuron models suggests that different models with diverse maximal conductance densities are  robust to changes in size, and can behave similarly to perturbations in their ion channels. 
 
 
+\begin{figure}[!htp]
+\centering
+\begin{fullwidth}
+\includegraphics[width=\linewidth]{7.pdf}
+\end{fullwidth}
+\caption{\textbf{LG, but not DG, bursting is phase locked to PD across temperature.} (a) Probability of LG burst starts as a function of PD phase. Each curve pools all LG burst starts in a given temperature.  (b) Probability of DG burst starts as a function of PD phase. Each curve in (a) and (b) pools all LG or DG burst starts at a given temperature. Shading indicates standard error.  (c) Mean LG start in PD phase as a function of temperature. Gray lines denote individual preparations; black line is the average of all preparations. Bars indicate standard error of the mean. (d) Probability of LG spiking as a function of PD phase. (e) Proabbility of DG spiking as a function of PD phase.  Dashed lines in all panels indicates chance level.}
+\end{figure}
+
 
 \section{Discussion}
+
+
 
 
 \subsection{Consequences of using calcium concentration as a proxy for cell activity}
