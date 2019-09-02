@@ -107,7 +107,7 @@ ch.Position = [.9 .25 .01 .5];
 caxis(ax(end),[min_temp max_temp]);
 ax(end).Position(3) = ax(1).Position(3);
 
-ylabel(ch,['Temperature (' char(176) 'C)']);
+ylabel(ch,gastric.tempLabel);
 
 xh(1) = xlabel(ax(6),'Time since burst start (s)')
 xh(1).Position = [3 -91];

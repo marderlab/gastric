@@ -114,7 +114,7 @@ end
 
 set(gca,'YLim',[0 1],'YScale','linear')
 ylabel('LG start in PD phase')
-xlabel(['Temperature (' char(176) 'C)'])
+xlabel(gastric.tempLabel)
 
 
 
