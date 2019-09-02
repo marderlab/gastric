@@ -110,7 +110,6 @@ for i = 1:length(show_these_rasters)
 				yoffset = yoffset - 1;
 
 
-
 end
 
 

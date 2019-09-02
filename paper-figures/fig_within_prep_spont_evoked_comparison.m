@@ -68,12 +68,16 @@ for i = 1:length(spont_files)
 	for j = 1:size(raw_data,2)
 		raw_data(:,j) = raw_data(:,j)/max(2*abs(raw_data(1:z,j)));
 	end
+
+	% start traces when LG starts bursting
+	start_here = time(C.spikes.lgn.LG(find(diff(C.spikes.lgn.LG)>1e4,1,'first') + 1));
+	time = time - start_here;
 	
 
 	% show raw_data
 	for j = 1:size(raw_data,2)
 		plot(ax.raw_data_spont(i),time,raw_data(:,j)+j,'Color','k');
-		th = text(ax.raw_data_spont(i),-1,0,show_these_channels{j});
+		th = text(ax.raw_data_spont(i),-1,0,['\it ' show_these_channels{j}]);
 		th.Position = [-3 j];
 	end
 
@@ -114,6 +118,10 @@ for i = 1:length(spont_files)
 	for j = 1:size(raw_data,2)
 		raw_data(:,j) = raw_data(:,j)/max(2*abs(raw_data(1:z,j)));
 	end
+
+	% start traces when LG starts bursting
+	start_here = time(C.spikes.lgn.LG(find(diff(C.spikes.lgn.LG)>1e4,1,'first') + 1));
+	time = time - start_here;
 	
 
 	% show raw_data
