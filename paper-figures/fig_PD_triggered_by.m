@@ -7,6 +7,9 @@ addpath('../')
 
 data = gastric.getEvokedData();
 
+% we're only going to show 4 preps
+data = data([2 3 5 10]);
+
 
 min_temp = 5;
 max_temp = 25;
@@ -25,69 +28,90 @@ data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',1,'min_spikes_per_bu
 data = crabsort.computePeriods(data,'neurons',{'DG'},'ibis',1,'min_spikes_per_burst',5);
 
 
-%
 
-
-% supplementary figure -- all rasters
 
 clear ax
 
-figure('outerposition',[300 300 1002 1300],'PaperUnits','points','PaperSize',[1002 1300]); hold on
+figure('outerposition',[3 3 1001 999],'PaperUnits','points','PaperSize',[1001 999]); hold on
 
-LG_plots = 1:20; 
-LG_plots(3:4:end) = [];
-LG_plots(3:3:end) = [];
-
-DG_plots = 1:20; 
-DG_plots(1:4:end) = [];
-DG_plots(1:3:end) = [];
 
 for i = 1:length(data)
 
-	ax.LG_triggered(i) = subplot(5,4,LG_plots(i)); hold on
-
+	ax(i) = subplot(4,4,i); hold on
 
 
 	gastric.plotRasterTriggeredBy(data(i),'neuron','PD', 'trigger','LG_burst_starts','N_rescale',NaN,'min_temp',min_temp,'max_temp',max_temp,'before',2,'after',2)
-	set(gca,'YTick',[])
+	set(gca,'YTick',[],'XTick',[])
 	set(gca,'YColor','w')
+	if i == 1
+		ylabel('LG')
+	end
 
-	ax.DG_triggered(i) = subplot(5,4,DG_plots(i)); hold on
+	ax(i+4) = subplot(4,4,i + 4); hold on
 	gastric.plotRasterTriggeredBy(data(i),'neuron','PD', 'trigger','DG_burst_starts','N_rescale',NaN,'min_temp',min_temp,'max_temp',max_temp,'before',2,'after',2)
 	set(gca,'YTick',[])
 	set(gca,'YColor','w')
 
 
-	
+	if i == 1
+		ylabel('DG')
+	end
 
 
 end
+
+for i = 1:length(data)
+
+	ax(i+8) = subplot(4,4,i+8); hold on
+
+	gastric.plotRasterTriggeredBy(data(i),'neuron','PD', 'trigger','LG_burst_starts','N_rescale',3,'min_temp',min_temp,'max_temp',max_temp);
+	set(gca,'YTick',[],'XTick',[])
+	set(gca,'YColor','w')
+
+	if i == 1
+		ylabel('LG')
+	end
+
+
+	ax(i+12) = subplot(4,4,i+12); hold on
+	gastric.plotRasterTriggeredBy(data(i),'neuron','PD', 'trigger','DG_burst_starts','N_rescale',3,'min_temp',min_temp,'max_temp',max_temp);
+	set(gca,'YTick',[])
+	set(gca,'YColor','w')
+
+	if i == 1
+		ylabel('DG')
+	end
+
+
+
+end
+
+
+th(1) = text(ax(1),-2.5,500,'LG','Rotation',90,'FontSize',16);
+th(2) = text(ax(5),-2.5,300,'DG','Rotation',90,'FontSize',16);
+th(3) = text(ax(9),-3.5,500,'LG','Rotation',90,'FontSize',16);
+th(4) = text(ax(13),-3.5,300,'DG','Rotation',90,'FontSize',16);
 
 figlib.pretty('LineWidth',1)
 
 
+axlib.move(ax,'left',.05)
 
-for i = 1:2:length(ax.LG_triggered)
-	ax.LG_triggered(i).Position(1) = .1;
-end
+axlib.move(ax(5:8),'up',.04)
+axlib.move(ax(9:12),'down',.04)
 
-for i = 2:2:length(ax.LG_triggered)
-	ax.LG_triggered(i).Position(1) = .3;
-end
 
-for i = 1:2:length(ax.DG_triggered)
-	ax.DG_triggered(i).Position(1) = .6;
-end
+ch = colorbar(ax(end));
+colormap(colormaps.redula)
+ch.Position = [.9 .25 .01 .5];
+caxis(ax(end),[min_temp max_temp]);
+ax(end).Position(3) = ax(1).Position(3);
 
-for i = 2:2:length(ax.DG_triggered)
-	ax.DG_triggered(i).Position(1) = .8;
-end
+ylabel(ch,['Temperature (' char(176) 'C)']);
 
-h = xlabel(ax.LG_triggered(end),'Time since LG burst start (s)');
-h.Position = [-1.9 -100];
+xh(1) = xlabel(ax(6),'Time since burst start (s)')
+xh(1).Position = [3 -91];
 
-h = xlabel(ax.DG_triggered(end),'Time since DG burst start (s)');
-h.Position = [-1.9 -100];
-
-suptitle('PD spikes')
+xh(2) = xlabel(ax(14),'Time since burst start (norm)')
+xh(2).Position = [4.2 -91];
 
