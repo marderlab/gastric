@@ -9,15 +9,17 @@ include_these = sort({'901_005','901_086','901_046','901_049','901_052','901_062
 
 disp(include_these')
 
-if exist('dan_stacked_data.mat','file') == 2
+cache_loc = [fileparts(fileparts(which('gastric.getEvokedData'))) filesep 'data' filesep 'dan_stacked_data.mat'];
 
-	load('dan_stacked_data','data')
+if exist(cache_loc,'file') == 2
+
+	load(cache_loc,'data')
 else
 	for i = 1:length(include_these)
 		data(i)  = crabsort.consolidate('neurons',{'PD','LG','DG'},'DataFun',{@crabsort.getTemperature},'DataDir',[data_root filesep include_these{i}],'stack',true);
 	end
 
-	save('dan_stacked_data','data','-nocompression','-v7.3')
+	save(cache_loc,'data','-nocompression','-v7.3')
 
 end
 

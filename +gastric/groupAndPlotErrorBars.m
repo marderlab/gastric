@@ -5,7 +5,6 @@
 function plot_handles = groupAndPlotErrorBars(group_bins, group_idx, prep_idx, Y)
 
 
-plot_handles = [];
 
 n_preps = length(unique(prep_idx(~isnan(prep_idx))));
 
@@ -25,7 +24,7 @@ for i = 1:n_preps
 		E(j) = corelib.sem(this_Y(idx));
 	end
 
-	plot_handles(end+1) = errorbar(group_bins(~isnan(M)),M(~isnan(M)),E(~isnan(M)));
+	plot_handles(i) = errorbar(group_bins(~isnan(M)),M(~isnan(M)),E(~isnan(M)));
 
 end
 

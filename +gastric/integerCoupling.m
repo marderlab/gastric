@@ -1,56 +1,64 @@
-% computes integer coupling b/w LG and PD neurons 
+% computes integer coupling b/w the bursts on 
+% a slowly-timed neuron and a fast neuron
+% the typical use case is if the fast neuron if
+% PD and the slow neuron is LG
 % 
-function [mean_PD_burst_periods, temperature] = integerCoupling(data)
+function [mean_fast_burst_periods, temperature] = integerCoupling(data, slow_neuron, fast_neuron)
 
 
 
+slow_burst_starts = data.([slow_neuron '_burst_starts']);
+slow_burst_ends = data.([slow_neuron '_burst_ends']);
 
 
-LG_burst_starts = data.LG_burst_starts;
-LG_burst_ends = data.LG_burst_ends;
-LG_burst_periods = data.LG_burst_periods;
-
-mean_PD_burst_periods = NaN*LG_burst_starts;
-n_pyloric_cyles = NaN*LG_burst_starts;
-delay_PD_start_LG_start = NaN*LG_burst_starts;
-delay_PD_start_LG_end = NaN*LG_burst_starts;
-delay_PD_end_LG_start = NaN*LG_burst_starts;
-delay_PD_end_LG_end = NaN*LG_burst_starts;
+if all(isnan(slow_burst_starts))
+	mean_fast_burst_periods = NaN*slow_burst_starts;
+	temperature = NaN*slow_burst_starts;
+	return
+end
 
 
-for j = 1:length(LG_burst_starts)-1
-	closest_PD_a = corelib.closest(data.PD_burst_starts,LG_burst_starts(j));
-	closest_PD_z = corelib.closest(data.PD_burst_starts,LG_burst_starts(j+1));
+mean_fast_burst_periods = NaN*slow_burst_starts;
+n_pyloric_cyles = NaN*slow_burst_starts;
+delay_fast_start_slow_start = NaN*slow_burst_starts;
+delay_fast_start_slow_end = NaN*slow_burst_starts;
+delay_fast_end_slow_start = NaN*slow_burst_starts;
+delay_fast_end_slow_end = NaN*slow_burst_starts;
 
 
-	n_pyloric_cyles(j) = closest_PD_z - closest_PD_a;
+for j = 1:length(slow_burst_starts)-1
+	closest_fast_a = corelib.closest(data.([fast_neuron '_burst_starts']),slow_burst_starts(j));
+	closest_fast_z = corelib.closest(data.([fast_neuron '_burst_starts']),slow_burst_starts(j+1));
 
-	mean_PD_burst_periods(j) = (data.PD_burst_starts(closest_PD_z) -  data.PD_burst_starts(closest_PD_a))/n_pyloric_cyles(j);
 
-	% compute delays (delay_PD_start_LG_start)
-	allowed_PD_starts = data.PD_burst_starts(data.PD_burst_starts < LG_burst_starts(j));
-	idx = corelib.closest(allowed_PD_starts,LG_burst_starts(j));
+	n_pyloric_cyles(j) = closest_fast_z - closest_fast_a;
+
+	mean_fast_burst_periods(j) = (data.([fast_neuron '_burst_starts'])(closest_fast_z) -  data.([fast_neuron '_burst_starts'])(closest_fast_a))/n_pyloric_cyles(j);
+
+	% compute delays (delay_fast_start_slow_start)
+	allowed_fast_starts = data.([fast_neuron '_burst_starts'])(data.([fast_neuron '_burst_starts']) < slow_burst_starts(j));
+	idx = corelib.closest(allowed_fast_starts,slow_burst_starts(j));
 	if ~isempty(idx)
-		delay_PD_start_LG_start(j) = LG_burst_starts(j) - allowed_PD_starts(idx);
+		delay_fast_start_slow_start(j) = slow_burst_starts(j) - allowed_fast_starts(idx);
 	end
 
 
-	allowed_PD_starts = data.PD_burst_starts(data.PD_burst_starts < LG_burst_ends(j));
-	idx = corelib.closest(allowed_PD_starts,LG_burst_ends(j));
+	allowed_fast_starts = data.([fast_neuron '_burst_starts'])(data.([fast_neuron '_burst_starts']) < slow_burst_ends(j));
+	idx = corelib.closest(allowed_fast_starts,slow_burst_ends(j));
 	if ~isempty(idx)
-		delay_PD_start_LG_end(j) = LG_burst_ends(j) - allowed_PD_starts(idx);
+		delay_fast_start_slow_end(j) = slow_burst_ends(j) - allowed_fast_starts(idx);
 	end
 
-	allowed_PD_ends = data.PD_burst_ends(data.PD_burst_ends < LG_burst_starts(j));
-	idx = corelib.closest(allowed_PD_ends,LG_burst_starts(j));
+	allowed_fast_ends = data.([fast_neuron '_burst_ends'])(data.([fast_neuron '_burst_ends']) < slow_burst_starts(j));
+	idx = corelib.closest(allowed_fast_ends,slow_burst_starts(j));
 	if ~isempty(idx)
-		delay_PD_end_LG_start(j) = LG_burst_starts(j) - allowed_PD_ends(idx);
+		delay_fast_end_slow_start(j) = slow_burst_starts(j) - allowed_fast_ends(idx);
 	end
 
-	allowed_PD_ends = data.PD_burst_ends(data.PD_burst_ends < LG_burst_ends(j));
-	idx = corelib.closest(allowed_PD_ends,LG_burst_ends(j));
+	allowed_fast_ends = data.([fast_neuron '_burst_ends'])(data.([fast_neuron '_burst_ends']) < slow_burst_ends(j));
+	idx = corelib.closest(allowed_fast_ends,slow_burst_ends(j));
 	if ~isempty(idx)
-		delay_PD_end_LG_end(j) = LG_burst_ends(j) - allowed_PD_ends(idx);
+		delay_fast_end_slow_end(j) = slow_burst_ends(j) - allowed_fast_ends(idx);
 	end
 
 
@@ -59,12 +67,12 @@ for j = 1:length(LG_burst_starts)-1
 end
 
 % compute the temperatures when we measure this stuff
-temperature = data.temperature(round(LG_burst_starts*1e3));
+temperature = data.temperature(round(slow_burst_starts*1e3));
 
 
-% normalize by PD burst period
-delay_PD_start_LG_start_norm_PD = delay_PD_start_LG_start./mean_PD_burst_periods;
-delay_PD_start_LG_end_norm_PD = delay_PD_start_LG_end./mean_PD_burst_periods;
-delay_PD_end_LG_start_norm_PD = delay_PD_end_LG_start./mean_PD_burst_periods;
-delay_PD_end_LG_end_norm_PD = delay_PD_end_LG_end./mean_PD_burst_periods;
+% normalize by fast burst period
+% delay_fast_start_slow_start_norm_PD = delay_fast_start_slow_start./mean_fast_burst_periods;
+% delay_fast_start_slow_end_norm_PD = delay_fast_start_slow_end./mean_fast_burst_periods;
+% delay_fast_end_slow_start_norm_PD = delay_fast_end_slow_start./mean_fast_burst_periods;
+% delay_fast_end_slow_end_norm_PD = delay_fast_end_slow_end./mean_fast_burst_periods;
 
