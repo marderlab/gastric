@@ -53,6 +53,10 @@ for i = 1:length(show_these)
 	raw_data = C.raw_data(:,channel_idx);
 	time = C.time;
 
+	% start traces when LG starts bursting
+	start_here = time(C.spikes.lgn.LG(find(diff(C.spikes.lgn.LG)>1e4,1,'first') + 1));
+	time = time - start_here;
+
 	% normalize
 	z = find(time>60,1,'first');
 
@@ -93,26 +97,18 @@ for i = 1:length(show_these_rasters)
 	LG = this_data.LG;
 	LG(LG<a) = [];
 	LG(LG>z) = [];
-	LG = LG - a;
+
+	S = find(diff(LG) > 1,1,'first');
+	LG(1:S) = [];
+	LG = LG - LG(1);
 
 	stim_temp = mean(this_data.temperature(a*1e3:z*1e3));
 
 	idx = ceil(((stim_temp - min_temp)/(max_temp - min_temp))*100);
 
-	neurolib.raster(ax.rasters,LG,'Color',c(idx,:),'deltat',1,'yoffset',yoffset,'center',false,'fill_fraction',.75)
+	neurolib.raster(ax.rasters,LG,'Color',c(idx,:),'deltat',1,'yoffset',yoffset,'center',false,'fill_fraction',.8)
 				yoffset = yoffset - 1;
 
-	DG = this_data.DG;
-	DG(DG<a) = [];
-	DG(DG>z) = [];
-	DG = DG - a;
-
-	stim_temp = mean(this_data.temperature(a*1e3:z*1e3));
-
-	idx = ceil(((stim_temp - min_temp)/(max_temp - min_temp))*100);
-
-	neurolib.raster(ax.rasters,DG,'Color',c(idx,:),'deltat',1,'yoffset',yoffset,'center',false,'fill_fraction',.75)
-				yoffset = yoffset - 1.5;
 
 
 end
@@ -121,7 +117,7 @@ end
 
 set(ax.rasters,'XLim',[0 60],'YLim',[yoffset-1, 1])
 ax.rasters.YTick = [];
-ax.rasters.YLim = [-21 1];
+ax.rasters.YLim = [-9 1];
 ax.rasters.YColor = 'w';
 xlabel(ax.rasters,'Time (s)')
 
@@ -144,7 +140,7 @@ set(ax.LG_burst_periods,'YLim',[1 100],'YScale','log')
 
 xoffset = 0;
 
-show_neuron_rasters = {'LG','DG'};
+show_neuron_rasters = {'LG'};
 yoffset = 0;
 
 for i = 1:length(data)
@@ -226,7 +222,7 @@ ylabel(ax.LG_burst_periods,'LG burst period (s)')
 
 ch = colorbar(ax.LG_burst_periods);
 colormap(ch,colormaps.redula);
-title(ch,['Temperature (' char(176) 'C)'])
+ylabel(ch,['Temperature (' char(176) 'C)'])
 ch.Position = [.88 .07 .01 .18];
 caxis([min_temp max_temp])
 
