@@ -29,23 +29,17 @@ end
 
 % show one example
 
+idx = 1;
 
-for prep_idx = 2:10
+figure('outerposition',[3 3 902 901],'PaperUnits','points','PaperSize',[902 901]); hold on
+clear ax
 
+mask_color = [1 1 1]*.9;
 
-	figure('outerposition',[3 3 601 901],'PaperUnits','points','PaperSize',[601 901]); hold on
+t_end = [10e3, 6e3, 6e3];
 
+for prep_idx = [2 5 10]
 
-	T = data(prep_idx).temperature;
-	time = (1:length(T))*1e-3;
-
-	subplot(4,1,1); hold on
-	SS = 1e3;
-	scatter(time(1:SS:end),T(1:SS:end),1,T(1:SS:end))
-
-	ylabel(gastric.tempLabel)
-
-	set(gca,'XTickLabel',{},'XLim',[0 max(time)])
 
 	for j = 1:length(neurons)
 		x = data(prep_idx).([neurons{j} '_burst_starts']);
@@ -53,30 +47,52 @@ for prep_idx = 2:10
 		y = data(prep_idx).([neurons{j} '_duty_cycles']);
 		y(y>1) = NaN;
 		y(y<0) = NaN;
-		subplot(4,1,j+1); hold on
+		ax(idx,j) = subplot(3,3,(j-1)*3 + idx); hold on
 		C = data(prep_idx).temperature(round(x*1e3));
 		sh = scatter(x, y,20,C);
 		sh.Marker = '.';
-		ylabel([neurons{j} ' duty cycle'])
+
+		if idx == 1
+			ylabel([neurons{j} ' duty cycle'])
+		else
+			set(gca,'YTickLabel',{})
+		end
 
 		if j < length(neurons)
 			set(gca,'XTickLabel',{})
 		else
+			xlabel('Time (s)')
+		end
+
+		if j > 1
 			sh.SizeData = 40;
 		end
 
 		% plot mask
 		M = veclib.subSample(data(prep_idx).mask,1e3,@min);
 		M(M>0)=2;
-		plot(M,'Color',[0.9 0.9 0.9],'LineWidth',3)
+		plot(M,'Color',mask_color,'LineWidth',3)
 
-		set(gca,'YLim',[0 1],'XLim',[0 max(time)])
+		set(gca,'YLim',[0 1],'XLim',[0 t_end(idx)])
 	end
-
-
 
 	colormap(colormaps.redula)
 
-	figlib.pretty('LineWidth',1)
+
+	idx = idx + 1;
 
 end
+
+figlib.pretty('LineWidth',1,'FontSize',14)
+
+
+
+
+for i = 1:3
+	ax(1,i).Position(1) = .1;
+	for j = 1:3
+		ax(i,j).Position(3) = .25;
+	end
+end
+
+axlib.move(ax(2,:),'left',.02)
