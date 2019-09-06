@@ -18,7 +18,7 @@ file_names = {'0008','0015','0021','0025','0028','0030'};
 all_temp = [11 15 19 23 27 30];
 
 
-figure('outerposition',[300 300 1200 901],'PaperUnits','points','PaperSize',[1200 901]); hold on
+figure('outerposition',[0 0 1200 901],'PaperUnits','points','PaperSize',[1200 901]); hold on
 
 c = colormaps.redula(100);
 min_temp = 7;
@@ -37,10 +37,11 @@ for i = 6:-1:1
 	lgn = C.raw_data(:,lgn_channel); 
 	dgn = C.raw_data(:,dgn_channel);
 
-	z = find(C.time>60,1,'first');
+	a = C.spikes.lgn.LG(1);
+	z = a + 60e4;
 
-	lgn = lgn/abs(max(lgn(1:z)));
-	dgn = dgn/abs(max(dgn(1:z)));
+	lgn = lgn/abs(max(lgn(a:z)));
+	dgn = dgn/abs(max(dgn(a:z)));
 
 
 	idx = ceil(((all_temp(i) - min_temp)/(max_temp - min_temp))*100);
@@ -48,13 +49,13 @@ for i = 6:-1:1
 
 	
 
-	plot(C.time(1:z), lgn(1:z) ,'Color',c(idx,:))
-	plot(C.time(1:z), dgn(1:z)-2 ,'Color',c(idx,:))
+	plot(C.time(a:z), lgn(a:z) ,'Color',c(idx,:))
+	plot(C.time(a:z), dgn(a:z)-2 ,'Color',c(idx,:))
 
-	neurolib.raster(C.spikes.lgn.LG,'deltat',C.dt,'center',false,'Color',c(idx,:),'yoffset',1.1,'fill_fraction',.1)
-	neurolib.raster(C.spikes.dgn.DG,'deltat',C.dt,'center',false,'Color',c(idx,:),'yoffset',-3,'fill_fraction',.1)
+	% neurolib.raster(C.spikes.lgn.LG,'deltat',C.dt,'center',false,'Color',c(idx,:),'yoffset',1.1,'fill_fraction',.1)
+	% neurolib.raster(C.spikes.dgn.DG,'deltat',C.dt,'center',false,'Color',c(idx,:),'yoffset',-3,'fill_fraction',.1)
 
-	set(gca,'XLim',[0 60])
+	set(gca,'XLim',[C.time(a) C.time(z)])
 
 	axis off
 
@@ -65,15 +66,18 @@ for i = 6:-1:1
 
 end
 
-th = text(ax(1),-1,0,'lgn');
+plot(ax(6),[50 60],[-3 -3],'k','LineWidth',3);
+thtime = text(ax(6),50,-3.5,'10 s');
+
+th = text(ax(1),-1,0,'\itlgn');
 th.Position = [-10 0];
 
 
-th = text(ax(1),-10,-2,'dgn');
+th = text(ax(1),-10,-2,'\itdgn');
 
 
 
-% now show ISIs of LG to show all the data
+
 data_root = '/Volumes/HYDROGEN/srinivas_data/temperature-data-for-embedding/';
 data_files = {'845_070','828_086_2','828_114_2','828_128','830_100','830_116_2','830_116_1','830_120_1','834_022','834_086_2'};
 
@@ -92,10 +96,24 @@ end
 
 
 
+% interpolate temperatures because Sara didn't record temperatures
+% for all files 
+
+for i = 1:length(data)
+	last_temp = NaN;
+	for j = 1:length(data{i})
+		if ~isnan(data{i}(j).temperature)
+			last_temp = data{i}(j).temperature;
+		else
+			data{i}(j).temperature = last_temp;
+		end
+
+	end
+end
 
 
 
-% show spectrograms of LG spiking for all data
+% show dominant period of LG bursting for all data
 ax = gca;
 ax(end+1) = subplot(2,1,2); hold on
 ax(end).YScale = 'log';
@@ -169,8 +187,8 @@ for i = 1:length(data)
 			idx  = ceil(((all_temp(j) - min_temp)/(max_temp - min_temp))*100);
 			idx(idx>length(c)) = length(c);
 			idx(idx<1) = 1;
-			plot(i + randn*.05, dominant_periods(j),'o','MarkerFaceColor',c(idx,:),'MarkerEdgeColor',c(idx,:),'MarkerSize',10)
-			%text(i + randn*.05, dominant_periods(j), mat2str(all_temp(j)),'Color',c(idx,:),'FontWeight','bold')
+			plot(i + randn*.1, dominant_periods(j),'o','MarkerFaceColor',c(idx,:),'MarkerEdgeColor',c(idx,:),'MarkerSize',10)
+
 		end
 
 	end
@@ -208,7 +226,7 @@ ax(end).XLim(1) = 0.5;
 ax(end).YLim = [2 50];
 ax(end).YTick = [2 5 10 20 50];
 
-title(ch,['Temperature ' char(176) '(C)'])
+title(ch,gastric.tempLabel)
 
 ax(end).YGrid = 'on';
 
@@ -217,49 +235,7 @@ figlib.pretty('PlotLineWidth',1,'LineWidth',1)
 
 ax(end).YMinorTick = 'on';
 
-
-
-% ax(end+1) = subplot(4,1,3); hold on
-% set(gca,'YScale','log','YLim',[1e-3 1e3])
-% offset = 0;
-% for i = 1:length(data)
-% 	this_data = data{i};
-% 	for j = 1:length(this_data)
-% 		spiketimes = sort(this_data(j).LG);
-% 		if length(spiketimes) < 2
-% 			continue
-% 		end
-% 		if this_data(j).decentralized
-% 			continue
-% 		end
-% 		ds = [NaN; diff(spiketimes)];
-% 		ds(ds<5e-3) = NaN;
-
-% 		if isnan(this_data(j).temperature)
-
-% 			plot(offset+spiketimes,ds,'.','Color',[.5 .5 .5])
-% 		else
-% 			idx = ceil(((this_data(j).temperature - min_temp)/(max_temp - min_temp))*100);
-% 			plot(offset + spiketimes,ds,'.','Color',c(idx,:))
-% 		end
-% 		offset = offset + spiketimes(end);
-% 	end
-% 	offset = offset + 50;
-% 	h = plotlib.vertline(offset);
-% 	h.Color = 'k';
-
-% end
-% set(gca,'XColor','w')
-% ylabel('LG ISI (s)')
-
-% ch = colorbar;
-% caxis([min_temp max_temp])
-% title(ch,'Temperature (C)')
-% ch.Position = [.88 .33 .01 .15];
-
-% ax(end).Position = [.13 .33 .7 .15];
-
-
+colormap(colormaps.redula(23))
 
 
 
