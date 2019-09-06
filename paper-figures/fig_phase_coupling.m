@@ -24,8 +24,8 @@ figure('outerposition',[300 300 1202 901],'PaperUnits','points','PaperSize',[130
 clear ax
 temp_space = min_temp:2:max_temp;
 
-nbins = 30;
-N = 1e2;
+
+N = 1e3;
 
 c = colormaps.redula(length(temp_space));
 
@@ -42,42 +42,33 @@ for i = 1:length(data)
 end
 
 ax(1) = subplot(2,3,1); hold on
-set(gca,'YLim',[0 .2],'XLim',[0 1])
+set(gca,'YLim',[0 1],'XLim',[0 1])
 
 
 
 
 for i = 1:length(temp_space)
 	use_these = all_phase(all_temp == temp_space(i));
-	if length(use_these) < 2*nbins
+
+	if length(use_these) < 100
 		continue
 	end
 
-	hy = zeros(N,nbins);
-
+	hy = zeros(length(use_these),N);
 	for j = 1:N
-		sample = datasample(use_these,length(use_these));
-		hy(j,:) = (histcounts(sample,linspace(0,1,nbins+1)));
-		hy(j,:) = hy(j,:)/sum(hy(j,:));
+		hy(:,j) = sort(datasample(use_these,length(use_these)));
 
 	end
 
-	Upper = max(hy);
-	Lower = min(hy);
+	M = mean(hy,2);
 
-	[hy, hx] = histcounts(use_these,linspace(0,1,nbins+1));
-	
-	hy = hy/sum(hy);
+	Upper = std(hy,[],2); %/sqrt(N);
+	Lower = std(hy,[],2); %/sqrt(N);
 
 
-	hx = hx(1:end-1) + mean(diff(hx))/2;
+	hx = linspace(0,1,size(Upper,1));
 
-	Upper = (Upper - hy)/sqrt(N);
-	Lower = (hy - Lower)/sqrt(N);
-
-
-
-	ph = plotlib.shadedErrorBar(hx,hy,[Upper; Lower]);
+	ph = plotlib.shadedErrorBar(hx,M,[Upper Lower]);
 	delete(ph.mainLine)
 
 	ph.patch.FaceColor = c(i,:);
@@ -86,14 +77,13 @@ for i = 1:length(temp_space)
 	ph.edge(1).Color = c(i,:);
 	ph.edge(2).Color = c(i,:);
 
+
 end
 
-ylabel('Probability of LG burst start')
+ylabel('Cumualtive probability of LG burst start')
 xlabel('PD phase')
-plotlib.horzline(1/nbins,'LineWidth',2,'Color','k','LineStyle','--');
 
-
-
+plotlib.drawDiag;
 
 
 subplot(2,3,3); hold on
@@ -113,7 +103,7 @@ for i = 1:length(ph)-1
 end
 
 set(gca,'YLim',[0 1],'YScale','linear')
-ylabel('LG start in PD phase')
+ylabel('LG burst start in PD phase')
 xlabel(gastric.tempLabel)
 
 
@@ -132,39 +122,29 @@ for i = 1:length(data)
 end
 
 ax(1) = subplot(2,3,2); hold on
-set(gca,'YLim',[0 .2],'XLim',[0 1])
+set(gca,'YLim',[0 1],'XLim',[0 1])
 
 for i = 1:length(temp_space)
 	use_these = all_phase(all_temp == temp_space(i));
-	if length(use_these) < 2*nbins
+
+	if length(use_these) < 100
 		continue
 	end
 
-	hy = zeros(N,nbins);
+	hy = zeros(length(use_these),N);
 
 	for j = 1:N
-		sample = datasample(use_these,length(use_these));
-		hy(j,:) = (histcounts(sample,linspace(0,1,nbins+1)));
-		hy(j,:) = hy(j,:)/sum(hy(j,:));
-
+		hy(:,j) = sort(datasample(use_these,length(use_these)));
 	end
 
-	Upper = max(hy);
-	Lower = min(hy);
+	M = mean(hy,2);
 
-	[hy, hx] = histcounts(use_these,linspace(0,1,nbins+1));
-	
-	hy = hy/sum(hy);
+	Upper = std(hy,[],2); %/sqrt(N);
+	Lower = std(hy,[],2); %/sqrt(N);
 
+	hx = linspace(0,1,size(Upper,1));
 
-	hx = hx(1:end-1) + mean(diff(hx))/2;
-
-	Upper = (Upper - hy)/sqrt(N);
-	Lower = (hy - Lower)/sqrt(N);
-
-
-
-	ph = plotlib.shadedErrorBar(hx,hy,[Upper; Lower]);
+	ph = plotlib.shadedErrorBar(hx,M,[Upper Lower]);
 	delete(ph.mainLine)
 
 	ph.patch.FaceColor = c(i,:);
@@ -175,11 +155,11 @@ for i = 1:length(temp_space)
 
 end
 
-ylabel('Probability of DG burst start')
+
+ylabel('Cumulative probability of DG burst start')
 xlabel('PD phase')
-plotlib.horzline(1/nbins,'LineWidth',2,'Color','k','LineStyle','--');
 
-
+plotlib.drawDiag;
 
 
 
@@ -193,17 +173,23 @@ end
 LG_phase = vertcat(data.LG_phase);
 all_temp = vertcat(data.all_temp);
 
-nbins = 20;
+nbins = 30;
 
 hx = linspace(0,1,nbins+1);
 hc = hx(1:end-1) + mean(diff(hx))/2;
 
 % average across preps and plot by temperature
-subplot(2,2,3); hold on
+subplot(2,3,4); hold on
 
 for i = 1:length(temp_space)
 	plot_this = round(all_temp) == temp_space(i);
+
+	if sum(plot_this) < 1e3
+		continue
+	end
+
 	hy = histcounts(LG_phase(plot_this),hx);
+
 	hy = hy/sum(hy);
 
 	idx = ceil(((temp_space(i) - min_temp)/(max_temp - min_temp))*100);
@@ -214,7 +200,7 @@ for i = 1:length(temp_space)
 		idx = length(c);
 	end
 
-	plot(hc,hy,'Color',c(idx,:))
+	plot(hc,hy,'Color',c(idx,:),'LineWidth',2)
 
 end
 xlabel('PD phase')
@@ -224,19 +210,24 @@ plotlib.horzline(1/nbins,'LineStyle','--','Color','k','LineWidth',2);
 
 
 
+
 for i = 1:length(data)
 	[data(i).DG_phase, data(i).all_temp] = gastric.measurePhase(data(i),'DG','PD');
 end
 DG_phase = vertcat(data.DG_phase);
 all_temp = vertcat(data.all_temp);
 
-hx = linspace(0,1,20);
+hx = linspace(0,1,nbins);
 
 % average across preps and plot by temperature
-subplot(2,2,4); hold on
+subplot(2,3,5); hold on
 
 for i = 1:length(temp_space)
 	plot_this = round(all_temp) == temp_space(i);
+
+	if sum(plot_this) < 1e3
+		continue
+	end
 	hy = histcounts(DG_phase(plot_this),hx);
 	hy = hy/sum(hy);
 
@@ -247,7 +238,7 @@ for i = 1:length(temp_space)
 	if idx > length(c)
 		idx = length(c);
 	end
-	plot(hx(2:end),hy,'Color',c(idx,:))
+	plot(hx(2:end),hy,'Color',c(idx,:),'LineWidth',2)
 
 end
 xlabel('PD phase')
