@@ -247,8 +247,12 @@ set(gca,'XLim',[0 1],'YLim',[0 .1])
 
 plotlib.horzline(1/nbins,'LineStyle','--','Color','k','LineWidth',2);
 
+colormap(c)
 
-
+ch = colorbar();
+ch.Position = [.75 .1 .01 .3];
+caxis([min_temp max_temp])
+ylabel(ch,gastric.tempLabel)
 
 figlib.pretty('PlotLineWidth',1)
 
