@@ -55,18 +55,6 @@ PD_space = .2:.2:2;
 axes(ax.ratio)
 ph = gastric.groupAndPlotErrorBars(temp_space, all_temp, all_prep, N_pyloric_gastric);
 
-% R = randn(length(ph),1);
-% C = ones(length(ph),3);
-% C(:,1) = .8+ .05*R;
-% C(:,2) = .8+ .05*R;
-% C(:,3) = .8+ .05*R;
-
-% C(C>1) = 1;
-% C(C<0) = 0;
-
-% for i = 1:length(ph)-1
-% 	set(ph(i),'Color',C(i,:))
-% end
 
 delete(ph(1:end-1));
 ph(end).Color = base_color;
@@ -79,18 +67,6 @@ ph(end).Color = base_color;
 axes(ax.integerness)
 ph = gastric.groupAndPlotErrorBars(temp_space, all_temp, all_prep, integerness);
 
-% R = randn(length(ph),1);
-% C = ones(length(ph),3);
-% C(:,1) = .8+ .05*R;
-% C(:,2) = .8+ .05*R;
-% C(:,3) = .8+ .05*R;
-
-% C(C>1) = 1;
-% C(C<0) = 0;
-
-% for i = 1:length(ph)-1
-% 	set(ph(i),'Color',C(i,:))
-% end
 
 delete(ph(1:end-1));
 ph(end).Color = base_color;
@@ -102,20 +78,23 @@ ph(end).Color = base_color;
 % now plot the remainders to show that it is different from random
 
 x = 1:length(Rem);
-y = NaN(length(x),100);
-for i = 1:100
+N = 1e3;
+y = NaN(length(x),N);
+for i = 1:N
 	y(:,i) = sort(datasample(Rem,length(x)));
 	
 end
 
 m = nanmean(y,2);
 
-Upper = nanmax(y - m,[],2);
-Lower = nanmax(m - y,[],2);
+
+Upper = nanstd(y,[],2);
+Upper(isnan(Upper)) = 0;
+
 
 x = x/sum(~isnan(m));
 axes(ax.remainders)
-ph = plotlib.shadedErrorBar(x(:),m,[Upper Lower]);
+ph = plotlib.shadedErrorBar(x(:),m,[Upper Upper]);
 delete(ph.mainLine)
 ph.patch.FaceColor = base_color;
 ph.patch.FaceAlpha = .5;
