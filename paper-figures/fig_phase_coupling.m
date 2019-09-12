@@ -45,7 +45,7 @@ ax(1) = subplot(2,3,1); hold on
 set(gca,'YLim',[0 1],'XLim',[0 1])
 
 
-
+nbins = 100;
 
 for i = 1:length(temp_space)
 	use_these = all_phase(all_temp == temp_space(i));
@@ -54,11 +54,14 @@ for i = 1:length(temp_space)
 		continue
 	end
 
-	hy = zeros(length(use_these),N);
+	hy = zeros(nbins,N);
 	for j = 1:N
-		hy(:,j) = sort(datasample(use_these,length(use_these)));
+		temp = datasample(use_these,length(use_these));
+		hy(:,j) = cumsum(histcounts(temp,linspace(0,1,nbins+1)));
+		hy(:,j) = hy(:,j)/hy(end,j);
 
 	end
+
 
 	M = mean(hy,2);
 
@@ -79,6 +82,7 @@ for i = 1:length(temp_space)
 
 
 end
+
 
 ylabel('Cumualtive probability of LG burst start')
 xlabel('PD phase')
@@ -131,10 +135,13 @@ for i = 1:length(temp_space)
 		continue
 	end
 
-	hy = zeros(length(use_these),N);
 
+	hy = zeros(nbins,N);
 	for j = 1:N
-		hy(:,j) = sort(datasample(use_these,length(use_these)));
+		temp = datasample(use_these,length(use_these));
+		hy(:,j) = cumsum(histcounts(temp,linspace(0,1,nbins+1)));
+		hy(:,j) = hy(:,j)/hy(end,j);
+
 	end
 
 	M = mean(hy,2);
@@ -152,6 +159,7 @@ for i = 1:length(temp_space)
 
 	ph.edge(1).Color = c(i,:);
 	ph.edge(2).Color = c(i,:);
+
 
 end
 
