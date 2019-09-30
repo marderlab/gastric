@@ -34,8 +34,8 @@ figure('outerposition',[300 300 1200 901],'PaperUnits','points','PaperSize',[120
 clear ax
 ax.LG.hero = subplot(2,2,1); hold on
 ax.LG.remainders = subplot(2,3,4); hold on
-ax.LG.ratio = subplot(2,3,5); hold on
-ax.LG.integerness = subplot(2,3,6); hold on
+ax.LG.ratio = subplot(2,3,6); hold on
+ax.LG.integerness = subplot(2,3,5); hold on
 
 ax.DG = ax.LG;
 ax.DG.hero = subplot(2,2,2); hold on

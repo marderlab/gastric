@@ -1,4 +1,10 @@
+% gastric.plotIntegerCoupling
+% makes an integer coupling plot for the 
+% requested neuron 
+
 function ch = plotIntegerCoupling(data, neuron, ax, base_color)
+
+MarkerSize = 10;
 
 % add some fake data to get the colorbars to be consistent across all figures
 all_x = [20; 20];
@@ -25,6 +31,14 @@ end
 
 
 [ph,ch] = plotlib.cplot(ax.hero, all_x,all_y,all_temp,'colormap',colormaps.redula(20),'use_scatter',false,'clim',[5 23]);
+
+for i = 1:length(ph)
+	try
+		ph(i).MarkerSize = MarkerSize;
+	catch
+	end
+end
+
 set(ax.hero,'XLim',[0.2 2],'YLim',[0 30])
 xlabel(ax.hero,'Mean PD period (s)')
 
@@ -61,27 +75,102 @@ ph(end).Color = base_color;
 
 
 
-
-
-% plot integerness and group by temperature
-axes(ax.integerness)
-ph = gastric.groupAndPlotErrorBars(temp_space, all_temp, all_prep, integerness);
-
-
-delete(ph(1:end-1));
-ph(end).Color = base_color;
+% we now define "integerness" as the area b/w the curve and the diagonal. 
+% let's compute that on a prep-by-prep basis, on a temperature-by temperature basis
+% this necessarily has to pool all data to measure this (because we need the CDF)
 
 
 
+% how many times should we bootstrap the data?
+N = 100;
 
+unique_preps = unique(all_prep);
+unique_preps(isnan(unique_preps)) = [];
+
+mean_integerness = NaN(length(temp_space),length(unique_preps));
+mean_integerness_rand =  NaN(length(temp_space),length(unique_preps));
+
+for i = 1:length(temp_space)
+	this_temp = temp_space(i);
+
+	for j = 1:length(unique_preps)
+		this_prep = unique_preps(j);
+
+		this_rem = Rem(abs(all_temp - this_temp) < 1 & all_prep == this_prep);
+		this_rem(isnan(this_rem)) = [];
+
+		if length(this_rem) < 30
+			continue
+		end
+
+		rand_rem = rand(length(this_rem),1);
+
+		mean_integerness(i,j) = 0;
+		mean_integerness_rand(i,j) = 0;
+
+		for k = 1:N
+			X = sort(datasample(this_rem,length(this_rem)));
+			[~,idx] = unique(X);
+			Y = linspace(0,1,length(X));
+			XX = linspace(0,1,100);
+			YY = interp1(X(idx),Y(idx),XX);
+
+			mean_integerness(i,j) = mean_integerness(i,j) + nansum(abs(XX - YY)/(100*.5));
+
+			% now the dummy data
+			X = sort(datasample(rand_rem,length(rand_rem)));
+			[~,idx] = unique(X);
+			Y = linspace(0,1,length(X));
+			XX = linspace(0,1,100);
+			YY = interp1(X(idx),Y(idx),XX);
+
+			mean_integerness_rand(i,j) = mean_integerness_rand(i,j) + nansum(abs(XX - YY)/(100*.5));
+			
+
+		end
+		mean_integerness(i,j) = mean_integerness(i,j)/N;
+		mean_integerness_rand(i,j) = mean_integerness_rand(i,j)/N;
+
+	end
+
+end
+
+
+
+
+% error is computed across biological replicates. 
+error_integerness = nanstd(mean_integerness,[],2);
+error_integerness = error_integerness./sqrt(sum(~isnan(mean_integerness),2));
+
+Y = nanmean(mean_integerness,2);
+rm_this = isnan(Y);
+
+errorbar(ax.integerness,temp_space(~rm_this),Y(~rm_this),error_integerness(~rm_this),'Color',base_color,'LineWidth',2);
+
+
+
+% now plot errorbars for randomized data
+error_integerness = nanstd(mean_integerness_rand,[],2);
+error_integerness = error_integerness./sqrt(sum(~isnan(mean_integerness_rand),2));
+
+Y = nanmean(mean_integerness_rand,2);
+rm_this = isnan(Y);
+
+
+errorbar(ax.integerness,temp_space(~rm_this),Y(~rm_this),error_integerness(~rm_this),'Color',[.7 .7 .7],'LineWidth',2);
 
 % now plot the remainders to show that it is different from random
 
 x = 1:length(Rem);
+
 N = 1e3;
-y = NaN(length(x),N);
+nbins = 100;
+
+y = NaN(nbins,N);
+
 for i = 1:N
-	y(:,i) = sort(datasample(Rem,length(x)));
+	y(:,i) = cumsum(histcounts(datasample(Rem,length(x)),linspace(0,1,nbins+1)));
+	y(:,i) = y(:,i)/y(end,i);
 	
 end
 
@@ -92,7 +181,7 @@ Upper = nanstd(y,[],2);
 Upper(isnan(Upper)) = 0;
 
 
-x = x/sum(~isnan(m));
+x = linspace(0,1,nbins);
 axes(ax.remainders)
 ph = plotlib.shadedErrorBar(x(:),m,[Upper Upper]);
 delete(ph.mainLine)
@@ -102,9 +191,10 @@ ph.edge(1).Color = base_color;
 ph.edge(2).Color = base_color;
 
 
+plot(ax.integerness,[0 100],[.5 .5],'k--');
 
-set(ax.integerness,'YLim',[0 1])
-ylabel(ax.integerness,'Integerness')
+set(ax.integerness,'YLim',[0 .55],'XLim',[min(temp_space)-5 max(temp_space)+5])
+ylabel(ax.integerness,'Area b/w significand c.d.f and diagonal')
 xlabel(ax.integerness,gastric.tempLabel)
 xlabel(ax.ratio,gastric.tempLabel)
 set(ax.ratio,'YLim',[0 50],'YScale','linear')
@@ -113,5 +203,5 @@ ax.hero.YColor = base_color;
 ylabel(ax.hero,[neuron ' burst period (s)'])
 axis(ax.hero,'square')
 
-ylabel(ax.remainders,'Significand of burst period ratio')
-xlabel(ax.remainders,'Cumulative probability')
+xlabel(ax.remainders,'Significand of burst period ratio')
+ylabel(ax.remainders,'Cumulative probability')

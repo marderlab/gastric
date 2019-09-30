@@ -25,7 +25,7 @@ clear ax
 temp_space = min_temp:2:max_temp;
 
 
-N = 1e3;
+
 
 c = colormaps.redula(length(temp_space));
 
@@ -44,7 +44,7 @@ end
 ax(1) = subplot(2,3,1); hold on
 set(gca,'YLim',[0 1],'XLim',[0 1])
 
-
+N = 1e4;
 nbins = 100;
 
 for i = 1:length(temp_space)
@@ -60,19 +60,21 @@ for i = 1:length(temp_space)
 		hy(:,j) = cumsum(histcounts(temp,linspace(0,1,nbins+1)));
 		hy(:,j) = hy(:,j)/hy(end,j);
 
+
 	end
 
 
 	M = mean(hy,2);
 
-	Upper = std(hy,[],2); %/sqrt(N);
-	Lower = std(hy,[],2); %/sqrt(N);
+	Upper = std(hy,[],2);
+	Lower = std(hy,[],2);
 
 
 	hx = linspace(0,1,size(Upper,1));
 
 	ph = plotlib.shadedErrorBar(hx,M,[Upper Lower]);
 	delete(ph.mainLine)
+
 
 	ph.patch.FaceColor = c(i,:);
 	ph.patch.FaceAlpha = .5;
@@ -88,6 +90,7 @@ ylabel('Cumualtive probability of LG burst start')
 xlabel('PD phase')
 
 plotlib.drawDiag;
+
 
 
 subplot(2,3,3); hold on
@@ -196,9 +199,29 @@ for i = 1:length(temp_space)
 		continue
 	end
 
-	hy = histcounts(LG_phase(plot_this),hx);
+	
+	use_these = LG_phase(plot_this);
 
-	hy = hy/sum(hy);
+	hy = zeros(nbins,N);
+	for j = 1:N
+		temp = datasample(use_these,length(use_these));
+		hy(:,j) = (histcounts(temp,linspace(0,1,nbins+1)));
+		hy(:,j) = hy(:,j)/sum(hy(:,j));
+
+
+	end
+
+	M = mean(hy,2);
+
+	Upper = std(hy,[],2);
+	Lower = std(hy,[],2);
+
+
+	hx = linspace(0,1,size(Upper,1));
+
+	ph = plotlib.shadedErrorBar(hx,M,[Upper Lower]);
+	delete(ph.mainLine)
+
 
 	idx = ceil(((temp_space(i) - min_temp)/(max_temp - min_temp))*100);
 	if idx < 1
@@ -208,7 +231,13 @@ for i = 1:length(temp_space)
 		idx = length(c);
 	end
 
-	plot(hc,hy,'Color',c(idx,:),'LineWidth',2)
+
+	ph.patch.FaceColor = c(idx,:);
+	ph.patch.FaceAlpha = .5;
+
+	ph.edge(1).Color = c(idx,:);
+	ph.edge(2).Color = c(idx,:);
+
 
 end
 xlabel('PD phase')
@@ -236,8 +265,29 @@ for i = 1:length(temp_space)
 	if sum(plot_this) < 1e3
 		continue
 	end
-	hy = histcounts(DG_phase(plot_this),hx);
-	hy = hy/sum(hy);
+
+	use_these = DG_phase(plot_this);
+
+	hy = zeros(nbins,N);
+	for j = 1:N
+		temp = datasample(use_these,length(use_these));
+		hy(:,j) = (histcounts(temp,linspace(0,1,nbins+1)));
+		hy(:,j) = hy(:,j)/sum(hy(:,j));
+
+
+	end
+
+	M = mean(hy,2);
+
+	Upper = std(hy,[],2);
+	Lower = std(hy,[],2);
+
+
+	hx = linspace(0,1,size(Upper,1));
+
+	ph = plotlib.shadedErrorBar(hx,M,[Upper Lower]);
+	delete(ph.mainLine)
+
 
 	idx = ceil(((temp_space(i) - min_temp)/(max_temp - min_temp))*100);
 	if idx < 1
@@ -246,7 +296,14 @@ for i = 1:length(temp_space)
 	if idx > length(c)
 		idx = length(c);
 	end
-	plot(hx(2:end),hy,'Color',c(idx,:),'LineWidth',2)
+
+
+	ph.patch.FaceColor = c(idx,:);
+	ph.patch.FaceAlpha = .5;
+
+	ph.edge(1).Color = c(idx,:);
+	ph.edge(2).Color = c(idx,:);
+
 
 end
 xlabel('PD phase')
