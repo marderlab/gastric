@@ -1,15 +1,27 @@
+% gastric.plotRasterTriggeredBy
+% This function makes plots showing rasters of one neuron
+% triggered by burst starts on another neuron
+%
+% specify the neuron you want to raster using 'neuron'
+% and the trigger using 'trigger'
+
 function plotRasterTriggeredBy(data, varargin)
 
 
 options.neuron = '';
 options.trigger = '';
-options.before = 3;
-options.after = 3;
+
+% time window to show (in seconds)
+options.time_window = 3;
+
+
 options.min_temp = 5;
 options.max_temp = 23;
 options.N_rescale = NaN;
 options.use_raster = false;
 options.MarkerSize = 1;
+options.PlotHistogram = true;
+options.HistogramSize = 3;
 
 options = corelib.parseNameValueArguments(options, varargin{:});
 
@@ -31,7 +43,7 @@ neuron_burst_starts = data.([neuron '_burst_starts']);
 neuron_burst_periods = data.([neuron '_burst_periods']);
 
 for j = 1:length(trigger_points)
-	these_spikes = data.(neuron)(data.(neuron) > (trigger_points(j) - before) & data.(neuron) < (trigger_points(j) + after));
+	these_spikes = data.(neuron)(data.(neuron) > (trigger_points(j) - time_window) & data.(neuron) < (trigger_points(j) + time_window));
 
 	if isempty(these_spikes)
 		continue
@@ -78,7 +90,7 @@ C(C<1) = 1;
 c = colormaps.redula(101);
 c(end,:) = [0 0 0];
 
-% if no temp data avaialble, set to black
+% if no temp data available, set to black
 C(isnan(C)) = length(c);
 
 for j = 1:length(trigger_points)
@@ -90,4 +102,46 @@ for j = 1:length(trigger_points)
 end
 
 plot([0 0],[0 length(trigger_points)],'k--')
-set(gca,'XLim',[-before after],'YLim',[0 length(trigger_points)]);
+
+n_rows = size(spikes,2);
+
+set(gca,'XLim',[-time_window time_window],'YLim',[0 n_rows])
+
+% attempt to also plot a histogram on top
+if ~PlotHistogram
+	return
+end
+
+% can't plot a histogram unless data is normalized
+if isnan(N_rescale)
+	return
+end
+
+
+% at this point the spikes have been normalized. 
+
+% ignore all spikes outside the window that we plot
+spikes = spikes(:);
+spikes(spikes<-N_rescale) = NaN;
+spikes(spikes>N_rescale) = NaN;
+spikes = spikes(~isnan(spikes));
+
+
+hy = histcounts(spikes,linspace(-N_rescale,N_rescale,101));
+hx = linspace(-N_rescale,N_rescale,100);
+hy = hy/sum(hy);
+
+hy = hy*n_rows*HistogramSize;
+hy = hy + n_rows;
+
+
+% hack
+hy(1) = n_rows;
+hy(end) = n_rows;
+
+
+
+fill(hx,hy,'k');
+
+
+set(gca,'XLim',[-N_rescale N_rescale],'YLim',[0 max(hy)])

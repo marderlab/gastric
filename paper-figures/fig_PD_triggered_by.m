@@ -8,8 +8,8 @@ addpath('../')
 data = gastric.getEvokedData();
 
 % we're only going to show 4 preps
-data = data([2 3 5 10]);
-
+%data = data([2 3 5 10]);
+data = data([2 4 6 5]);
 
 min_temp = 5;
 max_temp = 25;
@@ -40,7 +40,7 @@ for i = 1:length(data)
 	ax(i) = subplot(4,4,i); hold on
 
 
-	gastric.plotRasterTriggeredBy(data(i),'neuron','PD', 'trigger','LG_burst_starts','N_rescale',NaN,'min_temp',min_temp,'max_temp',max_temp,'before',2,'after',2)
+	gastric.plotRasterTriggeredBy(data(i),'neuron','PD', 'trigger','LG_burst_starts','min_temp',min_temp,'max_temp',max_temp,'time_window',2)
 	set(gca,'YTick',[],'XTick',[])
 	set(gca,'YColor','w')
 	if i == 1
@@ -48,7 +48,7 @@ for i = 1:length(data)
 	end
 
 	ax(i+4) = subplot(4,4,i + 4); hold on
-	gastric.plotRasterTriggeredBy(data(i),'neuron','PD', 'trigger','DG_burst_starts','N_rescale',NaN,'min_temp',min_temp,'max_temp',max_temp,'before',2,'after',2)
+	gastric.plotRasterTriggeredBy(data(i),'neuron','PD', 'trigger','DG_burst_starts','min_temp',min_temp,'max_temp',max_temp,'time_window',2)
 	set(gca,'YTick',[])
 	set(gca,'YColor','w')
 
@@ -60,11 +60,14 @@ for i = 1:length(data)
 
 end
 
+
+% now plot the normalized rasters
+
 for i = 1:length(data)
 
 	ax(i+8) = subplot(4,4,i+8); hold on
 
-	gastric.plotRasterTriggeredBy(data(i),'neuron','PD', 'trigger','LG_burst_starts','N_rescale',3,'min_temp',min_temp,'max_temp',max_temp);
+	gastric.plotRasterTriggeredBy(data(i),'neuron','PD', 'trigger','LG_burst_starts','N_rescale',3,'min_temp',min_temp,'max_temp',max_temp,'time_window',4);
 	set(gca,'YTick',[],'XTick',[])
 	set(gca,'YColor','w')
 
@@ -74,7 +77,7 @@ for i = 1:length(data)
 
 
 	ax(i+12) = subplot(4,4,i+12); hold on
-	gastric.plotRasterTriggeredBy(data(i),'neuron','PD', 'trigger','DG_burst_starts','N_rescale',3,'min_temp',min_temp,'max_temp',max_temp);
+	gastric.plotRasterTriggeredBy(data(i),'neuron','PD', 'trigger','DG_burst_starts','N_rescale',3,'min_temp',min_temp,'max_temp',max_temp,'time_window',4);
 	set(gca,'YTick',[])
 	set(gca,'YColor','w')
 
@@ -109,9 +112,9 @@ ax(end).Position(3) = ax(1).Position(3);
 
 ylabel(ch,gastric.tempLabel);
 
-xh(1) = xlabel(ax(6),'Time since burst start (s)')
-xh(1).Position = [3 -91];
+xh(1) = xlabel(ax(6),'Time since burst start (s)');
+xh(1).Position = [3 -201];
 
-xh(2) = xlabel(ax(14),'Time since burst start (norm)')
-xh(2).Position = [4.2 -91];
+xh(2) = xlabel(ax(14),'Time since burst start (norm)');
+xh(2).Position = [4.2 -201];
 
