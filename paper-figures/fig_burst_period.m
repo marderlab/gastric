@@ -154,8 +154,8 @@ legend(l,{'PD','LG'});
 
 
 ax.q10s = subplot(3,3,8); hold on
-LGE = [data.Q_LG_std]/2;
-PDE = [data.Q_PD_std]/2;
+LGE = [data.Q_LG_std];
+PDE = [data.Q_PD_std];
 errorbar([data.Q_LG_mean],[data.Q_PD_mean],PDE,PDE,LGE,LGE,'o');
 plotlib.drawDiag;
 axis square

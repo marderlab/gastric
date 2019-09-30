@@ -112,6 +112,8 @@ for i = 1:length(show_these_rasters)
 
 end
 
+text(ax.rasters,-2.7,-4,['\it lgn']);
+
 
 
 set(ax.rasters,'XLim',[0 60],'YLim',[yoffset-1, 1])
@@ -210,6 +212,8 @@ for i = 1:length(data)
 end
 
 
+% add a wee scale bar
+plot(ax.LG_burst_periods,[100 200], [1 1],'k','LineWidth',3);
 
 
 ax.LG_burst_periods.XColor = 'w';
@@ -233,7 +237,7 @@ ax.raw_data(2).Position = [.13 .525 .775 .2];
 figlib.pretty('PlotLineWidth',1,'LineWidth',1)
 
 
-
+text(ax.LG_burst_periods,100,.7,'100 s','FontSize',14)
 
 
 

@@ -198,7 +198,7 @@ plotlib.drawDiag;
 
 axis square
 xlabel('Evoked period (s)')
-ylabel('Spontaneous period (s)')
+ylabel(['Spontaneous' newline 'period (s)'])
 
 ax.compare.XColor = 'b';
 
