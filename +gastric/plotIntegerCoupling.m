@@ -57,7 +57,7 @@ all_t(rm_this) = NaN;
 
 N_pyloric_gastric = round(all_y./all_x);
 Rem = rem(all_y./all_x,1);
-integerness = gastric.integerness(Rem);
+% integerness = gastric.integerness(Rem);
 
 
 
@@ -115,7 +115,7 @@ for i = 1:length(temp_space)
 			XX = linspace(0,1,100);
 			YY = interp1(X(idx),Y(idx),XX);
 
-			mean_integerness(i,j) = mean_integerness(i,j) + nansum(abs(XX - YY)/(100*.5));
+			mean_integerness(i,j) = mean_integerness(i,j) + nansum(abs(XX - YY)/(100));
 
 			% now the dummy data
 			X = sort(datasample(rand_rem,length(rand_rem)));
@@ -124,7 +124,7 @@ for i = 1:length(temp_space)
 			XX = linspace(0,1,100);
 			YY = interp1(X(idx),Y(idx),XX);
 
-			mean_integerness_rand(i,j) = mean_integerness_rand(i,j) + nansum(abs(XX - YY)/(100*.5));
+			mean_integerness_rand(i,j) = mean_integerness_rand(i,j) + nansum(abs(XX - YY)/(100));
 			
 
 		end
@@ -191,9 +191,10 @@ ph.edge(1).Color = base_color;
 ph.edge(2).Color = base_color;
 
 
-plot(ax.integerness,[0 100],[.5 .5],'k--');
+% add a line to indicate theoretical maximum
+plot(ax.integerness,[0 100],[.25 .25],'k--');
 
-set(ax.integerness,'YLim',[0 .55],'XLim',[min(temp_space)-5 max(temp_space)+5])
+set(ax.integerness,'YLim',[0 .3],'XLim',[min(temp_space)-5 max(temp_space)+5])
 ylabel(ax.integerness,'Area b/w significand c.d.f and diagonal')
 xlabel(ax.integerness,gastric.tempLabel)
 xlabel(ax.ratio,gastric.tempLabel)
@@ -205,3 +206,4 @@ axis(ax.hero,'square')
 
 xlabel(ax.remainders,'Significand of burst period ratio')
 ylabel(ax.remainders,'Cumulative probability')
+

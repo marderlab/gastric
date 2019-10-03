@@ -74,5 +74,5 @@ L.Location = 'northwest';
 figlib.pretty('PlotLineWidth',1,'FontSize',16)
 
 
-
+th = text(12,.26,'Perfect integer coupling','Parent',ax.LG.integerness,'FontSize',13);
 
