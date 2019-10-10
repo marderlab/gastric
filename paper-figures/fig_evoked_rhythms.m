@@ -30,7 +30,7 @@ c = colormaps.redula(100);
 min_temp = 5;
 max_temp = 25;
 
-show_these_channels = {'lvn','pdn','mvn','dgn','lgn'};
+show_these_channels = {'pdn','mvn','dgn','lgn'};
 
 
 clear ax
@@ -136,8 +136,7 @@ data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',1,'min_spikes_per_bu
 
 
 ax.LG_burst_periods = subplot(4,1,4); hold on
-set(ax.LG_burst_periods,'YLim',[1 100],'YScale','log')
-
+set(ax.LG_burst_periods,'YScale','log','YLim',[3 30])
 
 xoffset = 0;
 
@@ -200,20 +199,24 @@ for i = 1:length(data)
 		Y = data(i).LG_burst_periods(only_these);
 		Y(Y>30) = NaN;
 
-		plot(ax.LG_burst_periods,xoffset + time, Y,'Color',c(idx,:));
+		plot(ax.LG_burst_periods,xoffset + time, Y,'.','Color',c(idx,:),'MarkerSize',22);
 
 
 	end
 
 	xoffset = xoffset + 250;
 
-	plotlib.vertline(xoffset,'Color','k');
+	if i < length(data)
+		plotlib.vertline(xoffset,'Color','k');
+	end
 
 end
 
 
+
+
 % add a wee scale bar
-plot(ax.LG_burst_periods,[100 200], [1 1],'k','LineWidth',3);
+plot(ax.LG_burst_periods,[100 200], [3 3],'k','LineWidth',3);
 
 
 ax.LG_burst_periods.XColor = 'w';
@@ -234,10 +237,13 @@ ax.LG_burst_periods.Position = [.13 .07 .7 .2];
 ax.raw_data(1).Position = [.13 .75 .775 .2];
 ax.raw_data(2).Position = [.13 .525 .775 .2];
 
+
+
 figlib.pretty('PlotLineWidth',1,'LineWidth',1)
+set(ax.LG_burst_periods,'YScale','log','YLim',[3 30])
+ax.LG_burst_periods.YTick = [3 6 10 20 30];
 
-
-text(ax.LG_burst_periods,100,.7,'100 s','FontSize',14)
+text(ax.LG_burst_periods,100,2.7,'100 s','FontSize',14)
 
 
 
