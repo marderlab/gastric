@@ -115,6 +115,6 @@ ylabel(ch,gastric.tempLabel);
 xh(1) = xlabel(ax(6),'Time since burst start (s)');
 xh(1).Position = [3 -201];
 
-xh(2) = xlabel(ax(14),'Time since burst start (norm)');
+xh(2) = xlabel(ax(14),'PD phase');
 xh(2).Position = [4.2 -201];
 
