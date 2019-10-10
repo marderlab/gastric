@@ -36,7 +36,7 @@ offset = 0;
 
 clear spont_T evoked_T
 
-show_these_channels = {'lvn','pdn','mvn','dgn','lgn'};
+show_these_channels = {'pdn','mvn','dgn','lgn'};
 
 for i = 1:length(spont_files)
 
@@ -149,12 +149,12 @@ for i = 1:length(spont_files)
 	set(ax.raw_data_evoked(i),'XLim',[0 30],'YTick',[],'YLim',[0 6],'YColor','w')
 	set(ax.raw_data_spont(i),'XLim',[0 30],'YTick',[],'YLim',[0 6],'YColor','w')
 
-	if i < 4
-		ax.raw_data_spont(i).XTick = [];
-		ax.raw_data_spont(i).XColor = 'w';
-		ax.raw_data_evoked(i).XTick = [];
-		ax.raw_data_evoked(i).XColor = 'w';
-	end
+
+	ax.raw_data_spont(i).XTick = [];
+	ax.raw_data_spont(i).XColor = 'w';
+	ax.raw_data_evoked(i).XTick = [];
+	ax.raw_data_evoked(i).XColor = 'w';
+
 
 end
 
@@ -197,10 +197,10 @@ errorbar(ax.compare, [spont_T.M],[evoked_T.M],[evoked_T.S]/2,[evoked_T.S]/2,[spo
 plotlib.drawDiag;
 
 axis square
-xlabel('Evoked period (s)')
-ylabel(['Spontaneous' newline 'period (s)'])
+ylabel('Evoked period (s)')
+xlabel(['Spontaneous' newline 'period (s)'])
 
-ax.compare.XColor = 'b';
+ax.compare.YColor = 'b';
 
 
 ylabel(ax.isi,'LG ISI (s)')
@@ -219,3 +219,8 @@ ax.compare.Position = [.7 .1 .15 .125];
 
 ax.isi.XColor = 'w';
 ax.isi.XTick = [];
+
+ax.isi.Position = [.1 .05 .5 .175];
+ax.compare.Position = [.7 .08 .18 .18];
+
+plot(ax.raw_data_spont(1),[20 30],[0 0],'LineWidth',3,'Color','k');

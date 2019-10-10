@@ -259,7 +259,7 @@ for i = 1:length(temp_space)
 
 end
 xlabel('PD phase')
-ylabel('LG spike probability')
+yh = ylabel('LG spike probability');
 set(gca,'XLim',[0 1],'YLim',[0 .1],'YTick',[0:.01:.07])
 plotlib.horzline(1/nbins,'LineStyle','--','Color','k','LineWidth',2);
 
@@ -334,11 +334,11 @@ colormap(c)
 ch = colorbar();
 ch.Position = [.75 .1 .01 .3];
 caxis([min_temp max_temp])
-ylabel(ch,gastric.tempLabel)
+title(ch,gastric.tempLabel)
 
 figlib.pretty('PlotLineWidth',1)
 
 
-
+yh.Position = [-.22 0.04];
 
 
