@@ -56,10 +56,18 @@ for j = 1:length(group_bins)
 
 	M(j) = nanmean(prep_means);
 	
+
+	
+
+
 	if options.UseSEM
 		E(j) = corelib.sem(prep_means);
 	else
 		E(j) =  nanstd(prep_means);
+	end
+
+	if sum(~isnan(prep_means)) < 3
+		E(j) = NaN;
 	end
 end
 

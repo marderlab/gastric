@@ -81,7 +81,7 @@ for i = 1:length(data)
 	data(i).Q_LG_mean = nanmean(q10);
 	data(i).Q_LG_std =nanstd(q10)/sqrt(sum(~isnan(q10)));
 
-	set(gca,'YScale','log','XLim',[6 24],'YTick',[.1 1 10 100])
+	set(gca,'YScale','log','XLim',[6 24],'YTick',[.1 1 10 100],'YLim',[.1 100])
 
 	%title(char(data(i).experiment_idx),'interpreter','none')
 	if i == 6
