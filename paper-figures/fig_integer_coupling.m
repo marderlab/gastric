@@ -54,6 +54,8 @@ ax.LG.remainders.YLim = [0 1];
 ax.LG.remainders.XLim = [0 1];
 plotlib.drawDiag(ax.LG.remainders);
 
+% add a new guide line showing perfect integer coupling
+plot(ax.LG.remainders,[0 0 1 1],[0 .5 .5 1],'b:')
 
 ax.LG.remainders.Position(4) = .3;
 ax.LG.ratio.Position(4) = .3;
@@ -71,8 +73,14 @@ lh(2).MarkerFaceColor = c(2,:);
 L = legend(lh,'LG','DG');
 L.Location = 'northwest';
 
+
 figlib.pretty('PlotLineWidth',1,'FontSize',16)
 
 
 th = text(12,.26,'Perfect integer coupling','Parent',ax.LG.integerness,'FontSize',13);
 
+ax.LG.ratio.YLim = [0 30];
+
+
+
+xlabel(ax.LG.remainders,'Significand of T_{gastric}/T_{pyloric}')

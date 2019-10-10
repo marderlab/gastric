@@ -192,7 +192,7 @@ ph.edge(2).Color = base_color;
 
 
 % add a line to indicate theoretical maximum
-plot(ax.integerness,[0 100],[.25 .25],'k--');
+plot(ax.integerness,[0 100],[.25 .25],'b:');
 
 set(ax.integerness,'YLim',[0 .3],'XLim',[min(temp_space)-5 max(temp_space)+5])
 ylabel(ax.integerness,'Area b/w significand c.d.f and diagonal')
@@ -203,6 +203,5 @@ ax.hero.YColor = base_color;
 ylabel(ax.hero,[neuron ' burst period (s)'])
 axis(ax.hero,'square')
 
-xlabel(ax.remainders,'Significand of burst period ratio')
 ylabel(ax.remainders,'Cumulative probability')
 
