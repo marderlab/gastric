@@ -84,3 +84,25 @@ ax.LG.ratio.YLim = [0 30];
 
 
 xlabel(ax.LG.remainders,'Significand of T_{gastric}/T_{pyloric}')
+
+for P = {'LG','DG'}
+
+	this = P{1};
+
+	ax.(this).hero.XTick = [.2 .5 1 2];
+	ax.(this).hero.YTick = [3 5 10 15 30];
+
+	ax.(this).hero.YScale = 'log';
+	ax.(this).hero.XScale = 'log';
+
+	ax.(this).hero.YLim = [3 30];
+	ax.(this).hero.XLim = [.2 2];
+end
+
+
+ch.Position = [.87 .55 .01 .4];
+ch.TickDirection = 'out';
+
+ax.LG.remainders.Position = [.1 .1 .2 .3];
+ax.LG.integerness.Position = [.425 .1 .2 .3];
+ax.LG.ratio.Position = [.7 .1 .2 .3];

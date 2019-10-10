@@ -29,8 +29,9 @@ for i = 4:30
 	plot(ax.hero,xx,yy,'Color',[.8 .8 .8])
 end
 
+only_these = all_prep > 0;
+[ph,ch] = plotlib.cplot(ax.hero, all_x(only_these),all_y(only_these),all_temp(only_these),'colormap',@colormaps.redula,'CLim',[5 25],'BinCenters',7:2:23);
 
-[ph,ch] = plotlib.cplot(ax.hero, all_x,all_y,all_temp,'colormap',colormaps.redula(20),'use_scatter',false,'clim',[5 23]);
 
 for i = 1:length(ph)
 	try
@@ -39,12 +40,10 @@ for i = 1:length(ph)
 	end
 end
 
-set(ax.hero,'XLim',[0.2 2],'YLim',[0 30])
 xlabel(ax.hero,'Mean PD period (s)')
 
 ch.Location = 'eastoutside';
 title(ch,gastric.tempLabel)
-colormap(colormaps.redula)
 
 
 
