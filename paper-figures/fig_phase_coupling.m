@@ -44,7 +44,7 @@ end
 ax(1) = subplot(2,3,1); hold on
 set(gca,'YLim',[0 1],'XLim',[0 1])
 
-N = 1e4;
+N = 1e3;
 nbins = 100;
 
 for i = 1:length(temp_space)
@@ -173,6 +173,12 @@ xlabel('PD phase')
 plotlib.drawDiag;
 
 
+% measure PD stops everywhere
+for i = 1:length(data)
+	[data(i).PD_stops, data(i).PD_temp] = gastric.measurePhase(data(i),'PD_burst_ends','PD');
+end
+PD_stops = vertcat(data.PD_stops);
+PD_temp = vertcat(data.PD_temp);
 
 
 
@@ -191,8 +197,11 @@ hc = hx(1:end-1) + mean(diff(hx))/2;
 
 % average across preps and plot by temperature
 subplot(2,3,4); hold on
-
+barx = .098;
 for i = 1:length(temp_space)
+
+	disp(temp_space(i))
+
 	plot_this = round(all_temp) == temp_space(i);
 
 	if sum(plot_this) < 1e3
@@ -203,7 +212,7 @@ for i = 1:length(temp_space)
 	use_these = LG_phase(plot_this);
 
 	hy = zeros(nbins,N);
-	for j = 1:N
+	parfor j = 1:N
 		temp = datasample(use_these,length(use_these));
 		hy(:,j) = (histcounts(temp,linspace(0,1,nbins+1)));
 		hy(:,j) = hy(:,j)/sum(hy(:,j));
@@ -238,13 +247,21 @@ for i = 1:length(temp_space)
 	ph.edge(1).Color = c(idx,:);
 	ph.edge(2).Color = c(idx,:);
 
+	% also indicate where PD stops bursting
+	M = mean(PD_stops(round(PD_temp) == temp_space(i)));
+	S = std(PD_stops(round(PD_temp) == temp_space(i)));
+	h(i) = barh(barx,M,'BarWidth',.003,'FaceColor',c(idx,:),'EdgeColor',c(idx,:));
+
+	errorbar(M,barx,S,'horizontal','Color',c(idx,:));
+
+	barx = barx - .003;
+
 
 end
 xlabel('PD phase')
 ylabel('LG spike probability')
-set(gca,'XLim',[0 1],'YLim',[0 .1])
+set(gca,'XLim',[0 1],'YLim',[0 .1],'YTick',[0:.01:.07])
 plotlib.horzline(1/nbins,'LineStyle','--','Color','k','LineWidth',2);
-
 
 
 
