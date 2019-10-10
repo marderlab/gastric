@@ -228,7 +228,7 @@ ylabel(ax.LG_burst_periods,'LG burst period (s)')
 
 ch = colorbar(ax.LG_burst_periods);
 colormap(ch,colormaps.redula);
-ylabel(ch,gastric.tempLabel)
+title(ch,gastric.tempLabel)
 ch.Position = [.88 .07 .01 .18];
 caxis([min_temp max_temp])
 

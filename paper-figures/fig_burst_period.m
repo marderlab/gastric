@@ -85,8 +85,8 @@ for i = 1:length(data)
 
 	%title(char(data(i).experiment_idx),'interpreter','none')
 	if i == 6
-		xlabel(['Temperature (' char(176) 'C)'])
-		ylabel('Burst period (s)')
+		xh = xlabel(gastric.tempLabel);
+		yh = ylabel('Burst period (s)');
 	end
 	if i < 6
 		set(gca,'XTickLabel',{})
@@ -258,3 +258,12 @@ end
 
 ax.all_periods.Position(1) = .11;
 ax.firing_rate.Position(1) = .71;
+
+
+xh.Position = [60 .015];
+yh.Position = [-2 200];
+
+ax.all_periods.YMinorTick = 'on';
+ax.all_periods.XMinorTick = 'off';
+ax.all_periods.XTick = 7:4:23;
+ax.all_periods.YTick = [.1 1 10 100];
