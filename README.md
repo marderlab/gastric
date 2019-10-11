@@ -1,9 +1,19 @@
-# Analysis of gastric rhythms
+# Interactions between two rhythmic circuits with distinct periods are maintained over a range of temperatures
 
-This repo contains scripts to analyze data of gastric rhtyhms.
 
-You should probably run `gastro_plyloric.m` to get started.
+This repo contains code that was used to analyze data for this paper. 
 
-Helper functions are in the `+gastric` package. 
+To reproduce figures from the paper, you will need to get this repo and the following repos: 
+
+```bash
+git clone https://github.com/sg-s/gastric
+git clone https://github.com/sg-s/srinivas.gs_mtools
+git clone https://github.com/sg-s/crabsort
+
+```
+
+Then, go into the `paper_figures` folder and run any of the scripts there to reproduce the figures. 
+
+
 
 

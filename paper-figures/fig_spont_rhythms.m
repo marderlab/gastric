@@ -254,7 +254,7 @@ figure('outerposition',[300 300 901 1001],'PaperUnits','points','PaperSize',[901
 
 ax = gca;
 
-set(ax,'XLim',[0 60],'YColor','w')
+set(ax,'XLim',[0 30],'YColor','w')
 
 offset = 0;
 for i = 1:length(data)
@@ -286,9 +286,9 @@ for i = 1:length(data)
 		offset = offset +  1;
 	end
 
-	offset = offset + 1;
+	offset = offset + 3;
 
-	plotlib.horzline(offset-.5,'LineWidth',2,'Color','k');
+	plotlib.horzline(offset-.5,'LineWidth',1,'Color','k');
 
 
 
@@ -300,7 +300,7 @@ ax.YLim(1) = -.5;
 ch = colorbar;
 colormap(c);
 caxis([min_temp max_temp])
-title(ch,'Temperature (C)')
+title(ch,gastric.tempLabel)
 ch.Position = [.88 .33 .01 .15];
 
 ax.Position = [.1 .1 .7 .85];
