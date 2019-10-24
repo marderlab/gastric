@@ -232,3 +232,5 @@ figlib.pretty('lw',1,'plw',1)
 
 
 
+
+figlib.saveall('Location',pwd,'SaveName',mfilename)
