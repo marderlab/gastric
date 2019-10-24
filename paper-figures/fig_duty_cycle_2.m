@@ -172,3 +172,6 @@ end
 
 plot(ax(end),[T-120, T],[0 0],'LineWidth',3,'Color','k')
 th = text(T-150,-.2,'2 min','Parent',ax(end),'FontSize',14);
+
+
+figlib.saveall('Location',pwd,'SaveName',mfilename)

@@ -267,3 +267,7 @@ ax.all_periods.YMinorTick = 'on';
 ax.all_periods.XMinorTick = 'off';
 ax.all_periods.XTick = 7:4:23;
 ax.all_periods.YTick = [.1 1 10 100];
+
+
+
+figlib.saveall('Location',pwd,'SaveName',mfilename)

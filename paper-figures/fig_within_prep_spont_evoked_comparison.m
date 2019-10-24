@@ -224,3 +224,6 @@ ax.isi.Position = [.1 .05 .5 .175];
 ax.compare.Position = [.7 .08 .18 .18];
 
 plot(ax.raw_data_spont(1),[20 30],[0 0],'LineWidth',3,'Color','k');
+
+
+figlib.saveall('Location',pwd,'SaveName',mfilename)

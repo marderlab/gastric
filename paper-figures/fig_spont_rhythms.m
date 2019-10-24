@@ -306,3 +306,7 @@ ch.Position = [.88 .33 .01 .15];
 ax.Position = [.1 .1 .7 .85];
 
 figlib.pretty('PlotLineWidth',1)
+
+
+
+figlib.saveall('Location',pwd,'SaveName',mfilename)

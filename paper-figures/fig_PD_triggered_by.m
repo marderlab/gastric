@@ -118,3 +118,5 @@ xh(1).Position = [3 -201];
 xh(2) = xlabel(ax(14),'PD phase');
 xh(2).Position = [4.2 -201];
 
+
+figlib.saveall('Location',pwd,'SaveName',mfilename)

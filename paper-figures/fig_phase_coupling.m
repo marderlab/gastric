@@ -342,3 +342,5 @@ figlib.pretty('PlotLineWidth',1)
 yh.Position = [-.22 0.04];
 
 
+
+figlib.saveall('Location',pwd,'SaveName',mfilename)

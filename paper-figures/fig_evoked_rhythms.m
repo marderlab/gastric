@@ -248,7 +248,7 @@ text(ax.LG_burst_periods,100,2.7,'100 s','FontSize',14)
 
 
 
-
+figlib.saveall('Location',pwd,'SaveName',mfilename)
 
 
 
