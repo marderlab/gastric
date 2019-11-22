@@ -239,6 +239,16 @@ colormap(colormaps.redula(23))
 
 
 
+aLG = annotation('textarrow',[0.3 0.5],[0.6 0.5],'String','LG');
+aLG.Position = [.12 .955 .016 -0.0355];
+aLG.FontSize = 16;
+
+aDG = annotation('textarrow',[0.3 0.5],[0.6 0.5],'String','DG');
+aDG.Position = [0.1524    0.7426    0.0125    0.0251];
+aDG.FontSize = 16;
+return
+
+
 
 
 
