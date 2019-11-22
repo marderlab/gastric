@@ -171,7 +171,16 @@ for i = 1:length(ax)
 end
 
 plot(ax(end),[T-120, T],[0 0],'LineWidth',3,'Color','k')
-th = text(T-150,-.2,'2 min','Parent',ax(end),'FontSize',14);
+text(T-150,-.2,'2 min','Parent',ax(end),'FontSize',14);
 
 
-figlib.saveall('Location',pwd,'SaveName',mfilename)
+text(-3e2,7,'Duty cycle','Rotation',90,'FontSize',20);
+x0 = 2e2;
+for i = 1:length(temp_space)
+	this_x = x0 + xoffset*(i-1)/4;
+	th(i) = text(this_x,17.2,[mat2str(temp_space(i)) char(176) 'C'],'FontSize',20);
+end
+
+
+figlib.saveall('Location',pwd,'SaveName',mfilename);
+
