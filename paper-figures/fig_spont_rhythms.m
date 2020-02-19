@@ -18,7 +18,7 @@ file_names = {'0008','0015','0021','0025','0028','0030'};
 all_temp = [11 15 19 23 27 30];
 
 
-figure('outerposition',[0 0 1200 901],'PaperUnits','points','PaperSize',[1200 901]); hold on
+figure('outerposition',[0 0 1200 1301],'PaperUnits','points','PaperSize',[1200 1301]); hold on
 
 c = colormaps.redula(100);
 min_temp = 7;
@@ -47,13 +47,9 @@ for i = 6:-1:1
 	idx = ceil(((all_temp(i) - min_temp)/(max_temp - min_temp))*100);
 
 
-	
 
 	plot(C.time(a:z), lgn(a:z) ,'Color',c(idx,:))
 	plot(C.time(a:z), dgn(a:z)-2 ,'Color',c(idx,:))
-
-	% neurolib.raster(C.spikes.lgn.LG,'deltat',C.dt,'center',false,'Color',c(idx,:),'yoffset',1.1,'fill_fraction',.1)
-	% neurolib.raster(C.spikes.dgn.DG,'deltat',C.dt,'center',false,'Color',c(idx,:),'yoffset',-3,'fill_fraction',.1)
 
 	set(gca,'XLim',[C.time(a) C.time(z)])
 
@@ -79,7 +75,8 @@ th = text(ax(1),-10,-2,'\itdgn');
 
 
 data_root = '/Volumes/HYDROGEN/srinivas_data/temperature-data-for-embedding/';
-data_files = {'845_070','828_086_2','828_114_2','828_128','830_100','830_116_2','830_116_1','830_120_1','834_022','834_086_2'};
+% data_files = {'845_070','828_086_2','828_114_2','828_128','830_100','830_116_2','830_116_1','830_120_1','834_022','834_086_2'};
+data_files = {'830_120_1','830_116_2'};
 
 H = hashlib.md5hash([data_files{:}]);
 
@@ -110,6 +107,104 @@ for i = 1:length(data)
 
 	end
 end
+
+
+
+ax = subplot(2,1,2); hold on
+
+
+set(ax,'XLim',[0 120],'YColor','w','XColor','w')
+
+offset = 5;
+for i = 1:length(data)
+	this_data = data{i};
+	for j = 1:length(this_data)
+		spiketimes = sort(this_data(j).LG);
+		if length(spiketimes) < 2
+			continue
+		end
+		if this_data(j).decentralized
+			continue
+		end
+
+		if isnan(this_data(j).temperature)
+			continue
+		end
+
+		if sum(spiketimes < 60) < 20
+			continue
+		end
+
+
+
+		idx = ceil(((this_data(j).temperature - min_temp)/(max_temp - min_temp))*100);
+		idx(idx>length(c)) = length(c);
+			idx(idx<1) = 1;
+		neurolib.raster(this_data(j).LG,'deltat',1,'yoffset',offset,'Color',c(idx,:),'center',true)
+
+		offset = offset +  1;
+	end
+
+	offset = offset + 15;
+
+	%plotlib.horzline(offset-.5,'LineWidth',1,'Color','k');
+
+
+
+end
+
+xlabel('Time (s)')
+
+ax.YLim(1) = -.5;
+ch = colorbar;
+colormap(c);
+caxis([min_temp max_temp])
+title(ch,gastric.tempLabel)
+ch.Position = [.88 .33 .01 .15];
+
+
+
+time_scale = plot(ax,[110 120],[0 0],'k','LineWidth',3);
+
+figlib.pretty('PlotLineWidth',1)
+
+ax.Position = [.13 .1 .7 .4];
+
+
+aLG = annotation('textarrow',[0.3 0.5],[0.6 0.5],'String','LG');
+aLG.Position = [.12 .955 .016 -0.0355];
+aLG.FontSize = 16;
+
+aDG = annotation('textarrow',[0.3 0.5],[0.6 0.5],'String','DG');
+aDG.Position = [0.1524    0.7426    0.0125    0.0251];
+aDG.FontSize = 16;
+
+
+
+
+th = text(ax,ax.XLim(2)-6,-4,'10s');
+th.FontSize = 20;
+
+th = text(ax,0, 30,'Prep 2','FontSize',18,'Rotation',90);
+th.Position = [-3 20];
+
+th = text(ax,-3, 64,'Prep 1','FontSize',18,'Rotation',90);
+
+
+figlib.saveall('Location',pwd,'SaveName',mfilename)
+
+
+
+
+return
+
+
+
+
+
+
+
+
 
 
 
@@ -239,14 +334,6 @@ colormap(colormaps.redula(23))
 
 
 
-aLG = annotation('textarrow',[0.3 0.5],[0.6 0.5],'String','LG');
-aLG.Position = [.12 .955 .016 -0.0355];
-aLG.FontSize = 16;
-
-aDG = annotation('textarrow',[0.3 0.5],[0.6 0.5],'String','DG');
-aDG.Position = [0.1524    0.7426    0.0125    0.0251];
-aDG.FontSize = 16;
-return
 
 
 
@@ -259,64 +346,3 @@ return
 
 
 %% supplemental figure showing rasters
-
-figure('outerposition',[300 300 901 1001],'PaperUnits','points','PaperSize',[901 1001]); hold on
-
-ax = gca;
-
-set(ax,'XLim',[0 30],'YColor','w')
-
-offset = 0;
-for i = 1:length(data)
-	this_data = data{i};
-	for j = 1:length(this_data)
-		spiketimes = sort(this_data(j).LG);
-		if length(spiketimes) < 2
-			continue
-		end
-		if this_data(j).decentralized
-			continue
-		end
-
-		if isnan(this_data(j).temperature)
-			continue
-		end
-
-		if sum(spiketimes < 60) < 20
-			continue
-		end
-
-
-
-		idx = ceil(((this_data(j).temperature - min_temp)/(max_temp - min_temp))*100);
-		idx(idx>length(c)) = length(c);
-			idx(idx<1) = 1;
-		neurolib.raster(this_data(j).LG,'deltat',1,'yoffset',offset,'Color',c(idx,:),'center',true)
-
-		offset = offset +  1;
-	end
-
-	offset = offset + 3;
-
-	plotlib.horzline(offset-.5,'LineWidth',1,'Color','k');
-
-
-
-end
-
-xlabel('Time (s)')
-
-ax.YLim(1) = -.5;
-ch = colorbar;
-colormap(c);
-caxis([min_temp max_temp])
-title(ch,gastric.tempLabel)
-ch.Position = [.88 .33 .01 .15];
-
-ax.Position = [.1 .1 .7 .85];
-
-figlib.pretty('PlotLineWidth',1)
-
-
-
-figlib.saveall('Location',pwd,'SaveName',mfilename)
