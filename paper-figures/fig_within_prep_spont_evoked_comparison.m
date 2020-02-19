@@ -16,19 +16,34 @@ data = crabsort.computePeriods(data,'neurons',{'LG'},'ibis',1,'min_spikes_per_bu
 
 
 % show raw traces of spontaenous vs. evoked 
-figure('outerposition',[300 300 1200 1333],'PaperUnits','points','PaperSize',[1200 1333]); hold on
+figure('outerposition',[300 300 1200 802],'PaperUnits','points','PaperSize',[1200 802]); hold on
 
 spont_files = {'941_006','901_086','901_080','901_062'};
 evoked_files = {'0029','0032','0012','0020'};
 
 clear ax
-for i = 1:length(spont_files)
-	ax.raw_data_spont(i) = subplot(5,2,(i-1)*2 + 1); hold on;
-	ax.raw_data_evoked(i) = subplot(5,2,(i-1)*2 + 2); hold on;
+for i = 1
+	ax.raw_data_spont(i) = subplot(2,2,(i-1)*2 + 1); hold on;
+	ax.raw_data_evoked(i) = subplot(2,2,(i-1)*2 + 2); hold on;
+	set(ax.raw_data_evoked(i),'XLim',[0 30],'YTick',[],'YLim',[0 4.5],'YColor','w')
+	set(ax.raw_data_spont(i),'XLim',[0 30],'YTick',[],'YLim',[0 4.5],'YColor','w')
+	ax.raw_data_spont(i).XTick = [];
+	ax.raw_data_spont(i).XColor = 'w';
+	ax.raw_data_evoked(i).XTick = [];
+	ax.raw_data_evoked(i).XColor = 'w';
+
+	ax.raw_data_spont(i).Position(1) = .1;
+	ax.raw_data_spont(i).Position(3) = .39;
+	ax.raw_data_evoked(i).Position(1) = .51;
+	ax.raw_data_evoked(i).Position(3) = .39;
+
+	ax.raw_data_spont(i).Position(4) = .35;
+	ax.raw_data_evoked(i).Position(4) = .35;
+
 end
 
-ax.isi = subplot(5,2,9); hold on
-ax.isi.Position = [.1 .1 .5 .1];
+ax.isi = subplot(2,2,3); hold on
+ax.isi.Position = [.1 .1 .5 .4];
 ax.isi.YScale = 'log';
 ax.isi.YLim = [1e-3 1e3];
 
@@ -75,10 +90,12 @@ for i = 1:length(spont_files)
 	
 
 	% show raw_data
-	for j = 1:size(raw_data,2)
-		plot(ax.raw_data_spont(i),time,raw_data(:,j)+j,'Color','k');
-		th = text(ax.raw_data_spont(i),-1,0,['\it ' show_these_channels{j}]);
-		th.Position = [-3 j];
+	if i == 1
+		for j = 1:size(raw_data,2)
+			plot(ax.raw_data_spont(i),time,raw_data(:,j)+j,'Color','k');
+			th = text(ax.raw_data_spont(i),-1,0,['\it ' show_these_channels{j}]);
+			th.Position = [-3 j];
+		end
 	end
 
 
@@ -125,8 +142,10 @@ for i = 1:length(spont_files)
 	
 
 	% show raw_data
-	for j = 1:size(raw_data,2)
-		plot(ax.raw_data_evoked(i),time,raw_data(:,j)+j,'Color','b');
+	if i == 1
+		for j = 1:size(raw_data,2)
+			plot(ax.raw_data_evoked(i),time,raw_data(:,j)+j,'Color','b');
+		end
 	end
 
 
@@ -146,31 +165,13 @@ for i = 1:length(spont_files)
 	h.Color = 'k';
 
 
-	set(ax.raw_data_evoked(i),'XLim',[0 30],'YTick',[],'YLim',[0 6],'YColor','w')
-	set(ax.raw_data_spont(i),'XLim',[0 30],'YTick',[],'YLim',[0 6],'YColor','w')
-
-
-	ax.raw_data_spont(i).XTick = [];
-	ax.raw_data_spont(i).XColor = 'w';
-	ax.raw_data_evoked(i).XTick = [];
-	ax.raw_data_evoked(i).XColor = 'w';
-
-
 end
+
+
 
 title(ax.raw_data_evoked(1),'Evoked')
 title(ax.raw_data_spont(1),'Spontaneous')
 
-
-for i = 1:4
-	ax.raw_data_spont(i).Position(1) = .1;
-	ax.raw_data_spont(i).Position(3) = .39;
-	ax.raw_data_evoked(i).Position(1) = .51;
-	ax.raw_data_evoked(i).Position(3) = .39;
-
-	ax.raw_data_spont(i).Position(4) = .17;
-	ax.raw_data_evoked(i).Position(4) = .17;
-end
 
 
 
@@ -189,7 +190,7 @@ end
 
 
 
-ax.compare = subplot(5,4,20); hold on
+ax.compare = subplot(2,3,6); hold on
 
 
 errorbar(ax.compare, [spont_T.M],[evoked_T.M],[evoked_T.S]/2,[evoked_T.S]/2,[spont_T.S]/2,[spont_T.S]/2,'ko')
@@ -211,7 +212,7 @@ figlib.pretty('PlotLineWidth',1)
 set(ax.compare,'XScale','linear','YScale','linear','XLim',[-2 25],'YLim',[-2 25])
 
 
-axlib.separate(ax.compare);
+axlib.separate(ax.compare,'Offset',.01);
 axlib.separate(ax.isi);
 
 ax.isi.XLim = [-20 1e3];
@@ -220,10 +221,22 @@ ax.compare.Position = [.7 .1 .15 .125];
 ax.isi.XColor = 'w';
 ax.isi.XTick = [];
 
-ax.isi.Position = [.1 .05 .5 .175];
-ax.compare.Position = [.7 .08 .18 .18];
+ax.isi.Position = [.1 .1 .5 .35];
+ax.compare.Position = [.6 .15 .35 .35];
 
 plot(ax.raw_data_spont(1),[20 30],[0 0],'LineWidth',3,'Color','k');
+
+
+th = text(ax.isi,400,2500,'Preparation');
+th.FontSize = 18;
+
+
+th = text(ax.isi,100,290,'1','FontSize',18);
+th = text(ax.isi,350,290,'2','FontSize',18);
+th = text(ax.isi,600,290,'3','FontSize',18);
+th = text(ax.isi,850,290,'4','FontSize',18);
+
+th = text(ax.raw_data_spont,24,-.25,'10 s','FontSize',18);
 
 
 figlib.saveall('Location',pwd,'SaveName',mfilename)
