@@ -124,8 +124,25 @@ xlabel(ax.rasters,'Time (s)')
 
 
 
+ch = colorbar(ax.rasters);
+colormap(ch,colormaps.redula);
+title(ch,gastric.tempLabel)
+ch.Position = [.9 .34 .01 .16];
+caxis([min_temp max_temp])
 
 
+ax.raw_data(1).Position = [.09 .75 .775 .2];
+ax.raw_data(2).Position = [.09 .525 .775 .2];
+ax.rasters.Position = [.09 .335 .775 .16];
+
+
+figlib.pretty('PlotLineWidth',1,'LineWidth',1)
+
+figlib.saveall('Location',pwd,'SaveName',mfilename)
+
+
+
+return
 
 
 % show burst periods of LG
@@ -225,33 +242,10 @@ ax.LG_burst_periods.YMinorTick = 'on';
 ylabel(ax.LG_burst_periods,'LG burst period (s)')
 
 
-
-ch = colorbar(ax.LG_burst_periods);
-colormap(ch,colormaps.redula);
-title(ch,gastric.tempLabel)
-ch.Position = [.88 .07 .01 .18];
-caxis([min_temp max_temp])
-
 ax.LG_burst_periods.Position = [.13 .07 .7 .2];
 
-ax.raw_data(1).Position = [.13 .75 .775 .2];
-ax.raw_data(2).Position = [.13 .525 .775 .2];
 
-
-
-figlib.pretty('PlotLineWidth',1,'LineWidth',1)
 set(ax.LG_burst_periods,'YScale','log','YLim',[3 30])
 ax.LG_burst_periods.YTick = [3 6 10 20 30];
 
 text(ax.LG_burst_periods,100,2.7,'100 s','FontSize',14)
-
-
-
-
-figlib.saveall('Location',pwd,'SaveName',mfilename)
-
-
-
-
-
-
