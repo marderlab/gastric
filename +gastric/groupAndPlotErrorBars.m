@@ -5,8 +5,7 @@
 function plot_handles = groupAndPlotErrorBars(group_bins, group_idx, prep_idx, Y, varargin)
 
 options.UseSEM = true;
-
-options = corelib.parseNameValueArguments(varargin{:},options);
+options = corelib.parseNameValueArguments(options,varargin{:});
 
 
 unique_preps = unique(prep_idx(~isnan(prep_idx)));
