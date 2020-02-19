@@ -33,7 +33,10 @@ all_prep_LG = [];
 clear ax
 figure('outerposition',[300 300 1001 901],'PaperUnits','points','PaperSize',[1001 901]); hold on
 for i = 1:length(data)
-	ax.preps(i) = subplot(3,5,i); hold on
+
+	if i == 2
+		ax.preps(i) = subplot(2,2,1); hold on
+	end
 
 	y = data(i).PD_burst_periods;
 	% remove some outliers
@@ -45,8 +48,9 @@ for i = 1:length(data)
 	all_y_PD = [all_y_PD; y];
 	all_prep_PD = [all_prep_PD; i + 0*x];
 
-
-	plot(T,y,'k.')
+	if i == 2
+		plot(T,y,'k.')
+	end
 
 	f = 1./y;
 	f0 = nanmean(f(abs(T - 11) < .1));
@@ -67,7 +71,10 @@ for i = 1:length(data)
 
 	x = round(data(i).LG_burst_starts*1e3);
 	T = data(i).temperature(x);
-	plot(T,y,'r.')
+
+	if i == 2
+		plot(T,y,'r.')
+	end
 
 
 	all_x_LG = [all_x_LG; T];
@@ -83,24 +90,16 @@ for i = 1:length(data)
 
 	set(gca,'YScale','log','XLim',[6 24],'YTick',[.1 1 10 100],'YLim',[.1 100])
 
-	%title(char(data(i).experiment_idx),'interpreter','none')
-	if i == 6
-		xh = xlabel(gastric.tempLabel);
-		yh = ylabel('Burst period (s)');
-	end
-	if i < 6
-		set(gca,'XTickLabel',{})
-	end
-	if rem(i,5) == 1
-	else
-		set(gca,'YTickLabel',{})
-	end
+
+	xlabel(gastric.tempLabel);
+	ylabel('Burst period (s)');
+
+
 end
 
 
 
-
-ax.all_periods = subplot(3,3,7); hold on
+ax.all_periods = subplot(2,2,2); hold on
 temp_space = 7:2:23;
 ph_PD = gastric.groupAndPlotErrorBars(temp_space, all_x_PD, all_prep_PD, all_y_PD);
 
@@ -153,7 +152,7 @@ legend(l,{'PD','LG'});
 
 
 
-ax.q10s = subplot(3,3,8); hold on
+ax.q10s = subplot(2,2,3); hold on
 LGE = [data.Q_LG_std];
 PDE = [data.Q_PD_std];
 errorbar([data.Q_LG_mean],[data.Q_PD_mean],PDE,PDE,LGE,LGE,'o');
@@ -200,7 +199,7 @@ all_PD_isis(all_PD_isis<.01) = NaN;
 
 
 
-ax.firing_rate = subplot(3,3,9); hold on
+ax.firing_rate = subplot(2,2,4); hold on
 ph_LG = gastric.groupAndPlotErrorBars(temp_space, all_LG_temp, all_LG_prep, 1./all_LG_isis);
 
 C = ones(length(ph_LG),3);
@@ -241,33 +240,33 @@ figlib.pretty('FontSize',18)
 
 
 
-for i = 1:length(ax.preps)
-	ax.preps(i).Position(4) = .18;
-	if rem(i,5) ~= 1
-		ax.preps(i).OuterPosition(3) = .13;
-	end
-end
+% for i = 1:length(ax.preps)
+% 	ax.preps(i).Position(4) = .18;
+% 	if rem(i,5) ~= 1
+% 		ax.preps(i).OuterPosition(3) = .13;
+% 	end
+% end
 
-for i = 1:5
-	ax.preps(i).Position(2) = .71;
-end
+% for i = 1:5
+% 	ax.preps(i).Position(2) = .71;
+% end
 
-for i = 6:length(ax.preps)
-	ax.preps(i).Position(2) = .5;
-end
+% for i = 6:length(ax.preps)
+% 	ax.preps(i).Position(2) = .5;
+% end
 
-ax.all_periods.Position(1) = .11;
-ax.firing_rate.Position(1) = .71;
+% ax.all_periods.Position(1) = .11;
+% ax.firing_rate.Position(1) = .71;
 
 
-xh.Position = [60 .015];
-yh.Position = [-2 200];
+% xh.Position = [60 .015];
+% yh.Position = [-2 200];
 
 ax.all_periods.YMinorTick = 'on';
 ax.all_periods.XMinorTick = 'off';
 ax.all_periods.XTick = 7:4:23;
 ax.all_periods.YTick = [.1 1 10 100];
-
+axis(ax.preps(2),'square')
 
 
 figlib.saveall('Location',pwd,'SaveName',mfilename)
