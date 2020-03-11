@@ -31,11 +31,11 @@ all_prep_LG = [];
 
 
 clear ax
-figure('outerposition',[300 300 1001 901],'PaperUnits','points','PaperSize',[1001 901]); hold on
+figure('outerposition',[300 300 1400 555],'PaperUnits','points','PaperSize',[1400 555]); hold on
 for i = 1:length(data)
 
 	if i == 2
-		ax.preps(i) = subplot(2,2,1); hold on
+		ax.preps(i) = subplot(1,3,1); hold on
 	end
 
 	y = data(i).PD_burst_periods;
@@ -99,7 +99,7 @@ end
 
 
 
-ax.all_periods = subplot(2,2,2); hold on
+ax.all_periods = subplot(1,3,2); hold on
 temp_space = 7:2:23;
 ph_PD = gastric.groupAndPlotErrorBars(temp_space, all_x_PD, all_prep_PD, all_y_PD);
 
@@ -135,7 +135,7 @@ set(gca,'YScale','log')
 
 xlabel(['Temperature (' char(176) 'C)'])
 ylabel('Burst period (s)')
-axis square
+
 
 
 clear l
@@ -149,18 +149,31 @@ legend(l,{'PD','LG'});
 
 
 
-
-
-
-ax.q10s = subplot(2,2,3); hold on
+ax.q10s = subplot(1,3,3); hold on
 LGE = [data.Q_LG_std];
 PDE = [data.Q_PD_std];
-errorbar([data.Q_LG_mean],[data.Q_PD_mean],PDE,PDE,LGE,LGE,'o');
-plotlib.drawDiag;
-axis square
 
-xlabel('Q_{10} (LG)')
-ylabel('Q_{10} (PD)')
+noise = randn(length(LGE),1)/10;
+e = errorbar(noise + 1,[data.Q_LG_mean],LGE);
+e.LineStyle = 'none';
+e.Color = 'r';
+e.Marker = 'o';
+e.MarkerFaceColor = 'r';
+
+e = errorbar(noise + 2,[data.Q_PD_mean],PDE);
+e.LineStyle = 'none';
+e.Color = 'k';
+e.Marker = 'o';
+e.MarkerFaceColor = 'k';
+
+set(ax.q10s,'XTickLabel',{'LG','PD'},'YLim',[0 3],'XTick',[1 2],'XLim',[.5 2.5])
+ylabel('Q_{10}')
+
+ax.q10s.Position(3) = .1;
+
+figlib.pretty()
+
+return
 
 
 
@@ -228,7 +241,6 @@ for i = 1:length(ph_PD)-1
 	set(ph_PD(i),'Color',C(i,:))
 end
 
-axis square
 
 xlabel(['Temperature (' char(176) 'C)'])
 ylabel('Within-burst frequency (Hz)')
