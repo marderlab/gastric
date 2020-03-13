@@ -2,7 +2,7 @@
 % makes an integer coupling plot for the 
 % requested neuron 
 
-function ch = plotIntegerCoupling(data, neuron, ax, base_color)
+function [ch, plh] = plotIntegerCoupling(data, neuron, ax, base_color)
 
 MarkerSize = 10;
 
@@ -54,11 +54,14 @@ rm_this = all_x > 2 | all_y > 30 | all_x < 0 | all_y < 0;
 all_x(rm_this) = NaN;
 all_t(rm_this) = NaN;
 
-N_pyloric_gastric = round(all_y./all_x);
+N_pyloric_gastric = (all_y./all_x);
 Rem = rem(all_y./all_x,1);
 % integerness = gastric.integerness(Rem);
 
 
+rm_this = isnan(N_pyloric_gastric);
+[rho, pval] = corr(all_temp(~rm_this),N_pyloric_gastric(~rm_this),'Type','Spearman');
+disp(pval)
 
 
 temp_space = 7:2:23;
@@ -66,11 +69,12 @@ PD_space = .2:.2:2;
 
 % plot N/plyoric and group by temperature
 axes(ax.ratio)
-ph = gastric.groupAndPlotErrorBars(temp_space, all_temp, all_prep, N_pyloric_gastric);
+plh = plot(ax.ratio,all_temp,N_pyloric_gastric,'.','Color',base_color);
+% ph = gastric.groupAndPlotErrorBars(temp_space, all_temp, all_prep, N_pyloric_gastric);
 
 
-delete(ph(1:end-1));
-ph(end).Color = base_color;
+% delete(ph(1:end-1));
+% ph(end).Color = base_color;
 
 
 
