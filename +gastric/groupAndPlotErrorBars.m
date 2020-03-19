@@ -2,7 +2,7 @@
 % and plot errors bars, for each prep,
 % and then group them all together and plot errorbars
 
-function plot_handles = groupAndPlotErrorBars(group_bins, group_idx, prep_idx, Y, varargin)
+function [plot_handles, M] = groupAndPlotErrorBars(group_bins, group_idx, prep_idx, Y, varargin)
 
 options.UseSEM = true;
 options = corelib.parseNameValueArguments(options,varargin{:});

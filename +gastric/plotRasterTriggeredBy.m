@@ -29,6 +29,7 @@ options = corelib.parseNameValueArguments(options, varargin{:});
 structlib.packUnpack(options)
 
 
+
 if ~isnan(N_rescale)
 	assert(N_rescale>0,'N_rescale must be a +ve integer')
 	assert(isscalar(N_rescale),'N_rescale must be a +ve integer')
