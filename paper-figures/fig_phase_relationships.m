@@ -124,7 +124,6 @@ xlabel(gastric.tempLabel)
 disp('Spearman test for LG start phase across temperature:')
 [~,p]=corr(temp_space(2:end-1)',M(2:end-1)','Type','Spearman')
 
-return
 
 
 % DG 

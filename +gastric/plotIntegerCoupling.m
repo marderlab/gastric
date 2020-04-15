@@ -162,6 +162,23 @@ rm_this = isnan(Y);
 
 errorbar(ax.integerness,temp_space(~rm_this),Y(~rm_this),error_integerness(~rm_this),'Color',[.7 .7 .7],'LineWidth',2);
 
+
+% useless statistics when we can see the result clearly by eye
+p = NaN*temp_space;
+for i = 1:length(p)
+	x = Rem(abs(all_temp - temp_space(i)) < 1);
+	x(isnan(x)) = [];
+	[~,p(i)] = kstest2(x,rand(length(x),1));
+
+	if p(i) < .05/9
+		disp(['Signficantly integer coupled at ' mat2str(temp_space(i)), 'p = ' mat2str(p(i),4)])
+	end
+end
+
+
+
+
+
 % now plot the remainders to show that it is different from random
 
 x = 1:length(Rem);
