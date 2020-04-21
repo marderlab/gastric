@@ -171,7 +171,7 @@ ax.DG.hero = subplot(3,2,4); hold on
 
 
 
-c = lines;
+c = [222,9,209; 40, 87, 41]/255;
 
 [ch, ph] = gastric.plotIntegerCoupling(data, 'LG', ax.LG, c(1,:));
 delete(ch)
@@ -233,3 +233,20 @@ ax.LG.ratio.Position = [.7 .1 .2 .2];
 
 ax.LG.hero.Position = [.1 .41 .33 .21];
 ax.DG.hero.Position = [.5 .41 .33 .21];
+
+ch.YDir = 'reverse';
+
+
+axlib.label(ax.raw_data(1),'a','FontSize',30,'YOffset',-.02)
+axlib.label(ax.LG.hero,'b','FontSize',30,'XOffset',-.01,'YOffset',-.01)
+axlib.label(ax.DG.hero,'c','FontSize',30,'XOffset',-.01,'YOffset',-.01)
+
+axlib.move(ax.DG.remainders,'left',.025)
+
+axlib.move(ax.DG.ratio,'right',.025)
+
+axlib.label(ax.DG.remainders,'d','FontSize',30,'XOffset',-.025,'YOffset',-.01)
+axlib.label(ax.DG.integerness,'e','FontSize',30,'XOffset',-.025,'YOffset',-.01)
+axlib.label(ax.DG.ratio,'f','FontSize',30,'XOffset',-.025,'YOffset',-.01)
+
+figlib.saveall('Location',pwd,'SaveName',mfilename)

@@ -129,7 +129,7 @@ colormap(ch,colormaps.redula);
 title(ch,gastric.tempLabel)
 ch.Position = [.9 .34 .01 .16];
 caxis([min_temp max_temp])
-
+ch.YDir = 'reverse';
 
 ax.raw_data(1).Position = [.09 .75 .775 .2];
 ax.raw_data(2).Position = [.09 .525 .775 .2];
@@ -138,11 +138,31 @@ ax.rasters.Position = [.09 .335 .775 .16];
 
 figlib.pretty('PlotLineWidth',1,'LineWidth',1)
 
+figlib.label('FontSize',30)
+
 figlib.saveall('Location',pwd,'SaveName',mfilename)
 
 
 
+
 return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 % show burst periods of LG

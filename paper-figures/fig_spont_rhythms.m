@@ -11,7 +11,11 @@ addpath('../')
 C = crabsort(false);
 
 
-C.path_name = '/Volumes/HYDROGEN/srinivas_data/temperature-data-for-embedding/830_116_2/';
+try data_root = getpref('gastric','data_loc');
+catch
+	error('You need to tell this script where you data is located using setpref ')
+end
+C.path_name = pathlib.join(data_root, '830_116_2' );
 
 
 file_names = {'0008','0015','0021','0025','0028','0030'};
@@ -61,6 +65,9 @@ for i = 6:-1:1
 
 
 end
+
+l = axlib.label(ax(1),'a','FontSize',30,'YOffset',-.01);
+
 
 plot(ax(6),[50 60],[-3 -3],'k','LineWidth',3);
 thtime = text(ax(6),50,-3.5,'10 s');
@@ -154,13 +161,13 @@ for i = 1:length(data)
 end
 
 xlabel('Time (s)')
-
+ax.YDir = 'reverse';
 ax.YLim(1) = -.5;
 ch = colorbar;
 colormap(c);
 caxis([min_temp max_temp])
 title(ch,gastric.tempLabel)
-ch.Position = [.88 .33 .01 .15];
+ch.Position = [.9 .23 .01 .15];
 
 
 
@@ -185,12 +192,15 @@ aDG.FontSize = 16;
 th = text(ax,ax.XLim(2)-6,-4,'10s');
 th.FontSize = 20;
 
-th = text(ax,0, 30,'Prep 2','FontSize',18,'Rotation',90);
-th.Position = [-3 20];
+th = text(ax,0, 30,'Preparation 2','FontSize',18,'Rotation',90);
+th.Position = [-3 30];
 
-th = text(ax,-3, 64,'Prep 1','FontSize',18,'Rotation',90);
+th = text(ax,-3, 74,'Preparation 1','FontSize',18,'Rotation',90);
+
+ch.YDir = 'reverse';
 
 
+axlib.label(ax,'b','FontSize',30,'YOffset',-.01)
 figlib.saveall('Location',pwd,'SaveName',mfilename)
 
 

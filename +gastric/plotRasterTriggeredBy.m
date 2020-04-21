@@ -19,7 +19,7 @@ options.min_temp = 5;
 options.max_temp = 23;
 options.N_rescale = NaN;
 options.use_raster = false;
-options.MarkerSize = 1;
+options.MarkerSize = 5;
 options.PlotHistogram = true;
 options.HistogramSize = 3;
 
@@ -98,7 +98,7 @@ for j = 1:length(trigger_points)
 	if options.use_raster
 		neurolib.raster(spikes(:,j),'Color',c(C(j),:),'deltat',1,'yoffset',j,'center',false)
 	else
-		plot(spikes(:,j),spikes(:,j)*0 + j,'.', 'Color',c(C(j),:),'MarkerSize',MarkerSize)
+		plot(spikes(:,j),spikes(:,j)*0 - j + length(trigger_points),'.', 'Color',c(C(j),:),'MarkerSize',MarkerSize)
 	end
 end
 

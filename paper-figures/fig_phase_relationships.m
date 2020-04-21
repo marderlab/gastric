@@ -322,3 +322,5 @@ ch.TickLabels = {};
 yh.Position = [-.13 .8];
 
 figlib.label('IgnoreThese',inset,'XOffset',-.02,'FontSize',29)
+
+figlib.saveall('Location',pwd,'SaveName',mfilename)

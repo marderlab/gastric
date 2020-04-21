@@ -215,7 +215,7 @@ ph.edge(2).Color = base_color;
 plot(ax.integerness,[0 100],[.25 .25],'b:');
 
 set(ax.integerness,'YLim',[0 .3],'XLim',[min(temp_space)-5 max(temp_space)+5])
-ylabel(ax.integerness,'Area b/w significand c.d.f and diagonal')
+ylabel(ax.integerness,{'Area b/w significand','c.d.f and diagonal'})
 xlabel(ax.integerness,gastric.tempLabel)
 xlabel(ax.ratio,gastric.tempLabel)
 ylabel(ax.ratio, 'T_{gastric}/T_{pyloric}')
