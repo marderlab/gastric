@@ -2,7 +2,10 @@
 function data = getEvokedData()
 
 
-data_root = '/Volumes/HYDROGEN/srinivas_data/gastric-data';
+try data_root = getpref('gastric','data_loc');
+catch
+	error('You need to tell this script where you data is located using setpref ')
+end
 
 
 include_these = sort({'901_005','901_086','901_046','901_049','901_052','901_062','901_080','901_095','901_098','932_151'});
