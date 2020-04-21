@@ -192,10 +192,10 @@ aDG.FontSize = 16;
 th = text(ax,ax.XLim(2)-6,-4,'10s');
 th.FontSize = 20;
 
-th = text(ax,0, 30,'Preparation 2','FontSize',18,'Rotation',90);
+th = text(ax,0, 30,'Preparation 1','FontSize',18,'Rotation',90);
 th.Position = [-3 30];
 
-th = text(ax,-3, 74,'Preparation 1','FontSize',18,'Rotation',90);
+th = text(ax,-3, 79,'Preparation 2','FontSize',18,'Rotation',90);
 
 ch.YDir = 'reverse';
 
