@@ -150,28 +150,46 @@ legend(l,{'PD','LG'});
 
 
 ax.q10s = subplot(1,3,3); hold on
-LGE = [data.Q_LG_std];
-PDE = [data.Q_PD_std];
+% LGE = [data.Q_LG_std];
+% PDE = [data.Q_PD_std];
 
-noise = randn(length(LGE),1)/10;
-e = errorbar(noise + 1,[data.Q_LG_mean],LGE);
-e.LineStyle = 'none';
-e.Color = 'r';
-e.Marker = 'o';
-e.MarkerFaceColor = 'r';
+% noise = randn(length(LGE),1)/10;
+% e = errorbar(noise + 1,[data.Q_LG_mean],LGE);
+% e.LineStyle = 'none';
+% e.Color = 'r';
+% e.Marker = 'o';
+% e.MarkerFaceColor = 'r';
 
-e = errorbar(noise + 2,[data.Q_PD_mean],PDE);
+% e = errorbar(noise + 2,[data.Q_PD_mean],PDE);
+% e.LineStyle = 'none';
+% e.Color = 'k';
+% e.Marker = 'o';
+% e.MarkerFaceColor = 'k';
+
+% set(ax.q10s,'XTickLabel',{'LG','PD'},'YLim',[0 3],'XTick',[1 2],'XLim',[.5 2.5])
+% ylabel('Q_{10}')
+
+% ax.q10s.Position(3) = .1;
+
+
+e = errorbar(ax.q10s,[data.Q_PD_mean],[data.Q_LG_mean],[data.Q_PD_std],[data.Q_PD_std],[data.Q_LG_std],[data.Q_LG_std]);
 e.LineStyle = 'none';
-e.Color = 'k';
 e.Marker = 'o';
 e.MarkerFaceColor = 'k';
+e.MarkerEdgeColor = 'k';
+e.Color = 'k';
+ax.q10s.XLim = [0 3];
+ax.q10s.YLim = [0 3];
 
-set(ax.q10s,'XTickLabel',{'LG','PD'},'YLim',[0 3],'XTick',[1 2],'XLim',[.5 2.5])
-ylabel('Q_{10}')
 
-ax.q10s.Position(3) = .1;
-
+plotlib.drawDiag(ax.q10s,'Color',[.6 .6 .6],'LineStyle','--');
+xlabel('Q_{10} of PD burst period')
+ylabel('Q_{10} of LG burst period')
 figlib.pretty()
+
+
+figlib.saveall('Location',pwd,'SaveName',mfilename)
+
 
 return
 
