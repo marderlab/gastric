@@ -5,6 +5,8 @@ clearvars
 close all
 addpath('../')
 
+colors = gastric.colors;
+
 
 %% Analysis of gastric and pyloric rhythms at different temperatures
 % In this document we look at pyloric and gastric rhtyhms at differnet temperatures.
@@ -49,7 +51,7 @@ for i = 1:length(data)
 	all_prep_PD = [all_prep_PD; i + 0*x];
 
 	if i == 2
-		plot(T,y,'k.')
+		plot(T,y,'.','Color',colors.PD)
 	end
 
 	f = 1./y;
@@ -73,7 +75,7 @@ for i = 1:length(data)
 	T = data(i).temperature(x);
 
 	if i == 2
-		plot(T,y,'r.')
+		plot(T,y,'.','Color',colors.LG)
 	end
 
 
@@ -103,33 +105,21 @@ ax.all_periods = subplot(1,3,2); hold on
 temp_space = 7:2:23;
 ph_PD = gastric.groupAndPlotErrorBars(temp_space, all_x_PD, all_prep_PD, all_y_PD);
 
-R = randn(length(ph_PD),1);
-C = ones(length(ph_PD),3);
-C(:,1) = .8+ .05*R;
-C(:,2) = .8+ .05*R;
-C(:,3) = .8+ .05*R;
 
-C(C>1) = 1;
-C(C<0) = 0;
 
 for i = 1:length(ph_PD)-1
-	set(ph_PD(i),'Color',C(i,:))
+	set(ph_PD(i),'Color',brighten(colors.PD,.9))
 end
 
 
 ph_LG = gastric.groupAndPlotErrorBars(temp_space, all_x_LG, all_prep_LG, all_y_LG);
 
 
-C = ones(length(ph_LG),3);
-C(:,2) = .8+ .05*randn(length(ph_LG),1);
-C(:,3) = .8+ .05*randn(length(ph_LG),1);
-C(C>1) = 1;
-C(C<0) = 0;
 
 for i = 1:length(ph_LG)-1
-	set(ph_LG(i),'Color',C(i,:))
+	set(ph_LG(i),'Color',brighten(colors.LG,.9))
 end
-set(ph_LG(end),'Color','r')
+set(ph_LG(end),'Color',colors.LG)
 
 set(gca,'YScale','log')
 
@@ -139,8 +129,8 @@ ylabel('Burst period (s)')
 
 
 clear l
-l(1) = plot(NaN,NaN,'o','MarkerFaceColor','k','MarkerEdgeColor','k');
-l(2) = plot(NaN,NaN,'o','MarkerFaceColor','r','MarkerEdgeColor','r');
+l(1) = plot(NaN,NaN,'o','MarkerFaceColor',colors.PD,'MarkerEdgeColor',colors.PD);
+l(2) = plot(NaN,NaN,'o','MarkerFaceColor',colors.LG,'MarkerEdgeColor',colors.LG);
 legend(l,{'PD','LG'});
 
 
@@ -187,6 +177,9 @@ xlabel('Q_{10} of PD burst period')
 ylabel('Q_{10} of LG burst period')
 figlib.pretty()
 
+
+ax.q10s.XColor = colors.PD;
+ax.q10s.YColor = colors.LG;
 
 figlib.saveall('Location',pwd,'SaveName',mfilename)
 
