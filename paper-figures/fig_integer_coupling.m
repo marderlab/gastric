@@ -98,14 +98,6 @@ for i = 1:length(show_these)
 	% show raw_data
 	for j = 1:size(raw_data,2)
 		plot(ax.raw_data(i),time,raw_data(:,j)+j,'Color',c(idx,:));
-		th_nerve(j) = text(ax.raw_data(i),-1,0,['\it ' show_these_channels{j}]);
-		th_nerve(j).Position = [-2 j];
-
-
-		
-
-
-
 	end
 
 	% find spikes
@@ -122,11 +114,15 @@ for i = 1:length(show_these)
 		plotlib.vertline(ax.raw_data(i),time(spiketimes(burst_starts(k))),'k:');
 	end
 
-	set(ax.raw_data(i),'YColor','w')
 
 
+
+	ax.raw_data(i).YColor = 'k';
 	ax.raw_data(i).XColor = 'w';
 	ax.raw_data(i).XTick = [];
+	ax.raw_data(i).YTick = [1 2];
+	ax.raw_data(i).YTickLabel = {'\itpdn','\itlgn'};
+
 
 
 end
@@ -158,7 +154,9 @@ th = text(10.4,1.5,'T_{LG}/T_{PD}=10.98','FontSize',14,'Parent',ax.raw_data(2));
 ax.raw_data(1).Position(2) = .82;
 ax.raw_data(2).Position(2) = .65;
 
-
+% add white lines to mask the yaxis 
+plotlib.vertline(ax.raw_data(1),ax.raw_data(1).XLim(1),'w','LineWidth',5);
+plotlib.vertline(ax.raw_data(2),ax.raw_data(2).XLim(1),'w','LineWidth',5);
 
 ax.LG.hero = subplot(3,2,3); hold on
 ax.LG.remainders = subplot(3,3,7); hold on
@@ -248,5 +246,8 @@ axlib.move(ax.DG.ratio,'right',.025)
 axlib.label(ax.DG.remainders,'d','FontSize',30,'XOffset',-.025,'YOffset',-.01)
 axlib.label(ax.DG.integerness,'e','FontSize',30,'XOffset',-.025,'YOffset',-.01)
 axlib.label(ax.DG.ratio,'f','FontSize',30,'XOffset',-.025,'YOffset',-.01)
+
+ax.raw_data(1).TickLength = [0 0];
+ax.raw_data(2).TickLength = [0 0];
 
 figlib.saveall('Location',pwd,'SaveName',mfilename)
