@@ -7,7 +7,7 @@ addpath('../')
 
 
 %% Analysis of gastric and pyloric rhythms at different temperatures
-% In this document we look at pyloric and gastric rhtyhms at differnet temperatures.
+% In this document we look at pyloric and gastric rhythms at different temperatures.
 % This data is from Dan Powell and the experiments that go into this are:
 
 data = gastric.getEvokedData();
@@ -131,21 +131,21 @@ ax.raw_data(1).XLim(1) = ax.raw_data(1).XLim(1) - 1;
 ax.raw_data(1).XLim(2) = ax.raw_data(1).XLim(1) + 21;
 ax.raw_data(2).XLim = [-1 10];
 
-plot(ax.raw_data(1),[18.9 36.21],[.5 .5]+.9,'k','LineWidth',3)
-text(34,1.55,'T_{PD} = .911s','FontSize',14,'Parent',ax.raw_data(1));
+plot(ax.raw_data(1),[18.9 27.13],[.5 .5]+.9,'k','LineWidth',3)
+text(24,1.55,'T_{PD} = .911s','FontSize',14,'Parent',ax.raw_data(1));
 
-plot(ax.raw_data(1),[18.16 36.5],[.5 .5]+1.8,'k','LineWidth',3)
-text(34,2.55,'T_{LG} = 9.17s','FontSize',14,'Parent',ax.raw_data(1));
+plot(ax.raw_data(1),[18.16 27.41],[.5 .5]+1.8,'k','LineWidth',3)
+text(24,2.55,'T_{LG} = 9.17s','FontSize',14,'Parent',ax.raw_data(1));
 
 ax.raw_data(1).Position(3) = .7;
 ax.raw_data(2).Position(3) = .7;
 th = text(39,1.5,'T_{LG}/T_{PD}=10.06','FontSize',14,'Parent',ax.raw_data(1));
 
-plot(ax.raw_data(2),[.1915 6.769],[.5 .5]+.9,'k','LineWidth',3)
+plot(ax.raw_data(2),[.1915 3.338],[.5 .5]+.9,'k','LineWidth',3)
 text(5,1.55,'T_{PD} = .313s','FontSize',14,'Parent',ax.raw_data(2));
 
-plot(ax.raw_data(2),[0 6.881],[.5 .5]+1.8,'k','LineWidth',3)
-text(5,2.55,'T_{LG} = 3.44s','FontSize',14,'Parent',ax.raw_data(2));
+plot(ax.raw_data(2),[0 3.458],[.5 .5]+1.8,'k','LineWidth',3)
+text(2,2.55,'T_{LG} = 3.44s','FontSize',14,'Parent',ax.raw_data(2));
 
 ax.raw_data(1).Position(3) = .7;
 ax.raw_data(2).Position(3) = .7;
