@@ -169,13 +169,13 @@ ax.DG.hero = subplot(3,2,4); hold on
 
 
 
-c = [222,9,209; 40, 87, 41]/255;
+c = gastric.colors;
 
-[ch, ph] = gastric.plotIntegerCoupling(data, 'LG', ax.LG, c(1,:));
+[ch, ph] = gastric.plotIntegerCoupling(data, 'LG', ax.LG, c.LG);
 delete(ch)
 
 
-[ch, ph] = gastric.plotIntegerCoupling(data, 'DG', ax.DG, c(2,:));
+[ch, ph] = gastric.plotIntegerCoupling(data, 'DG', ax.DG, c.DG);
 delete(ph)
 
 ax.LG.remainders.YLim = [0 1];
@@ -187,10 +187,10 @@ plot(ax.LG.remainders,[0 0 1 1],[0 .5 .5 1],'b:')
 
 
 clear lh L
-lh(1) = scatter(ax.LG.remainders,NaN,NaN,32,c(1,:));
-lh(2) = scatter(ax.LG.remainders,NaN,NaN,32,c(2,:));
-lh(1).MarkerFaceColor = c(1,:);
-lh(2).MarkerFaceColor = c(2,:);
+lh(1) = scatter(ax.LG.remainders,NaN,NaN,32,c.LG);
+lh(2) = scatter(ax.LG.remainders,NaN,NaN,32,c.DG);
+lh(1).MarkerFaceColor = c.LG;
+lh(2).MarkerFaceColor = c.DG;
 
 L = legend(lh,'LG','DG');
 L.Location = 'northwest';

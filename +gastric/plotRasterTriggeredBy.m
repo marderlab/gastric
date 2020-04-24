@@ -8,6 +8,8 @@
 function plotRasterTriggeredBy(data, varargin)
 
 
+colors = gastric.colors;
+
 options.neuron = '';
 options.trigger = '';
 
@@ -102,7 +104,7 @@ for j = 1:length(trigger_points)
 	end
 end
 
-plot([0 0],[0 length(trigger_points)],'k--')
+plot([0 0],[0 length(trigger_points)*2],'--','Color',colors.(options.trigger(1:2)),'LineWidth',3)
 
 n_rows = size(spikes,2);
 

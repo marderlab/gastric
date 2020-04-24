@@ -3,7 +3,7 @@ clearvars
 close all
 addpath('../')
 
-
+colors = gastric.colors;
 
 data = gastric.getEvokedData();
 
@@ -304,15 +304,15 @@ ax(4).Position(1) = .05;
 ax(2).Position(1) = .35;
 ax(5).Position(1) = .35;
 
-title(ax(1),'PD spikes','FontWeight','normal')
 
 ax(1).YColor = 'k';
 ax(4).YColor = 'k';
 
-ylabel(ax(1),'aligned to LG start')
-ylabel(ax(4),'aligned to DG start')
 
-xlabel(ax(4),'PD phase')
+ylabel(ax(1),'PD spikes')
+ylabel(ax(4),'PD spikes')
+
+xlabel(ax(4),'Time (normalized by PD burst period)')
 
 
 ch.Location = 'north';
@@ -322,5 +322,22 @@ ch.TickLabels = {};
 yh.Position = [-.13 .8];
 
 figlib.label('IgnoreThese',inset,'XOffset',-.02,'FontSize',29)
+
+
+r = rectangle(ax(1),'Position',[0 ax(1).YLim(2) 1e3 20],'FaceColor',brighten(colors.LG,.5),'EdgeColor',colors.LG);
+ax(1).YLim(2) = ax(1).YLim(2)+30;
+th = text(.1,ax(1).YLim(2)+30,'LG burst','Parent',ax(1),'Color',colors.LG,'FontSize',20);
+
+
+r = rectangle(ax(4),'Position',[0 ax(4).YLim(2)+20 1e3 20],'FaceColor',brighten(colors.DG,.5),'EdgeColor',colors.DG);
+ax(4).YLim(2) = ax(4).YLim(2)+40;
+th = text(.1,ax(4).YLim(2)+30,'DG burst','Parent',ax(4),'Color',colors.DG,'FontSize',20);
+
+% some nice color accents
+ax(2).YColor = colors.LG;
+ax(5).YColor = colors.DG;
+ax(3).YColor = colors.LG;
+ax(6).YColor = colors.DG;
+inset.YColor = colors.LG;
 
 figlib.saveall('Location',pwd,'SaveName',mfilename)
