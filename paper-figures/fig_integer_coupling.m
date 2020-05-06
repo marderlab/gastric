@@ -132,20 +132,20 @@ ax.raw_data(1).XLim(2) = ax.raw_data(1).XLim(1) + 21;
 ax.raw_data(2).XLim = [-1 10];
 
 plot(ax.raw_data(1),[18.9 27.13],[.5 .5]+.9,'k','LineWidth',3)
-text(24,1.55,'T_{PD} = .911s','FontSize',14,'Parent',ax.raw_data(1));
+text(24,1.57,'T_{PD} = .911s','FontSize',14,'Parent',ax.raw_data(1));
 
 plot(ax.raw_data(1),[18.16 27.41],[.5 .5]+1.8,'k','LineWidth',3)
-text(24,2.55,'T_{LG} = 9.17s','FontSize',14,'Parent',ax.raw_data(1));
+text(24,2.53,'T_{LG} = 9.17s','FontSize',14,'Parent',ax.raw_data(1));
 
 ax.raw_data(1).Position(3) = .7;
 ax.raw_data(2).Position(3) = .7;
 th = text(39,1.5,'T_{LG}/T_{PD}=10.06','FontSize',14,'Parent',ax.raw_data(1));
 
 plot(ax.raw_data(2),[.1915 3.338],[.5 .5]+.9,'k','LineWidth',3)
-text(5,1.55,'T_{PD} = .313s','FontSize',14,'Parent',ax.raw_data(2));
+text(2,1.57,'T_{PD} = .313s','FontSize',14,'Parent',ax.raw_data(2));
 
 plot(ax.raw_data(2),[0 3.458],[.5 .5]+1.8,'k','LineWidth',3)
-text(2,2.55,'T_{LG} = 3.44s','FontSize',14,'Parent',ax.raw_data(2));
+text(2,2.53,'T_{LG} = 3.44s','FontSize',14,'Parent',ax.raw_data(2));
 
 ax.raw_data(1).Position(3) = .7;
 ax.raw_data(2).Position(3) = .7;
@@ -211,9 +211,6 @@ for P = {'LG','DG'}
 
 	this = P{1};
 
-	ax.(this).hero.XTick = [.2 .5 1 2];
-	ax.(this).hero.YTick = [3 5 10 15 30];
-
 	ax.(this).hero.YScale = 'linear';
 	ax.(this).hero.XScale = 'linear';
 
@@ -225,29 +222,35 @@ end
 ch.Position = [.9 .4 .01 .2];
 ch.TickDirection = 'out';
 
-ax.LG.remainders.Position = [.1 .1 .2 .2];
-ax.LG.integerness.Position = [.425 .1 .2 .2];
-ax.LG.ratio.Position = [.7 .1 .2 .2];
 
-ax.LG.hero.Position = [.1 .41 .33 .21];
-ax.DG.hero.Position = [.5 .41 .33 .21];
+ax.LG.hero.Position = [.1 .32 .35 .35];
+ax.DG.hero.Position = [.53 .32 .35 .35];
 
 ch.YDir = 'reverse';
 
+ax.raw_data(1).TickLength = [0 0];
+ax.raw_data(2).TickLength = [0 0];
 
-axlib.label(ax.raw_data(1),'a','FontSize',30,'YOffset',-.02)
-axlib.label(ax.LG.hero,'b','FontSize',30,'XOffset',-.01,'YOffset',-.01)
-axlib.label(ax.DG.hero,'c','FontSize',30,'XOffset',-.01,'YOffset',-.01)
+ax.LG.remainders.Position = [.1 .06 .18 .18];
+ax.LG.integerness.Position = [.425 .06 .18 .18];
+ax.LG.ratio.Position = [.7 .06 .18 .18];
 
-axlib.move(ax.DG.remainders,'left',.025)
 
-axlib.move(ax.DG.ratio,'right',.025)
+ax.raw_data(2).Position = [.1 .7 .7 .14];
+ax.raw_data(1).Position = [.1 .84 .7 .14];
+
+
+
+
+axlib.label(ax.raw_data(1),'a','FontSize',30,'YOffset',-.02,'XOffset',-.03)
+axlib.label(ax.LG.hero,'b','FontSize',30,'YOffset',-.01,'XOffset',-.03)
+axlib.label(ax.DG.hero,'c','FontSize',30,'YOffset',-.01,'XOffset',-.025)
+
+
 
 axlib.label(ax.DG.remainders,'d','FontSize',30,'XOffset',-.025,'YOffset',-.01)
 axlib.label(ax.DG.integerness,'e','FontSize',30,'XOffset',-.025,'YOffset',-.01)
 axlib.label(ax.DG.ratio,'f','FontSize',30,'XOffset',-.025,'YOffset',-.01)
 
-ax.raw_data(1).TickLength = [0 0];
-ax.raw_data(2).TickLength = [0 0];
 
 figlib.saveall('Location',pwd,'SaveName',mfilename)
