@@ -1,7 +1,7 @@
 function [phase, temperature] = measurePhase(data, thing, clock_neuron)
 
 
-assert(isfield(data,thing),'Argument not found in structre')
+assert(isfield(data,thing),'Argument not found in structure')
 
 phase = NaN*data.(thing);
 temperature = NaN*phase;

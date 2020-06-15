@@ -85,9 +85,9 @@ for i = 1:length(temp_space)
 
 	a(i) = area(hx,hy,'FaceColor',c(i,:),'FaceAlpha',.3,'EdgeColor',c(i,:),'LineWidth',2);
 
-	% generate null data
-	n = rand(length(use_these),1);
-	[~,p] = kstest2(n,use_these)
+	% compare to uniform distribution 
+	[~,p]=kstest(use_these,'CDF',makedist('Uniform'))
+	
 
 end
 
@@ -127,7 +127,7 @@ disp('Spearman test for LG start phase across temperature:')
 
 
 % DG 
-% show histograms of when LG bursts start in PD phase
+% show histograms of when DG bursts start in PD phase
 all_phase = [];
 all_temp = [];
 all_prep = [];
@@ -156,9 +156,9 @@ for i = 1:length(temp_space)
 
 	a(i) = area(hx,hy,'FaceColor',c(i,:),'FaceAlpha',.3,'EdgeColor',c(i,:),'LineWidth',2);
 
-	% generate null data
-	n = rand(length(use_these),1);
-	[~,p] = kstest2(n,use_these)
+	% compare to uniform distribution 
+	[~,p]=kstest(use_these,'CDF',makedist('Uniform'))
+
 end
 
 
@@ -166,8 +166,6 @@ plot([0 1],[1 1],'k--')
 
 ylabel('DG burst start probability')
 xlabel('PD phase')
-
-
 
 
 % measure PD stops everywhere
@@ -239,6 +237,8 @@ set(gca,'XLim',[0 1],'YLim',[0 6],'YTick',[0:0.5:2])
 plotlib.horzline(1,'LineStyle','--','Color','k','LineWidth',1);
 
 
+
+% now DG
 
 
 for i = 1:length(data)

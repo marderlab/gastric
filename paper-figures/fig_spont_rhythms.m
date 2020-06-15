@@ -15,7 +15,7 @@ try data_root = getpref('gastric','data_loc');
 catch
 	error('You need to tell this script where you data is located using setpref ')
 end
-C.path_name = pathlib.join(data_root, '830_116_2' );
+C.path_name = fullfile(data_root, 'haddad','830_116_2' );
 
 
 file_names = {'0008','0015','0021','0025','0028','0030'};
@@ -79,10 +79,7 @@ th.Position = [-10 0];
 th = text(ax(1),-10,-2,'\itdgn');
 
 
-
-
-data_root = '/Volumes/HYDROGEN/srinivas_data/temperature-data-for-embedding/';
-% data_files = {'845_070','828_086_2','828_114_2','828_128','830_100','830_116_2','830_116_1','830_120_1','834_022','834_086_2'};
+% now show rasters
 data_files = {'830_120_1','830_116_2'};
 
 H = hashlib.md5hash([data_files{:}]);
@@ -93,72 +90,18 @@ else
 
 	clear data
 	for i = length(data_files):-1:1
-		data{i} = crabsort.consolidate('DataDir',[data_root data_files{i}],'neurons',{'LG'});
+		data{i} = crabsort.consolidate(data_files{i},'neurons',{'LG'},'RebuildCache',true);
 	end
 	save([H '.cache'],'data');
 end
 
 
 
-% interpolate temperatures because Sara didn't record temperatures
-% for all files 
-
-for i = 1:length(data)
-	last_temp = NaN;
-	for j = 1:length(data{i})
-		if ~isnan(data{i}(j).temperature)
-			last_temp = data{i}(j).temperature;
-		else
-			data{i}(j).temperature = last_temp;
-		end
-
-	end
-end
-
-
 
 ax = subplot(2,1,2); hold on
 
 
-set(ax,'XLim',[0 120],'YColor','w','XColor','w')
-
-offset = 5;
-for i = 1:length(data)
-	this_data = data{i};
-	for j = 1:length(this_data)
-		spiketimes = sort(this_data(j).LG);
-		if length(spiketimes) < 2
-			continue
-		end
-		if this_data(j).decentralized
-			continue
-		end
-
-		if isnan(this_data(j).temperature)
-			continue
-		end
-
-		if sum(spiketimes < 60) < 20
-			continue
-		end
-
-
-
-		idx = ceil(((this_data(j).temperature - min_temp)/(max_temp - min_temp))*100);
-		idx(idx>length(c)) = length(c);
-			idx(idx<1) = 1;
-		neurolib.raster(this_data(j).LG,'deltat',1,'yoffset',offset,'Color',c(idx,:),'center',true)
-
-		offset = offset +  1;
-	end
-
-	offset = offset + 15;
-
-	%plotlib.horzline(offset-.5,'LineWidth',1,'Color','k');
-
-
-
-end
+gastric.plotLGRasters(data,ax,min_temp,max_temp);
 
 xlabel('Time (s)')
 ax.YDir = 'reverse';
@@ -206,6 +149,67 @@ figlib.saveall('Location',pwd,'SaveName',mfilename)
 
 
 
+
+
+
+
+% supplementary figure showing all other preps
+
+clear data
+
+data_files = {'828_086_2','828_114_2','828_128','830_100','830_116_1','834_022','834_086_2'};
+
+
+H = hashlib.md5hash([data_files{:}]);
+
+if exist([H '.cache'],'file') == 2
+	load([H '.cache'],'-mat')
+else
+
+	clear data
+	for i = length(data_files):-1:1
+		data{i} = crabsort.consolidate(data_files{i},'neurons',{'LG'},'RebuildCache',true);
+	end
+	save([H '.cache'],'data');
+end
+
+
+
+
+figure('outerposition',[300 300 888 1111],'PaperUnits','points','PaperSize',[888 1111]); hold on
+
+ax = gca;
+
+gastric.plotLGRasters(data,ax,min_temp,max_temp,5);
+
+
+set(ax,'XLim',[0 120],'YColor','w','XColor','w')
+
+
+xlabel('Time (s)')
+ax.YDir = 'reverse';
+ax.YLim(1) = -.5;
+ch = colorbar;
+colormap(c);
+caxis([min_temp max_temp])
+title(ch,gastric.tempLabel)
+ch.Position = [.91 .23 .01 .15];
+yy = get(gca,'YLim');
+yy = yy(2);
+time_scale = plot(ax,[110 120],[130 130],'k','LineWidth',3);
+ch.YDir = 'reverse'
+
+figlib.pretty('PlotLineWidth',1)
+
+
+ax.Position = [.06 .11 .77 .8];
+
+th = text(112,134,'10s')
+th.FontSize = 20;
+
+
+
+
 return
 
 
@@ -216,6 +220,33 @@ return
 
 
 
+
+
+
+
+th = text(ax,ax.XLim(2)-6,-4,'10s');
+th.FontSize = 20;
+
+th = text(ax,0, 30,'Preparation 1','FontSize',18,'Rotation',90);
+th.Position = [-3 30];
+
+th = text(ax,-3, 79,'Preparation 2','FontSize',18,'Rotation',90);
+
+ch.YDir = 'reverse';
+
+
+axlib.label(ax,'b','FontSize',30,'YOffset',-.01)
+figlib.saveall('Location',pwd,'SaveName',mfilename)
+
+
+
+
+
+
+
+
+
+return
 
 
 % show dominant period of LG bursting for all data
@@ -350,9 +381,3 @@ colormap(colormaps.redula(23))
 
 
 
-
-
-
-
-
-%% supplemental figure showing rasters
