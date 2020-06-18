@@ -179,6 +179,9 @@ xlabel(gastric.tempLabel)
 
 figlib.pretty()
 
+try
+	figlib.saveall('Location',  '/Users/srinivas/Dropbox/Temp-Paper/Temperature-Paper/individual-figures','SaveName',mfilename)
+catch
 
+end
 
-figlib.saveall('Location',pwd,'SaveName',mfilename)

@@ -140,8 +140,11 @@ figlib.pretty('PlotLineWidth',1,'LineWidth',1)
 
 figlib.label('FontSize',30)
 
-figlib.saveall('Location',pwd,'SaveName',mfilename)
+try
+	figlib.saveall('Location',  '/Users/srinivas/Dropbox/Temp-Paper/Temperature-Paper/individual-figures','SaveName',mfilename)
+catch
 
+end
 
 
 

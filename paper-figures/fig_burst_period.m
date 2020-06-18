@@ -181,7 +181,31 @@ figlib.pretty()
 ax.q10s.XColor = colors.PD;
 ax.q10s.YColor = colors.LG;
 
-figlib.saveall('Location',pwd,'SaveName',mfilename)
+
+
+
+figlib.label('FontSize',29,'YOffset',-.01,'XOffset',-.02)
+drawnow
+
+
+
+try
+	figlib.saveall('Location',  '/Users/srinivas/Dropbox/Temp-Paper/Temperature-Paper/individual-figures','SaveName',mfilename)
+catch
+
+end
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 return
@@ -262,7 +286,6 @@ ylabel('Within-burst frequency (Hz)')
 figlib.pretty('FontSize',18)
 
 
-
 % for i = 1:length(ax.preps)
 % 	ax.preps(i).Position(4) = .18;
 % 	if rem(i,5) ~= 1
@@ -292,4 +315,5 @@ ax.all_periods.YTick = [.1 1 10 100];
 axis(ax.preps(2),'square')
 
 
-figlib.saveall('Location',pwd,'SaveName',mfilename)
+
+

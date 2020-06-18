@@ -96,3 +96,10 @@ for i = 1:3
 end
 
 axlib.move(ax(2,:),'left',.02)
+
+try
+	figlib.saveall('Location',  '/Users/srinivas/Dropbox/Temp-Paper/Temperature-Paper/individual-figures','SaveName',mfilename)
+catch
+
+end
+

@@ -207,6 +207,12 @@ ax.Position = [.06 .11 .77 .8];
 th = text(112,134,'10s')
 th.FontSize = 20;
 
+try
+	figlib.saveall('Location',  '/Users/srinivas/Dropbox/Temp-Paper/Temperature-Paper/individual-figures','SaveName',mfilename)
+catch
+
+end
+
 
 
 

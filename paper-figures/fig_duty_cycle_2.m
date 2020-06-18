@@ -181,6 +181,9 @@ for i = 1:length(temp_space)
 	th(i) = text(this_x,17.2,[mat2str(temp_space(i)) char(176) 'C'],'FontSize',20);
 end
 
+try
+	figlib.saveall('Location',  '/Users/srinivas/Dropbox/Temp-Paper/Temperature-Paper/individual-figures','SaveName',mfilename)
+catch
 
-figlib.saveall('Location',pwd,'SaveName',mfilename);
+end
 

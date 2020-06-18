@@ -238,5 +238,9 @@ th = text(ax.isi,850,290,'4','FontSize',18);
 
 th = text(ax.raw_data_spont,24,-.25,'10 s','FontSize',18);
 
+try
+	figlib.saveall('Location',  '/Users/srinivas/Dropbox/Temp-Paper/Temperature-Paper/individual-figures','SaveName',mfilename)
+catch
 
-figlib.saveall('Location',pwd,'SaveName',mfilename)
+end
+

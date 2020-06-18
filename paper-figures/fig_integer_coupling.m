@@ -253,4 +253,9 @@ axlib.label(ax.DG.integerness,'e','FontSize',30,'XOffset',-.025,'YOffset',-.01)
 axlib.label(ax.DG.ratio,'f','FontSize',30,'XOffset',-.025,'YOffset',-.01)
 
 
-figlib.saveall('Location',pwd,'SaveName',mfilename)
+try
+	figlib.saveall('Location',  '/Users/srinivas/Dropbox/Temp-Paper/Temperature-Paper/individual-figures','SaveName',mfilename)
+catch
+
+end
+
