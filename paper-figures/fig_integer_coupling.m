@@ -37,7 +37,7 @@ figure('outerposition',[300 300 1200 1300],'PaperUnits','points','PaperSize',[12
 close all
 addpath('../')
 
-data_root = '/Volumes/DATA/gastric-data';
+data_root = '/Volumes/DATA/pyloric-data/powell';
 
 
 %% Analysis of gastric and pyloric rhythms at different temperatures
@@ -48,7 +48,7 @@ example_data = '901_046';
 
 
 C = crabsort(false);
-C.path_name = [data_root filesep char(example_data)];
+C.path_name = fullfile(data_root, char(example_data));
 
 show_these = {'0006','0079'};
 show_these_rasters = {'0006', '0015','0026','0041','0053','0062','0084','0072','0079'};

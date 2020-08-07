@@ -5,7 +5,7 @@
 close all
 addpath('../')
 
-data_root = '/Volumes/DATA/gastric-data';
+data_root = getpref('gastric','data_loc');
 
 
 %% Analysis of gastric and pyloric rhythms at different temperatures
@@ -18,7 +18,7 @@ example_data = '901_046';
 
 
 C = crabsort(false);
-C.path_name = [data_root filesep char(example_data)];
+C.path_name = fullfile(data_root,example_data);
 
 show_these = {'0006','0079'};
 show_these_rasters = {'0006', '0015','0026','0041','0053','0062','0084','0072','0079'};
@@ -37,6 +37,7 @@ clear ax
 ax.raw_data(1) = subplot(4,1,1); hold on
 ax.raw_data(2) = subplot(4,1,2); hold on
 
+yscales = [];
 
 for i = 1:length(show_these)
 
@@ -61,7 +62,10 @@ for i = 1:length(show_these)
 	z = find(time>60,1,'first');
 
 	for j = 1:size(raw_data,2)
-		raw_data(:,j) = raw_data(:,j)/max(2*abs(raw_data(1:z,j)));
+		if i == 1
+			yscales(j) = max(2*abs(raw_data(1:z,j)));
+		end
+		raw_data(:,j) = raw_data(:,j)/yscales(j);
 	end
 	
 

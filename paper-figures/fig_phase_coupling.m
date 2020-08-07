@@ -86,7 +86,7 @@ for i = 1:length(temp_space)
 end
 
 
-ylabel('Cumualtive probability of LG burst start')
+ylabel('Cumulative probability of LG burst start')
 xlabel('PD phase')
 
 plotlib.drawDiag;

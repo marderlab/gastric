@@ -93,7 +93,7 @@ end
 
 plot([0 1],[1 1],'k--')
 
-ylabel('LG burst start probability')
+ylabel('LG burst start p.d.f')
 
 
 
@@ -164,7 +164,7 @@ end
 
 plot([0 1],[1 1],'k--')
 
-ylabel('DG burst start probability')
+ylabel('DG burst start p.d.f')
 xlabel('PD phase')
 
 
@@ -232,7 +232,7 @@ for i = 1:length(temp_space)
 
 end
 
-yh = ylabel('LG spike probability');
+yh = ylabel('LG spike p.d.f');
 set(gca,'XLim',[0 1],'YLim',[0 6],'YTick',[0:0.5:2])
 plotlib.horzline(1,'LineStyle','--','Color','k','LineWidth',1);
 
@@ -280,7 +280,7 @@ for i = 1:length(temp_space)
 
 end
 xlabel('PD phase')
-ylabel('DG spike probability')
+ylabel('DG spike p.d.f')
 set(gca,'XLim',[0 1],'YLim',[0 6])
 
 plotlib.horzline(1,'LineStyle','--','Color','k','LineWidth',1);
@@ -345,4 +345,5 @@ try
 catch
 
 end
+
 

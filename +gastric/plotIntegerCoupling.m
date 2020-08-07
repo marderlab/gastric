@@ -21,6 +21,11 @@ for i = 1:length(data)
 	all_prep = [all_prep; this_x*0 + i];
 end
 
+% throw out some outliers
+all_y(all_y>30) = NaN;
+all_y(all_y<0) = NaN;
+all_x(all_x<0) = NaN;
+all_x(all_x>2) = NaN;
 
 % plot gridlines
 for i = 4:30
@@ -163,15 +168,37 @@ rm_this = isnan(Y);
 errorbar(ax.integerness,temp_space(~rm_this),Y(~rm_this),error_integerness(~rm_this),'Color',[.7 .7 .7],'LineWidth',2);
 
 
-% useless statistics when we can see the result clearly by eye
-p = NaN*temp_space;
-for i = 1:length(p)
+
+% make sure we evenly sample from all temperatures to avoid weighting one or the other
+DataSize = NaN*temp_space;
+for i = 1:length(temp_space)
 	x = Rem(abs(all_temp - temp_space(i)) < 1);
 	x(isnan(x)) = [];
-	[~,p(i)] = kstest2(x,rand(length(x),1));
+	DataSize(i) = length(x);
+end
+
+p = NaN*temp_space;
+for i = 1:length(p)
+	use_this = abs(all_temp - temp_space(i)) < 1;
+	x = Rem(use_this);
+	x(isnan(x)) = [];
+
+	this_y = all_y(use_this);
+	this_x = all_x(use_this);
+	rm_this = isnan(this_x) | isnan(this_y);
+	this_y(rm_this) = [];
+	this_x(rm_this) = [];
+	this_x = datasample(this_x,100);
+	this_y = datasample(this_y,100);
+	this_rem = rem(this_y./this_x,1);
+	
+	
+
+	[~,p(i)] = kstest2(x,this_rem);
+
 
 	if p(i) < .05/9
-		disp(['Signficantly integer coupled at ' mat2str(temp_space(i)), 'p = ' mat2str(p(i),4)])
+		disp(['Significantly integer coupled at ' mat2str(temp_space(i)), 'p = ' mat2str(p(i),4)])
 	end
 end
 
@@ -209,6 +236,15 @@ ph.patch.FaceColor = base_color;
 ph.patch.FaceAlpha = .5;
 ph.edge(1).Color = base_color;
 ph.edge(2).Color = base_color;
+
+% now plot the null distribution which we obtain by randomizing numerators and denominators
+rand_rem = rem(datasample(all_y,1e4)./datasample(all_x,1e4),1);
+rand_rem(isnan(rand_rem)) = [];
+null_y = histcounts(rand_rem,linspace(0,1,nbins+1),'Normalization','cdf');
+plot(ax.remainders,x,null_y,'k')
+
+
+keyboard
 
 
 % add a line to indicate theoretical maximum
