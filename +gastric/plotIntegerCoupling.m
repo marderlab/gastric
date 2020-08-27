@@ -45,7 +45,7 @@ for i = 1:length(ph)
 	end
 end
 
-xlabel(ax.hero,'Mean PD period (s)')
+xlabel(ax.hero,'Mean PD burst period (s)')
 
 ch.Location = 'eastoutside';
 title(ch,gastric.tempLabel)
@@ -61,13 +61,29 @@ all_t(rm_this) = NaN;
 
 N_pyloric_gastric = (all_y./all_x);
 Rem = rem(all_y./all_x,1);
-% integerness = gastric.integerness(Rem);
-
+RandRem = rem(all_y./veclib.shuffle(all_x),1);
+RandRem(isnan(RandRem)) = [];
 
 rm_this = isnan(N_pyloric_gastric);
 [rho, pval] = corr(all_temp(~rm_this),N_pyloric_gastric(~rm_this),'Type','Spearman');
+disp('Spearman p-value for all temperatures vs. ratios...')
 disp(pval)
 
+disp('N cycles compared:')
+disp(sum(~rm_this))
+
+% what if we weighted each prep equally?
+disp('Spearman p-value for all temperatures vs. ratios, prep by prep...')
+
+unique_temps = 7:2:23;
+all_N = NaN(length(unique_temps),10);
+
+for i = 1:length(unique_temps)
+	for j = 1:10
+		all_N(i,j) = nanmean(N_pyloric_gastric(~rm_this & all_prep == j & abs(all_temp - unique_temps(i)) <1));
+	end
+end
+unique_temps = repmat(unique_temps,10,1);
 
 temp_space = 7:2:23;
 PD_space = .2:.2:2;
@@ -111,7 +127,7 @@ for i = 1:length(temp_space)
 			continue
 		end
 
-		rand_rem = rand(length(this_rem),1);
+		rand_rem = datasample(RandRem,length(this_rem));
 
 		mean_integerness(i,j) = 0;
 		mean_integerness_rand(i,j) = 0;
@@ -154,7 +170,6 @@ Y = nanmean(mean_integerness,2);
 rm_this = isnan(Y);
 
 errorbar(ax.integerness,temp_space(~rm_this),Y(~rm_this),error_integerness(~rm_this),'Color',base_color,'LineWidth',2);
-
 
 
 % now plot errorbars for randomized data
@@ -243,8 +258,6 @@ rand_rem(isnan(rand_rem)) = [];
 null_y = histcounts(rand_rem,linspace(0,1,nbins+1),'Normalization','cdf');
 plot(ax.remainders,x,null_y,'k')
 
-
-keyboard
 
 
 % add a line to indicate theoretical maximum

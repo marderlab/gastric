@@ -15,7 +15,7 @@ try data_root = getpref('gastric','data_loc');
 catch
 	error('You need to tell this script where you data is located using setpref ')
 end
-C.path_name = fullfile(data_root, 'haddad','830_116_2' );
+C.path_name = fullfile(fileparts(fileparts(data_root)), 'haddad','830_116_2' );
 
 
 file_names = {'0008','0015','0021','0025','0028','0030'};
@@ -94,7 +94,6 @@ else
 	end
 	save([H '.cache'],'data');
 end
-
 
 
 

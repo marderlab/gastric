@@ -32,7 +32,7 @@ for i = 1:length(data)
 		idx = ceil(((this_data(j).temperature - min_temp)/(max_temp - min_temp))*100);
 		idx(idx>length(c)) = length(c);
 			idx(idx<1) = 1;
-		neurolib.raster(this_data(j).LG,'deltat',1,'yoffset',offset,'Color',c(idx,:),'center',true)
+		neurolib.raster(this_data(j).LG,'deltat',1,'yoffset',offset,'Color',c(idx,:),'center',false)
 
 		offset = offset +  1;
 	end

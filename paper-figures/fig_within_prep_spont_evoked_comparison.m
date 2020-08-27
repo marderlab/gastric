@@ -3,7 +3,7 @@
 close all
 clearvars
 
-data_root = '/Volumes/DATA/gastric-data';
+data_root = '/Volumes/DATA/pyloric-data';
 
 
 data = gastric.getEvokedData();
@@ -57,7 +57,7 @@ for i = 1:length(spont_files)
 
 
 	C = crabsort(false);
-	C.path_name = [data_root filesep spont_files{i}];
+	C.path_name = fullfile(data_root, 'powell',spont_files{i});
 
 		
 	if exist([C.path_name spont_files{i} '_0000.abf'],'file')
@@ -244,3 +244,10 @@ catch
 
 end
 
+plot(ax.isi,[100 120],[5e-3,5e-3],'LineWidth',3,'Color','k')
+th = text(ax.isi,100,4e-3,'20s','FontSize',18);
+th.Position = [90 2e-3];
+
+axlib.label(ax.raw_data_spont,'a','FontSize',24,'XOffset',-.03,'YOffset',-.01);
+axlib.label(ax.isi,'b','FontSize',24,'XOffset',-.03,'YOffset',-.01);
+h = axlib.label(ax.compare,'c','FontSize',24,'XOffset',0,'YOffset',-.01);
