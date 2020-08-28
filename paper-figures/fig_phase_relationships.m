@@ -72,6 +72,7 @@ set(ax(2),'YLim',[0 6],'XLim',[0 1])
 
 nbins = 20;
 
+
 for i = 1:length(temp_space)
 	use_these = all_phase(all_temp == temp_space(i));
 
@@ -85,11 +86,14 @@ for i = 1:length(temp_space)
 
 	a(i) = area(hx,hy,'FaceColor',c(i,:),'FaceAlpha',.3,'EdgeColor',c(i,:),'LineWidth',2);
 
-	% compare to uniform distribution 
-	[~,p]=kstest(use_these,'CDF',makedist('Uniform'))
+	LG(i).phases =  use_these;
 	
+	LG(i).temperature = temp_space(i);
+
 
 end
+
+
 
 plot([0 1],[1 1],'k--')
 
@@ -101,7 +105,7 @@ ylabel('LG burst start p.d.f')
 % inset
 inset = axes; hold on
 inset.Position = [.52 .77 .12 .15];
-[ph, M] = gastric.groupAndPlotErrorBars(temp_space, all_temp, all_prep, all_phase);
+[ph, M] = gastric.groupAndPlotErrorBars(temp_space, all_temp, all_prep, all_phase,'circular',true);
 
 R = randn(length(ph),1);
 C = ones(length(ph),3);
@@ -122,7 +126,9 @@ xlabel(gastric.tempLabel)
 
 
 disp('Spearman test for LG start phase across temperature:')
-[~,p]=corr(temp_space(2:end-1)',M(2:end-1)','Type','Spearman')
+[rho,p]=corr(temp_space(2:end-2)',M(2:end-2)','Type','Spearman')
+disp('Spearman rho:')
+disp(rho)
 
 
 
@@ -144,6 +150,8 @@ end
 ax(5) = subplot(2,3,5); hold on
 set(gca,'YLim',[0 6],'XLim',[0 1])
 
+
+
 for i = 1:length(temp_space)
 	use_these = all_phase(all_temp == temp_space(i));
 
@@ -156,16 +164,49 @@ for i = 1:length(temp_space)
 
 	a(i) = area(hx,hy,'FaceColor',c(i,:),'FaceAlpha',.3,'EdgeColor',c(i,:),'LineWidth',2);
 
-	% compare to uniform distribution 
-	[~,p]=kstest(use_these,'CDF',makedist('Uniform'))
+	% collect data for stats
+	DG(i).phases = use_these;
+
 
 end
+
 
 
 plot([0 1],[1 1],'k--')
 
 ylabel('DG burst start p.d.f')
 xlabel('PD phase')
+
+
+
+
+
+
+% inset for DG
+inset2 = axes; hold on
+inset2.Position = [.52 .29 .12 .15];
+[ph, M] = gastric.groupAndPlotErrorBars(temp_space, all_temp, all_prep, all_phase,'circular',true);
+
+R = randn(length(ph),1);
+C = ones(length(ph),3);
+C(:,1) = .8+ .05*R;
+C(:,2) = .8+ .05*R;
+C(:,3) = .8+ .05*R;
+
+C(C>1) = 1;
+C(C<0) = 0;
+
+for i = 1:length(ph)-1
+	set(ph(i),'Color',C(i,:))
+end
+
+set(gca,'YLim',[0 1],'YScale','linear')
+ylabel('DG start (PD phase)')
+xlabel(gastric.tempLabel)
+
+
+
+
 
 
 % measure PD stops everywhere
@@ -276,6 +317,9 @@ for i = 1:length(temp_space)
 
 	a(i) = area(hx,hy,'FaceColor',c(idx,:),'FaceAlpha',.3,'EdgeColor',c(idx,:),'LineWidth',1);
 
+	% collect data for stats
+	DG(i).spike_phases = use_these;
+	DG(i).temperature = temp_space(i);
 
 
 end
@@ -321,7 +365,7 @@ title(ch,'')
 ch.TickLabels = {};
 yh.Position = [-.13 .8];
 
-figlib.label('IgnoreThese',inset,'XOffset',-.02,'FontSize',29)
+figlib.label('IgnoreThese',[inset, inset2],'XOffset',-.02,'FontSize',29)
 
 
 r = rectangle(ax(1),'Position',[0 ax(1).YLim(2) 1e3 20],'FaceColor',brighten(colors.LG,.5),'EdgeColor',colors.LG);
@@ -339,11 +383,42 @@ ax(5).YColor = colors.DG;
 ax(3).YColor = colors.LG;
 ax(6).YColor = colors.DG;
 inset.YColor = colors.LG;
+inset2.YColor = colors.DG;
 
-try
-	figlib.saveall('Location',  '/Users/srinivas/Dropbox/Temp-Paper/Temperature-Paper/individual-figures','SaveName',mfilename)
-catch
+plot(ax(3),[0 0],[2 6],'LineWidth',3,'Color','w')
 
+figlib.saveall()
+
+
+
+% stats
+
+
+disp('DG burst starts:')
+p = NaN(length(DG),1);
+test_stat = p;
+temperature = p;
+for i = 1:length(p)
+	if isempty(DG(i).phases)
+		continue
+	end
+	[p(i),test_stat(i)]=circ_rtest(DG(i).phases*2*pi);
+	temperature(i) = DG(i).temperature;
 end
 
+table(temperature,p,test_stat)
 
+
+disp('LG burst starts:')
+
+p = NaN(length(LG),1);
+test_stat = p;
+temperature = p;
+for i = 1:length(p)
+	if isempty(LG(i).phases)
+		continue
+	end
+	[p(i),test_stat(i)]=circ_rtest(LG(i).phases*2*pi);
+	temperature(i) = LG(i).temperature;
+end
+table(temperature,p,test_stat)

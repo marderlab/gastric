@@ -80,3 +80,31 @@ histogram(x,'Normalization','pdf','EdgeColor','none'); figlib.pretty; box off
 
 subplot(1,3,3); hold on
 histogram(xx,'Normalization','pdf','EdgeColor','none'); figlib.pretty; box off
+
+
+
+
+
+
+
+x = rand(1e6,1)+2;
+y = rand(1e6,1)+11;
+z = rem(y./x,1);
+
+figure('outerposition',[300 300 1200 600],'PaperUnits','points','PaperSize',[1200 600]); hold on
+subplot(1,3,1); hold on
+histogram(x,'Normalization','pdf','NumBins',100,'EdgeColor','none')
+xlabel('Denominator')
+ylabel('pdf')
+
+
+subplot(1,3,2); hold on
+histogram(y,'Normalization','pdf','NumBins',100,'EdgeColor','none')
+xlabel('Numerator')
+
+
+subplot(1,3,3); hold on
+histogram(z,'Normalization','pdf','NumBins',100,'EdgeColor','none')
+xlabel('Significand of quotient')
+
+figlib.pretty('FontSize',30)

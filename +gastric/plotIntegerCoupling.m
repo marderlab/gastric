@@ -184,13 +184,6 @@ errorbar(ax.integerness,temp_space(~rm_this),Y(~rm_this),error_integerness(~rm_t
 
 
 
-% make sure we evenly sample from all temperatures to avoid weighting one or the other
-DataSize = NaN*temp_space;
-for i = 1:length(temp_space)
-	x = Rem(abs(all_temp - temp_space(i)) < 1);
-	x(isnan(x)) = [];
-	DataSize(i) = length(x);
-end
 
 p = NaN*temp_space;
 for i = 1:length(p)
@@ -209,12 +202,17 @@ for i = 1:length(p)
 	
 	
 
-	[~,p(i)] = kstest2(x,this_rem);
+	[~,p(i), ksstat] = kstest2(x,this_rem);
 
 
 	if p(i) < .05/9
 		disp(['Significantly integer coupled at ' mat2str(temp_space(i)), 'p = ' mat2str(p(i),4)])
+	else
+		disp(['NOT Significantly integer coupled at ' mat2str(temp_space(i)), 'p = ' mat2str(p(i),4)])
 	end
+
+	disp('ksstat=')
+	disp(ksstat)
 end
 
 
