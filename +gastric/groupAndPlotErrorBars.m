@@ -67,6 +67,8 @@ for i = 1:n_preps
 
 	plot_handles(i) = errorbar(group_bins(~isnan(M)),M(~isnan(M)),E(~isnan(M)));
 
+	plot_handles(i).DisplayName = mat2str(i);
+
 end
 
 
