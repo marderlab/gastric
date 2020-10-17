@@ -20,6 +20,9 @@ if temperature == 11
 	temp_ok(find(~temp_ok,1,'first'):end)=0;
 end
 
+
+% by running the loop in reverse, we are picking the last data
+% file with this nominal temperature
 for j = length(data):-1:1
 
 	if ~any(data(j).mask)

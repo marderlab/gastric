@@ -4,6 +4,14 @@
 
 function [ch, plh] = plotIntegerCoupling(data, neuron, ax, base_color)
 
+
+arguments
+	data (1,1) struct
+	neuron char
+	ax struct
+	base_color 
+end
+
 MarkerSize = 10;
 
 % add some fake data to get the colorbars to be consistent across all figures

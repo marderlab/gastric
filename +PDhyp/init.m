@@ -26,7 +26,7 @@ for i = 1:length(data)
 	this_data = data{i};
 
 	delta_temp = cellfun(@max,{this_data.temperature}) - cellfun(@min,{this_data.temperature});
-	this_data(delta_temp>2) = [];
+	this_data(delta_temp>1) = [];
 	data{i} = this_data(:);
 end
 
@@ -44,5 +44,15 @@ for i = 1:length(data)
 	for j = 1:length(data{i})
 		 [~,idx]=min(abs(mean(data{i}(j).temperature) - TemperatureSteps));
 		 data{i}(j).nominal_temperature = TemperatureSteps(idx);
+	end
+end
+
+
+
+% temperature is sampled at 1s but we need it at 1ms
+for i = 1:length(data)
+	for j = 1:length(data{i})
+		temp = repmat(data{i}(j).temperature(:),1,1e3)';
+		data{i}(j).temperature = temp(:);
 	end
 end

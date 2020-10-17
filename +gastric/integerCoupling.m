@@ -6,6 +6,12 @@
 function [mean_fast_burst_periods, temperature] = integerCoupling(data, slow_neuron, fast_neuron)
 
 
+arguments
+	data (1,1) struct
+	slow_neuron char = 'LG'
+	fast_neuron char = 'PD'
+end
+
 
 slow_burst_starts = data.([slow_neuron '_burst_starts']);
 slow_burst_ends = data.([slow_neuron '_burst_ends']);
@@ -68,11 +74,4 @@ end
 
 % compute the temperatures when we measure this stuff
 temperature = data.temperature(round(slow_burst_starts*1e3));
-
-
-% normalize by fast burst period
-% delay_fast_start_slow_start_norm_PD = delay_fast_start_slow_start./mean_fast_burst_periods;
-% delay_fast_start_slow_end_norm_PD = delay_fast_start_slow_end./mean_fast_burst_periods;
-% delay_fast_end_slow_start_norm_PD = delay_fast_end_slow_start./mean_fast_burst_periods;
-% delay_fast_end_slow_end_norm_PD = delay_fast_end_slow_end./mean_fast_burst_periods;
 

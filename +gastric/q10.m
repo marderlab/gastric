@@ -9,6 +9,8 @@ end
 
 rm_this = isnan(periods) | isnan(temperatures);
 
+temperatures = round(temperatures);
+
 periods(rm_this) = [];
 temperatures(rm_this) = [];
 
@@ -16,6 +18,9 @@ f = 1./periods(:);
 f0 = nanmean(f(abs(temperatures(:) - 11) < .1));
 q = ((f./f0).^(10./(temperatures(:)-11)));
 
+
+
 q(isnan(q)) = [];
 q(isinf(q)) = [];
+
 q(q==0) = [];
