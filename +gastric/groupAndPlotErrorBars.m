@@ -37,8 +37,8 @@ bin_width = min(abs(diff(group_bins)))/2;
 
 % split by prep
 for i = 1:n_preps
-	this_group = group_idx(prep_idx == i);
-	this_Y = Y(prep_idx == i);
+	this_group = group_idx(prep_idx == unique_preps(i));
+	this_Y = Y(prep_idx == unique_preps(i));
 
 	M = NaN*group_bins;
 	E = NaN*group_bins;

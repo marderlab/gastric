@@ -63,7 +63,7 @@ try data_root = getpref('gastric','data_loc');
 catch
 	error('You need to tell this script where you data is located using setpref ')
 end
-C.path_name = fullfile(fileparts(data_root), 'powell','999_017' );
+C.path_name = fullfile(fileparts(data_root),'999_017' );
 
 file_names = {'0002','0005','0008','0011','0003','0006','0009','0012'};
 
@@ -142,10 +142,18 @@ LG_PD0.prep_idx = [];
 
 prep_idx = 0;
 
-for i = [7 2 8]
-	this_data = data{i};
+for i = 1:length(data) 
+
 
 	prep_idx = prep_idx + 1;
+
+	% if ~ismember(i,[7 2 8])
+	% 	continue
+	% end
+
+	this_data = data{i};
+
+	
 
 	% compute PD periods
 	for j = 1:length(this_data)
@@ -211,29 +219,42 @@ end
 % compare Q10s 
 ax(4) = subplot(2,3,6); hold on
 clear Q
-R = randn(4)/10;
+R = randn(prep_idx,1)/10;
+meanQ = struct;
 for i = 1:prep_idx
 	Q = gastric.q10(PD.periods(PD.prep_idx==i),PD.temperature(PD.prep_idx==i));
-	errorbar(1+R(i),mean(Q),std(Q)/sqrt(length(Q)),'Color','k');
+	E = std(Q)/sqrt(length(Q));
+	if E < 1
+		errorbar(1+R(i),mean(Q),E,'Color','k');
+	end
 	plot(ax(4),1+R(i),mean(Q),'o','Color','k','MarkerFaceColor','k');
+	meanQ.PD(i) = mean(Q);
 
 	Q = gastric.q10(LG.periods(LG.prep_idx==i),LG.temperature(LG.prep_idx==i));
-	errorbar(2+R(i),mean(Q),std(Q)/sqrt(length(Q)),'Color','k');
+	E = std(Q)/sqrt(length(Q));
+	if E < 1
+		errorbar(2+R(i),mean(Q),E,'Color','k');
+	end
 	plot(ax(4),2+R(i),mean(Q),'o','Color','k','MarkerFaceColor','k');
+	meanQ.LG(i) = mean(Q);
 
 	Q = gastric.q10(LG_PD0.periods(LG_PD0.prep_idx==i),LG_PD0.temperature(LG_PD0.prep_idx==i));
-	errorbar(3+R(i),mean(Q),std(Q)/sqrt(length(Q)),'Color','k');
+	E = std(Q)/sqrt(length(Q));
+	if E < 1
+		errorbar(3+R(i),mean(Q),E,'Color','k');
+	end
 	plot(ax(4),3+R(i),mean(Q),'o','Color','k','MarkerFaceColor','k');
+	meanQ.LG_PD0(i) = mean(Q);
 
 end
-set(gca,'YLim',[0 4])
+set(ax(4),'YLim',[0 5])
 
 
 
 % show periods for the example prep
-PD = structlib.purge(PD,PD.prep_idx~=1);
-LG = structlib.purge(LG,LG.prep_idx~=1);
-LG_PD0 = structlib.purge(LG_PD0,LG_PD0.prep_idx~=1);
+PD = structlib.purge(PD,PD.prep_idx~=7);
+LG = structlib.purge(LG,LG.prep_idx~=7);
+LG_PD0 = structlib.purge(LG_PD0,LG_PD0.prep_idx~=7);
 
 colors = gastric.colors;
 
@@ -268,10 +289,10 @@ th = text(ax(1),-15,2,'\itpdn','FontSize',20);
 
 th = text(ax(1),1,-16.5,'10 s','FontSize',20);
 
-th = text(ax(1),-25,1,'11°C','FontSize',20);
-th = text(ax(1),-25,-4,'15°C','FontSize',20);
-th = text(ax(1),-25,-9,'19°C','FontSize',20);
-th = text(ax(1),-25,-14,'21°C','FontSize',20);
+th = text(ax(1),-25,1,['11' char(176) 'C'],'FontSize',20);
+th = text(ax(1),-25,-4,['15' char(176) 'C'],'FontSize',20);
+th = text(ax(1),-25,-9,['19' char(176) 'C'],'FontSize',20);
+th = text(ax(1),-25,-14,['21' char(176) 'C'],'FontSize',20);
 
 
 
