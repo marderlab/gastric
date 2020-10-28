@@ -3,6 +3,7 @@
 % experiments in a notebook that didn't have a number
 
 close all
+addpath('../')
 
 TemperatureSteps = [11 15 19 21];
 
@@ -124,7 +125,7 @@ for i = 1:length(file_names)
 
 end
 
-
+colors = gastric.colors;
 
 
 % compute periods for each prep for the reference temperatures 
@@ -147,6 +148,7 @@ for i = 1:length(data)
 
 	prep_idx = prep_idx + 1;
 
+	% these are the best 3 preps
 	% if ~ismember(i,[7 2 8])
 	% 	continue
 	% end
@@ -217,37 +219,37 @@ end
 
 
 % compare Q10s 
-ax(4) = subplot(2,3,6); hold on
-clear Q
-R = randn(prep_idx,1)/10;
-meanQ = struct;
-for i = 1:prep_idx
-	Q = gastric.q10(PD.periods(PD.prep_idx==i),PD.temperature(PD.prep_idx==i));
-	E = std(Q)/sqrt(length(Q));
-	if E < 1
-		errorbar(1+R(i),mean(Q),E,'Color','k');
-	end
-	plot(ax(4),1+R(i),mean(Q),'o','Color','k','MarkerFaceColor','k');
-	meanQ.PD(i) = mean(Q);
+% ax(4) = subplot(2,3,6); hold on
+% clear Q
+% R = randn(prep_idx,1)/10;
+% meanQ = struct;
+% for i = 1:prep_idx
+% 	Q = gastric.q10(PD.periods(PD.prep_idx==i),PD.temperature(PD.prep_idx==i));
+% 	E = std(Q)/sqrt(length(Q));
+% 	if E < 1
+% 		errorbar(1+R(i),mean(Q),E,'Color','k');
+% 	end
+% 	plot(ax(4),1+R(i),mean(Q),'o','Color','k','MarkerFaceColor','k');
+% 	meanQ.PD(i) = mean(Q);
 
-	Q = gastric.q10(LG.periods(LG.prep_idx==i),LG.temperature(LG.prep_idx==i));
-	E = std(Q)/sqrt(length(Q));
-	if E < 1
-		errorbar(2+R(i),mean(Q),E,'Color','k');
-	end
-	plot(ax(4),2+R(i),mean(Q),'o','Color','k','MarkerFaceColor','k');
-	meanQ.LG(i) = mean(Q);
+% 	Q = gastric.q10(LG.periods(LG.prep_idx==i),LG.temperature(LG.prep_idx==i));
+% 	E = std(Q)/sqrt(length(Q));
+% 	if E < 1
+% 		errorbar(2+R(i),mean(Q),E,'Color','k');
+% 	end
+% 	plot(ax(4),2+R(i),mean(Q),'o','Color','k','MarkerFaceColor','k');
+% 	meanQ.LG(i) = mean(Q);
 
-	Q = gastric.q10(LG_PD0.periods(LG_PD0.prep_idx==i),LG_PD0.temperature(LG_PD0.prep_idx==i));
-	E = std(Q)/sqrt(length(Q));
-	if E < 1
-		errorbar(3+R(i),mean(Q),E,'Color','k');
-	end
-	plot(ax(4),3+R(i),mean(Q),'o','Color','k','MarkerFaceColor','k');
-	meanQ.LG_PD0(i) = mean(Q);
+% 	Q = gastric.q10(LG_PD0.periods(LG_PD0.prep_idx==i),LG_PD0.temperature(LG_PD0.prep_idx==i));
+% 	E = std(Q)/sqrt(length(Q));
+% 	if E < 1
+% 		errorbar(3+R(i),mean(Q),E,'Color','k');
+% 	end
+% 	plot(ax(4),3+R(i),mean(Q),'o','Color','k','MarkerFaceColor','k');
+% 	meanQ.LG_PD0(i) = mean(Q);
 
-end
-set(ax(4),'YLim',[0 5])
+% end
+% set(ax(4),'YLim',[0 5])
 
 
 
@@ -256,12 +258,12 @@ PD = structlib.purge(PD,PD.prep_idx~=7);
 LG = structlib.purge(LG,LG.prep_idx~=7);
 LG_PD0 = structlib.purge(LG_PD0,LG_PD0.prep_idx~=7);
 
-colors = gastric.colors;
+
 
 ax(3) = subplot(2,3,3); hold on
-ph = gastric.groupAndPlotErrorBars(TemperatureSteps, PD.temperature, PD.prep_idx, PD.periods*10);
-delete(ph(end))
-ph(1).Color = colors.PD;
+% ph = gastric.groupAndPlotErrorBars(TemperatureSteps, PD.temperature, PD.prep_idx, PD.periods*10);
+% delete(ph(end))
+% ph(1).Color = colors.PD;
 
 ph = gastric.groupAndPlotErrorBars(TemperatureSteps, LG.temperature, LG.prep_idx, LG.periods);
 delete(ph(end))
@@ -271,16 +273,15 @@ ph = gastric.groupAndPlotErrorBars(TemperatureSteps, LG_PD0.temperature, LG_PD0.
 delete(ph(end))
 ph(1).Color = colors.('LG (PD hyp.)');
 
-xlabel('Temperature (C)')
+xlabel(gastric.tempLabel)
 ylabel('Burst period (s)')
 ax(3).YScale = 'log';
 
 % fake plots for a legend
 clear ph
-ph(1) = plot(NaN,NaN,'.','MarkerSize',30,'Color',colors.PD);
-ph(2) = plot(NaN,NaN,'.','MarkerSize',30,'Color',colors.LG);
-ph(3) = plot(NaN,NaN,'.','MarkerSize',30,'Color',colors.('LG (PD hyp.)'));
-legend(ph,{'PD (10x)','LG','LG (PD hyp.)'})
+ph(1) = plot(NaN,NaN,'.','MarkerSize',30,'Color',colors.LG);
+ph(2) = plot(NaN,NaN,'.','MarkerSize',30,'Color',colors.('LG (PD hyp.)'));
+legend(ph,{'LG','LG (PD hyp.)'})
 
 
 
@@ -296,20 +297,32 @@ th = text(ax(1),-25,-14,['21' char(176) 'C'],'FontSize',20);
 
 
 
+
+
+
+% show the number of preps where we get a gastric rhythm at different temperatures
+A = [9 9 9 4; 9 9 7 4];
+ax(4) = subplot(2,3,6); 
+colors = [colormaps.redula(4)];
 figlib.pretty()
 
+for i = 1:4
+	text(i-.2,1,mat2str(A(1,i)),'Color',colors(i,:),'FontSize',25)
+	text(i-.2,2,mat2str(A(2,i)),'Color',colors(i,:),'FontSize',25)
+end
 
-ax(4).XTick = [1:3];
-ax(4).XTickLabel = {'PD','LG','LG (PD hyp.)'};
-ax(4).XLim = [0 4];
-ax(4).XTickLabelRotation = 45;
-ax(4).Position(2) = .13;
-ylabel(ax(4),'Q_{10} (burst period)')
+set(ax(4),'XLim',[0 5],'YLim',[0 3],'XTick',[1:4],'XTickLabel',{'11','15','19','21'},'YTick',[1 2],'YTickLabel',{'PD on','PD off'})
+
+xlabel(gastric.tempLabel)
+ax(4).Position = [.6916 .11 .22 .2];
+
 
 figlib.label('XOffset',-.01,'FontSize',28)
 
-ax(3).YTick = [3 10 30];
-ax(3).YLim = [3 30];
+
+ax(3).YLim = [5 20];
+ax(3).YTick = [5:5:20];
+ax(3).YScale = 'linear';
 
 
 return
