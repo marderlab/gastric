@@ -71,7 +71,9 @@ file_names = {'0002','0005','0008','0011','0003','0006','0009','0012'};
 
 yoffset = 0;
 
-colors = [colormaps.redula(4); colormaps.redula(4)];
+colors = colormaps.redula(100);
+min_temp = 5;
+max_temp = 25;
 
 for i = 1:length(file_names)
 
@@ -81,6 +83,7 @@ for i = 1:length(file_names)
 
 	lgn_channel = find(strcmp(C.common.data_channel_names,'lgn'));
 	pdn_channel = find(strcmp(C.common.data_channel_names,'pdn'));
+	temp_channel = find(strcmp(C.common.data_channel_names,'temperature'));
 
 	lgn = C.raw_data(:,lgn_channel); 
 	pdn = C.raw_data(:,pdn_channel);
@@ -117,8 +120,11 @@ for i = 1:length(file_names)
 
 	time = (1:length(lgn))*C.dt*100;
 
-	plot(time,lgn+yoffset,'Color',colors(i,:))
-	plot(time,pdn+yoffset+2,'Color',colors(i,:))
+	temp = mean(C.raw_data(:,temp_channel));
+	temp = round(interp1(linspace(min_temp,max_temp,100),1:100,temp));
+
+	plot(time,lgn+yoffset,'Color',colors(temp,:))
+	plot(time,pdn+yoffset+2,'Color',colors(temp,:))
 
 
 	yoffset = yoffset-5;
@@ -303,12 +309,15 @@ th = text(ax(1),-25,-14,['21' char(176) 'C'],'FontSize',20);
 % show the number of preps where we get a gastric rhythm at different temperatures
 A = [9 9 9 4; 9 9 7 4];
 ax(4) = subplot(2,3,6); 
-colors = [colormaps.redula(4)];
+colors = colormaps.redula(100);
 figlib.pretty()
 
+Temp_space = [11 15 19 21];
+
 for i = 1:4
-	text(i-.2,1,mat2str(A(1,i)),'Color',colors(i,:),'FontSize',25)
-	text(i-.2,2,mat2str(A(2,i)),'Color',colors(i,:),'FontSize',25)
+	temp = round(interp1(linspace(min_temp,max_temp,100),1:100,Temp_space(i)));
+	text(i-.2,1,mat2str(A(1,i)),'Color',colors(temp,:),'FontSize',25)
+	text(i-.2,2,mat2str(A(2,i)),'Color',colors(temp,:),'FontSize',25)
 end
 
 set(ax(4),'XLim',[0 5],'YLim',[0 3],'XTick',[1:4],'XTickLabel',{'11','15','19','21'},'YTick',[1 2],'YTickLabel',{'PD on','PD off'})
@@ -324,6 +333,9 @@ ax(3).YLim = [5 20];
 ax(3).YTick = [5:5:20];
 ax(3).YScale = 'linear';
 
+colorbar
+caxis([5 25])
+colormap(colormaps.redula)
 
 return
 

@@ -6,7 +6,7 @@ function [ch, plh] = plotIntegerCoupling(data, neuron, ax, base_color)
 
 
 arguments
-	data (1,1) struct
+	data (:,1) struct
 	neuron char
 	ax struct
 	base_color 

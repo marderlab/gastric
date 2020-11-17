@@ -318,4 +318,4 @@ axis(ax.preps(2),'square')
 
 
 % extremely useful stats because the differences we see are so teeny tiny
-[~,p,~,stats]=ttest2([data.Q_PD_mean],[data.Q_LG_mean])
+[~,p,~,stats]=ttest([data.Q_PD_mean],[data.Q_LG_mean])
