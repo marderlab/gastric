@@ -1,4 +1,5 @@
 
+addpath('../')
 
 close all
 clearvars
@@ -201,13 +202,14 @@ axis square
 ylabel('Evoked period (s)')
 xlabel(['Spontaneous' newline 'period (s)'])
 
-ax.compare.YColor = 'b';
 
 
 ylabel(ax.isi,'LG ISI (s)')
 ax.isi.XLim(1) = 0;
 
 figlib.pretty('PlotLineWidth',1)
+
+ax.compare.YColor = 'b';
 
 set(ax.compare,'XScale','linear','YScale','linear','XLim',[-2 25],'YLim',[-2 25])
 

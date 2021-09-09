@@ -259,10 +259,10 @@ ph.edge(1).Color = base_color;
 ph.edge(2).Color = base_color;
 
 % now plot the null distribution which we obtain by randomizing numerators and denominators
-rand_rem = rem(datasample(all_y,1e4)./datasample(all_x,1e4),1);
-rand_rem(isnan(rand_rem)) = [];
-null_y = histcounts(rand_rem,linspace(0,1,nbins+1),'Normalization','cdf');
-plot(ax.remainders,x,null_y,'k')
+% rand_rem = rem(datasample(all_y,1e4)./datasample(all_x,1e4),1);
+% rand_rem(isnan(rand_rem)) = [];
+% null_y = histcounts(rand_rem,linspace(0,1,nbins+1),'Normalization','cdf');
+% plot(ax.remainders,x,null_y,'k')
 
 
 

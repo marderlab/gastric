@@ -132,7 +132,7 @@ ax.raw_data(1).XLim(2) = ax.raw_data(1).XLim(1) + 21;
 ax.raw_data(2).XLim = [-1 10];
 
 plot(ax.raw_data(1),[18.9 27.13],[.5 .5]+.9,'k','LineWidth',3)
-text(24,1.57,'T_{PD} = .911s','FontSize',14,'Parent',ax.raw_data(1));
+text(24,1.57,'<T_{PD}> = .911s','FontSize',14,'Parent',ax.raw_data(1));
 
 plot(ax.raw_data(1),[18.16 27.41],[.5 .5]+1.8,'k','LineWidth',3)
 text(24,2.53,'T_{LG} = 9.17s','FontSize',14,'Parent',ax.raw_data(1));
@@ -142,7 +142,7 @@ ax.raw_data(2).Position(3) = .7;
 th = text(39,1.5,'T_{LG}/T_{PD}=10.06','FontSize',14,'Parent',ax.raw_data(1));
 
 plot(ax.raw_data(2),[.1915 3.338],[.5 .5]+.9,'k','LineWidth',3)
-text(2,1.57,'T_{PD} = .313s','FontSize',14,'Parent',ax.raw_data(2));
+text(2,1.57,'<T_{PD}> = .313s','FontSize',14,'Parent',ax.raw_data(2));
 
 plot(ax.raw_data(2),[0 3.458],[.5 .5]+1.8,'k','LineWidth',3)
 text(2,2.53,'T_{LG} = 3.44s','FontSize',14,'Parent',ax.raw_data(2));

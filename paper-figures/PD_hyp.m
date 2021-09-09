@@ -320,10 +320,10 @@ for i = 1:4
 	text(i-.2,2,mat2str(A(2,i)),'Color',colors(temp,:),'FontSize',25)
 end
 
-set(ax(4),'XLim',[0 5],'YLim',[0 3],'XTick',[1:4],'XTickLabel',{'11','15','19','21'},'YTick',[1 2],'YTickLabel',{'PD on','PD off'})
+set(ax(4),'XLim',[0 5],'YLim',[0 3],'XTick',[1:4],'XTickLabel',{'11','15','19','21'},'YTick',[1 2],'YTickLabel',{'PD active','PD inactive'})
 
 xlabel(gastric.tempLabel)
-ax(4).Position = [.6916 .11 .22 .2];
+ ax(4).Position = [.71 .11 .22 .2];
 
 
 figlib.label('XOffset',-.01,'FontSize',28)

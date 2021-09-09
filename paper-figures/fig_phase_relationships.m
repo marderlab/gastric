@@ -87,9 +87,8 @@ for i = 1:length(temp_space)
 	a(i) = area(hx,hy,'FaceColor',c(i,:),'FaceAlpha',.3,'EdgeColor',c(i,:),'LineWidth',2);
 
 	LG(i).phases =  use_these;
-	
 	LG(i).temperature = temp_space(i);
-
+	LG(i).prep = all_prep(all_temp == temp_space(i));
 
 end
 
@@ -166,7 +165,7 @@ for i = 1:length(temp_space)
 
 	% collect data for stats
 	DG(i).phases = use_these;
-
+	DG(i).prep = all_prep(all_temp == temp_space(i));
 
 end
 
@@ -422,3 +421,74 @@ for i = 1:length(p)
 	temperature(i) = LG(i).temperature;
 end
 table(temperature,p,test_stat)
+
+
+
+% do the stats prep-by prep
+p = NaN(length(LG),10);
+test_stat = p;
+temperature = p;
+for i = 1:length(LG)
+	for j = 1:10
+		this = LG(i).phases(LG(i).prep == j)*2*pi;
+		if length(this) < 50
+			continue
+		end
+		this = this(1:50);
+		[p(i,j), test_stat(i,j)] = circ_rtest(this);
+	end
+end
+
+
+figure('outerposition',[300 300 1200 600],'PaperUnits','points','PaperSize',[1200 600]); hold on
+plotlib.imagescnan(p)
+ch = colorbar;
+title(ch,'p')
+xlabel('Preparation #')
+ylabel('Temperature')
+set(gca,'YTick',(1:length(LG))+1,'YTickLabel',axlib.makeTickLabels([LG.temperature],1))
+ax = gca;
+figlib.pretty()
+ch.Position = [.89 .11 .01 .7]
+ax.Position = [.13 .11 .7 .8];
+
+
+
+% now DG
+p = NaN(length(DG),10);
+test_stat = p;
+temperature = p;
+for i = 1:length(DG)
+	for j = 1:10
+		this = DG(i).phases(DG(i).prep == j)*2*pi;
+		if length(this) < 50
+			continue
+		end
+		this = this(1:50);
+		[p(i,j), test_stat(i,j)] = circ_rtest(this);
+	end
+	
+end
+
+
+figure('outerposition',[300 300 1200 600],'PaperUnits','points','PaperSize',[1200 600]); hold on
+plotlib.imagescnan(p)
+ch = colorbar;
+title(ch,'p')
+xlabel('Preparation #')
+ylabel('Temperature')
+set(gca,'YTick',(1:length(DG))+1,'YTickLabel',axlib.makeTickLabels([DG.temperature],1))
+ax = gca;
+figlib.pretty()
+ch.Position = [.89 .11 .01 .7]
+ax.Position = [.13 .11 .7 .8];
+
+
+
+% how many burst starts per prep/per temp?
+N = zeros(length(LG),10);
+for i = 1:10
+	for j = 1:length(LG)
+		N(i,j) = sum(LG(j).prep == i);
+	end
+end
